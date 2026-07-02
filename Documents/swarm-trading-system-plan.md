@@ -71,7 +71,7 @@ Two-layer decision process — this is the key design correction from our earlie
    - Can approve, reject, or **request modification** (e.g., "reduce size by 30%") rather than a flat binary
 
 ### 3.3 Manual Override
-- A human-accessible control plane (dashboard or CLI) that can:
+- A human-accessible control plane dashboard that can:
   - Pause any individual agent
   - Pause the entire system (kill switch)
   - Force-reject a pending proposal regardless of Manager approval
@@ -90,7 +90,7 @@ Two-layer decision process — this is the key design correction from our earlie
 |---|---|---|
 | Containerization | Docker Compose | You already want this; clean service isolation per agent |
 | Inter-agent messaging | Redis pub/sub (or lightweight queue) | Simple, fast, good fit for proposal/approval flow |
-| Manager framework | LangGraph (or CrewAI) | Both handle stateful, branching approval workflows better than plain OpenAI Agents SDK for this specific manager/worker pattern — worth a short bake-off before committing |
+| Manager framework | CrewAI | Both handle stateful, branching approval workflows better than plain OpenAI Agents SDK for this specific manager/worker pattern — worth a short bake-off before committing |
 | Member agent framework | Lightweight — can be simple Python services, don't need heavy agent frameworks for straightforward strategies | Keeps early agents easy to debug |
 | Stocks execution | **Robinhood Agentic Trading (MCP)** | Official, beta, built-in trade preview/override — matches your manual-override requirement natively |
 | Crypto execution | **Robinhood Crypto Trading API** (key-pair auth) | Official, documented, separate from the agentic product |
@@ -144,11 +144,11 @@ Two-layer decision process — this is the key design correction from our earlie
 
 ## 6. Open Design Questions (to resolve before Phase 1 build starts)
 
-1. Framework choice: LangGraph vs CrewAI vs OpenAI Agents SDK — needs a short hands-on comparison.
-2. ~~Exact hard-rule parameters: what are your actual risk limits (max % per position, max daily loss, etc.)?~~ — **Resolved (starting defaults, see 6.1 below)** — set as a working baseline to build Phase 1's hard-rules layer against; expected to be tuned once backtesting/paper trading produce real evidence, not treated as final.
+1. Framework choice: CrewAI.
+2. **Resolved (starting defaults, see 6.1 below)** — set as a working baseline to build Phase 1's hard-rules layer against; expected to be tuned once backtesting/paper trading produce real evidence, not treated as final.
 3. Capital allocation model: fixed budget per agent, or dynamic reallocation based on performance over time? — **Partially addressed by the probation model in 6.2** (capital cut/increased in steps based on rolling performance), but the *initial* fixed-budget split across agents is still undecided.
-4. What happens to a rejected proposal — discarded, or does the member agent get to revise and resubmit?
-5. ~~How is "success" measured for each member agent (to eventually adjust its capital or retire it)?~~ — **Resolved (starting defaults, see 6.2 below)** — same caveat as above: a baseline to start Phase 1/2 with, to be revisited once agents have a real track record.
+4. What happens to a rejected proposal — discarded, or does the member agent get to revise and resubmit? - They would get revise and resubmit after resolve the issue - will need manual override in this phrase (potentially)
+5. **Resolved (starting defaults, see 6.2 below)** — same caveat as above: a baseline to start Phase 1/2 with, to be revisited once agents have a real track record.
 
 ### 6.1 Hard-rule parameters (starting defaults)
 
@@ -215,7 +215,7 @@ Finance and Investment Banking are treated as **one combined plugin** for now, p
 ### 9.2 Engineering
 Scope: the org doing engineering work on itself — infrastructure, CI, code quality, repo hygiene. Not yet detailed at the Member-Agent level (no build phases defined yet, unlike Finance/IB's Phases 0–5 in Section 5). Connector: Github.
 
-Note: `Security-Agent/` and `Test-Agent/` at the repo root are *not* Member Agents of this plugin — they're engineering-support co-worker agents (code/security review, test-case authoring) that assist with building this project, sitting outside the org's own multi-agent architecture. See their own `CLAUDE.md` files.
+Note: `Security-Agent/` and `Test-Agent/` at the repo root are engineering-support co-worker agents (code/security review, test-case authoring) that assist with building this project, sitting outside the org's own multi-agent architecture. See their own `CLAUDE.md` files.
 
 ### 9.3 Design
 Scope: diagramming, UX, notes. Connectors: Excalidraw, Goodnotes.
@@ -239,5 +239,5 @@ Scope: diagramming, UX, notes. Connectors: Excalidraw, Goodnotes.
 1. Does every plugin need the full two-layer hard-rules + soft-judgment Manager, or is that specific to Finance/IB's real-capital risk profile?
 2. Should Investment Banking split out from Finance into its own plugin later, or stay merged as it is now?
 3. What does a Member Agent look like in Engineering or Design, where there's no "capital" or "trade proposal" concept the way Finance/IB has?
-4. ~~Resolve the LLM-provider-vs-strategy naming mismatch on the Finance/IB ellipses in `system.excalidraw`~~ — **Resolved in Section 9.1:** provider and strategy are orthogonal per-agent configuration (`agents.llm_provider` / `agents.strategy` in the Phase 0 schema); the diagram ellipses are illustrative LLM backends, not strategy names.
+4. **Resolved in Section 9.1:** provider and strategy are orthogonal per-agent configuration (`agents.llm_provider` / `agents.strategy` in the Phase 0 schema); the diagram ellipses are illustrative LLM backends, not strategy names.
 5. Section 4 recommends a LangGraph-vs-CrewAI bake-off (and question 1 in Section 6 keeps it open), while Section 5 and the diagram already name CrewAI as the orchestration choice. Treat CrewAI as the working default; the bake-off question stays open until the Phase 1 Manager is actually built.

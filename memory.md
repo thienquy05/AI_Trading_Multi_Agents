@@ -35,6 +35,28 @@ Entry template:
 
 ---
 
+## 2026-07-02 — Diagram: schema cluster expanded to column-level detail
+
+**What changed:**
+- Rebuilt the "Postgres schema (general picture)" cluster in
+  `Documents/system.excalidraw` (user request, same branch/PR as the
+  schema itself): each of the 12 table boxes now lists its columns with
+  types and markers (`PK`, `UQ`, `-> table (ondelete)` for FKs, `?` for
+  nullable), monospace, laid out on a 3×4 grid with regenerated FK
+  arrows (child → parent) and the revise-and-resubmit self-loop on
+  `proposals`. Legend now explains the notation and the DB-enforced
+  append-only ledgers. Script-verified: valid JSON, unique ids, no
+  dangling `boundElements`/binding refs, no line overflowing its box.
+
+**Why:**
+- The name-only boxes stopped earning their keep once the real columns
+  existed in migrations 0003/0004 — the diagram is the plan doc's visual
+  counterpart and should answer "what's in this table?" at a glance.
+
+**Open questions / what's next:**
+- None — regenerate via script (kept in session scratchpad, trivially
+  rewritable) if columns change in later branches.
+
 ## 2026-07-02 — Branch 1 `features/db-trading-core` built and verified: trading-domain schema + DB-role separation
 
 **What changed:**

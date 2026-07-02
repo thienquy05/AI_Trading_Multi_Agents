@@ -15,9 +15,11 @@ system_controls/control_events/orders/positions, with DB-enforced
 append-only ledgers via a least-privilege runtime role — a minimal
 `frontend/` (Next.js placeholder), `docker-compose.yml` (postgres + redis
 + backend + frontend + one-shot `migrate` service), and `start.sh` /
-`stop.sh`. No live agent logic yet — roadmap branches 2+ (auth,
-hard-rules engine, proposal pipeline, …) are next. See `memory.md` for
-the full rationale.
+`stop.sh`. Branch 2 (`features/auth-api`) added the login gate: JWT auth
+(`POST /auth/login`, `get_current_operator` dependency), Redis
+failed-login rate limiting, the `seed-operator` CLI, and the CORS pin.
+No live agent logic yet — roadmap branches 3+ (hard-rules engine,
+proposal pipeline, …) are next. See `memory.md` for the full rationale.
 
 ## The logging rule
 

@@ -35,6 +35,43 @@ Entry template:
 
 ---
 
+## 2026-07-02 — Branch 2 `features/auth-api` built and verified: the login gate before any control surface
+
+**What changed:**
+- `POST /auth/login` (username + password, JSON) → short-lived HS256 JWT
+  (PyJWT; `JWT_SECRET_KEY` + `JWT_TTL_MINUTES=30` in config, no secret
+  default — token issuing refuses to run unset, same pattern as the
+  Fernet key). `GET /auth/me` added as the gate's first consumer/smoke.
+- `app/auth.py::get_current_operator` — the single auth dependency
+  (scaffold-roadmap §2: no roles) that every mutating endpoint built
+  from now on must depend on. Uniform 401 for missing/expired/forged
+  token and gone/deactivated user — no failure-mode oracle.
+- Failed-login rate limiter: Redis fixed-window counter per username
+  (`LOGIN_MAX_FAILURES=5` / `LOGIN_FAILURE_WINDOW_SECONDS=300`), 429 +
+  `Retry-After` once tripped, counter cleared on success. Redis client
+  is a FastAPI dependency (`app/redis_client.py`) so tests override it
+  with fakeredis.
+- No registration endpoint on purpose — `python -m app.cli
+  seed-operator` creates (or `--reset-password` re-keys) the operator
+  from `OPERATOR_USERNAME`/`OPERATOR_PASSWORD` env or interactive
+  prompt; min password length 12.
+- CORS pinned to `FRONTEND_ORIGIN` (closes the deferred CORS item);
+  `users.last_login_at` maintained on login (runtime DB role keeps
+  UPDATE on `users` — only the ledgers are append-only).
+- Login timing: unknown-username requests verify against a dummy argon2
+  hash so "no such user" is timing-indistinguishable from "wrong
+  password"; 401 body is identical for both.
+
+**Why:**
+- Roadmap branch 2: the login gate must exist *before* the proposal /
+  control-plane endpoints (branches 4–5) so auth is never retrofitted
+  onto the endpoints that guard capital.
+
+**Open questions / what's next:**
+- Branch 3 `features/hard-rules-engine` (pure-function rule module).
+- Token revocation/refresh deliberately out of scope — tokens are
+  30-minute and the operator re-logs-in; revisit only if that hurts.
+
 ## 2026-07-02 — Diagram: schema cluster expanded to column-level detail
 
 **What changed:**

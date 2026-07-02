@@ -27,6 +27,21 @@ class Settings(BaseSettings):
     # Must be a urlsafe base64-encoded 32-byte key (Fernet.generate_key()).
     credential_encryption_key: str = ""
 
+    # HS256 signing secret for access tokens. No default on purpose —
+    # token issuing/verification refuses to run without it (app/auth.py).
+    jwt_secret_key: str = ""
+    # Short-lived by design (scaffold-roadmap §2): the operator re-logs-in,
+    # tokens are never refreshed.
+    jwt_ttl_minutes: int = 30
+
+    # The only origin the browser may call the API from (CORS pin).
+    frontend_origin: str = "http://localhost:3000"
+
+    # Failed-login limiter: after `attempts` failures for a username, the
+    # login endpoint answers 429 until the window expires (Redis counter).
+    login_max_failures: int = 5
+    login_failure_window_seconds: int = 300
+
     backend_port: int = 5000
 
     @property

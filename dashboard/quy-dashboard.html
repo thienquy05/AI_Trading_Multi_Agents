@@ -143,6 +143,17 @@
   </section>
 
   <section>
+    <h2>Scanners</h2>
+    <p class="sub">Premarket gappers (6:00 AM run) and Trend Join Long entry checks (hourly, 10:30–2:30 ET).</p>
+    <h2 style="font-size:16px">Premarket gappers <span class="muted num" id="gap-when"></span></h2>
+    <div class="tbl-wrap" id="gappers"></div>
+    <h2 style="font-size:16px; margin-top:18px">TJL watchlist <span class="muted num" id="tjl-when"></span></h2>
+    <div class="tbl-wrap" id="tjl"></div>
+    <h2 style="font-size:16px; margin-top:18px">TJL backtest <span class="muted" id="bt-note"></span></h2>
+    <div class="tiles" id="bt-tiles"></div>
+  </section>
+
+  <section>
     <h2>Desk activity</h2>
     <p class="sub">Latest from TRADE-LOG.md and RESEARCH-LOG.md — full history lives in the repo.</p>
     <ul class="feed" id="feed"></ul>
@@ -164,16 +175,14 @@
 
 <script>
 const DATA = {
-  lastUpdated: "2026-07-08T11:45:00Z",
+  lastUpdated: "2026-07-08T12:35:00Z",
   chips: [
+    {label:"Alpaca connected — paper PA3Q8O23ZYJB", state:"ok"},
     {label:"Robinhood connected", state:"ok"},
-    {label:"Alpaca — awaiting network allowlist", state:"wait"},
-    {label:"Telegram — awaiting chat link", state:"wait"}
+    {label:"Telegram — send /start to @Zenith_Trading_Agent_bot", state:"wait"}
   ],
-  alpaca: null,
-  alpacaNote: "Alpaca isn’t reachable from Claude’s environment yet — the network allowlist " +
-    "(paper-api.alpaca.markets, data.alpaca.markets, api.telegram.org) hasn’t taken effect. " +
-    "Balances and positions will appear on the first run after it does.",
+  alpaca: {equity:100000, cash:100000, buying_power:400000, day_pl:0, day_pl_pct:0},
+  alpacaNote: null,
   positions: [],
   orders: [],
   robinhood: {
@@ -190,13 +199,29 @@ const DATA = {
       {acct:"Individual", sym:"TSLA", qty:"0.002340", avg:427.35}
     ]
   },
+  scanners: {
+    gappers: {when:"Jul 8, 8:18 AM ET", rows:[
+      {rank:1, sym:"SOXS", price:5.06, gap:5.09, vol:229587,
+       catalyst:"Direxion filed a 2× leveraged SK Hynix ETF, heating up the semiconductor-ETF race"}
+    ]},
+    tjl: {when:"Jul 8, 8:18 AM ET (premarket test, --force)", rows:[
+      {sym:"AMD", result:"fail_daily", detail:"px $518.20 ≤ prev high $524.80"},
+      {sym:"NVDA", result:"fail_daily", detail:"px $196.97 ≤ prev high $198.38"},
+      {sym:"MU", result:"fail_daily", detail:"px $903.13 ≤ prev high $941.32"}
+    ]},
+    backtest: {note:"AMD/NVDA/MU · 5-min bars · 2026-01-09 → 2026-07-08",
+      trades:83, winRate:32.5, totalR:8.04, pf:1.15,
+      perTicker:"MU +12.82R · NVDA −1.90R · AMD −2.88R"}
+  },
   feed: [
+    {t:"2026-07-08", what:"<b>Scanners online.</b> Premarket gappers + TJL entry scanner + 6-month TJL backtest built and verified live against Alpaca; strategy rulebook gains Strategy 2 (Trend Join Long)."},
     {t:"2026-07-08", what:"<b>Desk opened.</b> Repo rebuilt around the Alpaca paper-trading challenge; strategy v1 (3R/1R gap) drafted and awaiting Quy’s edits."}
   ],
   schedule: [
     {when:"6:00 AM — Pre-Market Research", does:"Account check, catalyst scan, 2–3 trade ideas → RESEARCH-LOG.md", ping:"Telegram: silent unless urgent"},
     {when:"8:30 AM — Market Open", does:"Execute planned setups, stops set on every fill", ping:"Telegram: only if a trade was placed"},
-    {when:"12:00 PM — Midday Scan", does:"P&L check, trail winners, cut thesis-breaks / −7%", ping:"Telegram: only if action taken"},
+    {when:"Hourly — TJL Watch", does:"Trend Join Long entry check, 10:30–2:30 ET at :30 past; trades PASSes within rules", ping:"Telegram: first run, changed hits, or errors"},
+    {when:"12:00 PM — Midday Scan", does:"P&L check + TJL check, trail winners, cut thesis-breaks / −7%", ping:"Telegram: only if action taken"},
     {when:"3:00 PM — Daily Summary", does:"Snapshot → TRADE-LOG.md, dashboard refresh", ping:"Telegram: always"}
   ]
 };
@@ -266,6 +291,34 @@ table($("rh-holdings"), DATA.robinhood.holdings, [
   {h:"Account", f:r=>esc(r.acct)}, {h:"Symbol", f:r=>`<b>${esc(r.sym)}</b>`},
   {h:"Shares", r:1, f:r=>r.qty}, {h:"Avg cost", r:1, f:r=>usd(r.avg)}
 ], "No holdings.");
+
+// — Scanners —
+const SC = DATA.scanners || {};
+$("gap-when").textContent = SC.gappers ? "· " + SC.gappers.when : "";
+table($("gappers"), (SC.gappers||{}).rows || [], [
+  {h:"#", r:1, f:r=>r.rank}, {h:"Symbol", f:r=>`<b>${esc(r.sym)}</b>`},
+  {h:"Price", r:1, f:r=>usd(r.price)},
+  {h:"Gap", r:1, f:r=>`<span class="pos">+${r.gap}%</span>`},
+  {h:"PM vol", r:1, f:r=>r.vol.toLocaleString("en-US")},
+  {h:"Catalyst", f:r=>r.catalyst ? esc(r.catalyst) : `<span class="muted">—</span>`}
+], "No qualifying gappers.");
+$("tjl-when").textContent = SC.tjl ? "· " + SC.tjl.when : "";
+table($("tjl"), (SC.tjl||{}).rows || [], [
+  {h:"Symbol", f:r=>`<b>${esc(r.sym)}</b>`},
+  {h:"Result", f:r=>r.result==="PASS"
+      ? `<span class="pos"><b>PASS</b></span>` : `<span class="muted">${esc(r.result)}</span>`},
+  {h:"Detail", f:r=>esc(r.detail)}
+], "No TJL scan yet today.");
+const BT = SC.backtest;
+$("bt-note").textContent = BT ? "· " + BT.note : "";
+$("bt-tiles").innerHTML = !BT ? `<div class="empty">No backtest yet.</div>` : [
+  {l:"Trades", v:BT.trades},
+  {l:"Win rate", v:BT.winRate + "%"},
+  {l:"Total R", v:(BT.totalR>=0?"+":"") + BT.totalR + "R", c:BT.totalR>=0?"pos":"neg"},
+  {l:"Profit factor", v:BT.pf},
+  {l:"Per ticker", v:BT.perTicker, small:true}
+].map(t=>`<div class="tile"><div class="label">${t.l}</div>
+  <div class="value num ${t.c||""}" ${t.small?'style="font-size:14px;line-height:1.5"':""}>${t.v}</div></div>`).join("");
 
 // — Feed & schedule —
 $("feed").innerHTML = DATA.feed.map(e =>

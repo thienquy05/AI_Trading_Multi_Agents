@@ -7,10 +7,14 @@ Append at the BOTTOM, one entry per pre-market run.
 ```
 ## YYYY-MM-DD — pre-market
 - Account: equity $X | cash $X | open positions: ...
-- Macro/calendar: (CPI/PPI/FOMC/jobs/earnings due, times in CT)
+- Macro/calendar: (CPI/PPI/FOMC/jobs/earnings due, times in ET) +
+  §3b blackout windows in effect today
 - Sector momentum / market tone:
+- Crypto regime: BULL|BEAR (BTC vs daily SMA200) | BTC/ETH/SOL 24h
+- Extra-watch (BTC/ETH/SOL/NVDA/ORCL): anything material, else "quiet"
 - Ideas (2–3):
-  1. TICKER — thesis | catalyst | entry zone | stop | 3R target | risk notes
+  1. TICKER — thesis | catalyst (+source) | entry zone | stop | 3R
+     target | size @1% risk | invalidation | guardrails checked
 - Watching but not trading: ... (why not)
 ```
 

@@ -7,7 +7,7 @@ a new dated line.
 
 ### Trade entry
 ```
-### YYYY-MM-DD HH:MM CT — BUY|SELL TICKER
+### YYYY-MM-DD HH:MM ET — BUY|SELL TICKER
 - Qty / entry / stop / target: N @ $X.XX | stop $X.XX | target $X.XX (3R)
 - Risk: $XX (X.X% of equity) | 1R = $X.XX/share
 - Setup: gap-retest | other (explain)
@@ -17,12 +17,12 @@ a new dated line.
 
 ### Exit
 ```
-### YYYY-MM-DD HH:MM CT — EXIT TICKER
+### YYYY-MM-DD HH:MM ET — EXIT TICKER
 - Qty @ $X.XX | P&L: $XX (+X.XR) | reason: target | stop | thesis-break | -7% | trail
 - Lesson (if any):
 ```
 
-### Daily snapshot (3 PM run)
+### Daily snapshot (4 PM ET run)
 ```
 ### YYYY-MM-DD — daily snapshot
 - Equity $X | day P&L $X (X.X%) | cash $X

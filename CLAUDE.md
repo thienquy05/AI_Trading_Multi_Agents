@@ -39,8 +39,10 @@ This project is token-sensitive. Keep sessions lean:
   in `AGENT-INSTRUCTIONS.md` say which).
 - Use `scripts/alpaca.sh` (one curl each) instead of loading MCP servers.
 - Logs are append-only: add entries, don't re-read/rewrite whole files.
-- Telegram: silent unless a trade was placed, action was taken, or it's
-  the 3 PM daily summary.
+- Telegram: every main run (5a/7a/9:30a/1p/4p ET) ALWAYS sends its
+  detailed brief — Quy's standing preference (2026-07-08). Only the
+  hourly TJL watches stay silent unless a trade was placed. Save
+  tokens on file reads and tool calls, not on the briefs.
 - Commit + push log changes at the end of each run, one commit, landed
   on `master` automatically without asking — direct push, or
   self-merged PR if the ruleset rejects it. Quy's standing

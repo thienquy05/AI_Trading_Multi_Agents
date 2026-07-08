@@ -126,7 +126,7 @@ and satisfies the "stop on every position" rule atomically.
 | `scan_tjl.py [--force] [--no-telegram] [TICKERS…]` | Trend Join Long entry check. Universe: explicit args override, else `scans/watchlist_<date>.json` (today's research picks), else latest gappers scan top-10, else exits cleanly with "no candidates." Time-gated 10:00–15:30 ET (`--force` bypass for testing). Saves `scans/tjl_watchlist_<date>_<HHMM>ET.json`. Telegram auto-gated: first run of day, changed hits, or error. |
 | `backtest_tjl.py [--tickers A,B,C] [--months N]` | TJL backtest on 5-min bars; same universe resolution as `scan_tjl.py` (selection-bias caveat in its header). On demand only. |
 | `scan_crypto.py [--no-telegram] [PAIRS…]` | C-TJL crypto sleeve check (strategy §2c). Checks the BTC>daily-SMA200 regime gate FIRST — in a bear regime it stands down without scanning. Universe: fixed liquid majors in `backtest_crypto.py`. Run in the 6:00 AM and 12:00 PM workflows. Saves `scans/crypto_tjl_<date>_<HHMM>UTC.json`. |
-| `backtest_crypto.py [--tickers A,B] [--months N] [--grid]` | C-TJL backtest on 4H crypto bars incl. regime gate + fee/slippage haircut. On demand; re-run monthly to confirm the sleeve's edge still holds. |
+| `backtest_crypto.py [--tickers A,B] [--months N] [--grid]` | C-TJL backtest on daily crypto bars incl. regime gate + fee/slippage haircut (4H variants failed validation — see §2c). On demand; re-run monthly to confirm the sleeve's edge still holds. |
 
 **No fixed ticker universe.** Neither scanner defaults to a hardcoded
 list (e.g. AMD/NVDA/MU) — that was a bug in the original build. The

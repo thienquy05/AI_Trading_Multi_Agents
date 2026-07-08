@@ -80,22 +80,31 @@ Alpaca paper crypto: 24/7, long-only, fractional, **no bracket orders**.
   entries unless **BTC's previous daily close > its daily SMA200**. In a
   bear regime the sleeve is FLAT — cash is the position. Validation
   showed every long-only entry style (breakout and mean-reversion alike)
-  loses in a bear tape; the edge only exists with the gate on.
+  loses in a bear tape; the gate kept the sleeve out of the entire
+  2025–26 down year at a cost of ~4R over the 48-month test.
 - **Universe**: fixed liquid majors — BTC, ETH, SOL, XRP, DOGE, LINK,
   AVAX, LTC (all /USD). Fixed is deliberate: crypto has no daily
   gappers/catalyst flow and the liquid set is stable. Review monthly.
-- **Entry (4H bars)**: most recent completed 4-hour bar closes above the
-  highest high of the previous 20 bars AND above its 4H SMA200. Enter at
-  market on the signal (agent wakes on cron; slippage is budgeted).
-- **Stop (1R)**: entry − 1.5 × ATR(14, 4H) — signal-bar lows are too
-  tight on 4H crypto bars; ATR is the natural stop unit. Placed as a
+- **Entry (DAILY bars, UTC-midnight aligned)**: most recent completed
+  daily bar closes above the highest high of the previous 55 daily bars
+  AND above its own daily SMA200. Enter at market at the next wake-up.
+  Daily, not 4H, is a validation result, not a style choice: the same
+  breakout on 4H bars is gross-positive but **net negative** — with a
+  2-ATR(4H) stop (~2% of price) Alpaca's ~0.6% round trip costs ~0.3R
+  per trade and eats the edge. On daily bars the stop is ~7% of price
+  and costs shrink to ~0.1R.
+- **Stop (1R)**: entry − 2.0 × ATR(14, daily) — signal-bar lows are too
+  tight on crypto bars; ATR is the natural stop unit. Placed as a
   **stop_limit GTC immediately after the entry fill** (two calls — no
   brackets in crypto). Limit leg 0.5% below the stop.
-- **Target (3R)**: entry + 4.5 × ATR, as a GTC limit sell is NOT used —
-  the stop_limit sell already consumes the position qty (wash-trade
-  rule); the agent takes the 3R exit manually at a wake-up, or trails
-  per §3. Max hold 14 days, then exit at market.
-- **Cooldown**: 24h per symbol after any exit; one position per symbol.
+- **Target (3R)**: entry + 6 × ATR. A resting GTC limit sell is NOT
+  placed — the stop_limit already consumes the position qty (wash-trade
+  rule); the agent takes the 3R exit at a wake-up, or trails per §3.
+  Max hold 30 days, then exit at market.
+- **Cooldown**: 3 days per symbol after any exit; one position per
+  symbol. Signal lands just after 00:00 UTC (7 PM CT); execution waits
+  for the 6 AM CT run — that ~11h gap is budgeted as slippage and is
+  exactly what the live paper gate below measures.
 - **Sizing — validation phase**: risk **0.25% of equity** per trade
   (half the sleeve's normal 0.5%, which is half the equities 1%) until
   the paper gate below is passed. Max **2 concurrent crypto positions**,
@@ -106,13 +115,26 @@ Alpaca paper crypto: 24/7, long-only, fractional, **no bracket orders**.
 
 ### Validation status (paper gate)
 
-- Backtest (see changelog + `scans/backtest_crypto_*.json`): 12-month
-  window is a bear regime — every parameter cell negative, gate correctly
-  keeps the sleeve flat. Longer-window results below.
+- **Backtest baseline (2022-07-29 → 2026-07-08, 48 months, daily bars,
+  0.6%/round-trip costs)**: 77 trades, 39.0% win rate, **+23.34R net**,
+  PF 1.50, avg win +2.33R / avg loss −0.99R, max drawdown 8.45R
+  (≈2% of equity at 0.25% risk). Positive in 5 of 8 pairs (ETH +8.4R,
+  XRP +7.8R, LINK +5.3R, LTC +4.7R, BTC +1.9R; SOL/DOGE/AVAX small
+  negatives) — not concentrated in one name. Robustness: every
+  neighboring grid cell (Donchian 20/55 × ATR 1.5/2.0/2.5) is also net
+  positive, PF 1.07–1.51. Full record:
+  `scans/backtest_crypto_2022-07-29_2026-07-08.json`.
+- **What failed validation and was rejected**: the identical breakout on
+  4H bars (all 18 grid cells negative over both 12m and 48m — costs eat
+  the gross edge) and 4H mean-reversion dip-buying (all 8 variants
+  negative). Long-only crypto without the regime gate also loses in the
+  current bear tape. These are recorded so we don't re-test them fresh.
 - **Live paper gate before full 0.5% sizing**: ≥15 sleeve trades OR 8
   weeks elapsed with the gate open, net expectancy ≥ 0R and no risk-rule
-  violations. Until then: 0.25% risk. Bear regime weeks don't count —
-  flat is correct behavior, not missing data.
+  violations. Until then: 0.25% risk. Bear-regime weeks don't count —
+  flat is correct behavior, not missing data. As of 2026-07-08 the
+  regime is BEAR (BTC ~$63.3k vs SMA200 ~$74.5k): the sleeve is live but
+  correctly flat, waiting for the gate to open.
 - Re-run `backtest_crypto.py` monthly (and at every regime flip) and
   record the result in `WEEKLY-REVIEW.md`.
 
@@ -205,3 +227,10 @@ payload.
 - 2026-07-08: added §5, Robinhood advisory signals (RSI/MA/earnings-based
   buy/hold/sell badges for the read-only Robinhood dashboard section),
   ported from Quy's cowork portfolio dashboard concept.
+- 2026-07-08: added §2c, the crypto sleeve (C-TJL). Validation journey:
+  4H breakout and 4H mean-reversion both failed (net negative after
+  costs, all parameter cells, 12m and 48m windows); daily-bar Donchian-55
+  breakout with BTC>SMA200 regime gate passed (+23.34R net / PF 1.5 over
+  48 months). Sleeve live at 0.25% risk pending the paper gate; regime
+  currently BEAR so the sleeve is flat. Order mechanics verified on
+  paper (crypto = no brackets, stop_limit placed as second call).

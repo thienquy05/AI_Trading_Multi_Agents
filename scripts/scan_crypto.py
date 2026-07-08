@@ -7,8 +7,9 @@ Order of checks:
      regime ⇒ the whole sleeve stands down (no signal checks, no entries;
      existing stops keep working). This gate is what the 48-month backtest
      validated; the sleeve has NO edge with the gate off.
-  2. Per symbol: most recent COMPLETED 4H bar closes above the highest
-     high of the 20 bars before it AND above its 4H SMA200.
+  2. Per symbol: most recent COMPLETED daily bar (UTC-midnight aligned)
+     closes above the highest high of the 55 bars before it AND above
+     its daily SMA200.
 On a PASS it prints suggested entry/stop/target/qty. THE AGENT places the
 orders (entry, then stop-limit immediately — Alpaca crypto has NO bracket
 orders) per the sleeve's risk rules; this script only signals.
@@ -42,7 +43,7 @@ def regime_now(now):
 
 
 def check(sym, bars):
-    """bars: completed 4H bars, oldest first. Returns result dict."""
+    """bars: completed daily bars, oldest first. Returns result dict."""
     if len(bars) < SMA_LEN + 1:
         return {"symbol": sym, "pass": False, "why": "insufficient bars"}
     sig = bars[-1]                      # most recent completed bar
@@ -53,7 +54,7 @@ def check(sym, bars):
     ok_trend = sig["c"] > sma
     res = {"symbol": sym, "pass": bool(ok_break and ok_trend),
            "bar_close_utc": sig["t"].isoformat(), "close": sig["c"],
-           "donchian_high": round(hh, 6), "sma200_4h": round(sma, 6),
+           "donchian_high": round(hh, 6), "sma200_daily": round(sma, 6),
            "breakout": ok_break, "trend_ok": ok_trend}
     if res["pass"]:
         risk = ATR_MULT * atr
@@ -83,13 +84,13 @@ def main():
               f"sleeve stands down, no entries.")
         return
 
-    start = now - timedelta(days=40)
-    data = get_crypto_bars(syms, "4Hour", start, end=now)
+    start = now - timedelta(days=320)   # SMA200 daily warmup
+    data = get_crypto_bars(syms, "1Day", start, end=now)
 
     results = []
     for s in syms:
         bars = [b for b in data.get(s, [])
-                if b["t"] + timedelta(hours=4) <= now]   # completed only
+                if b["t"].date() < now.date()]           # completed only
         results.append(check(s, bars))
     hits = [r for r in results if r["pass"]]
 
@@ -119,7 +120,8 @@ def main():
     for r in results:
         mark = "PASS" if r["pass"] else "----"
         print(f"{mark} {r['symbol']}: close {r.get('close')} "
-              f"| don20H {r.get('donchian_high')} | sma {r.get('sma200_4h')}")
+              f"| don{DONCHIAN}H {r.get('donchian_high')} "
+              f"| sma {r.get('sma200_daily')}")
 
     hit_syms = {h["symbol"] for h in hits}
     if "--no-telegram" not in sys.argv and (first_today

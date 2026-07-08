@@ -144,7 +144,7 @@
 
   <section>
     <h2>Scanners</h2>
-    <p class="sub">Premarket gappers (6:00 AM run) and Trend Join Long entry checks (hourly, 10:30–2:30 ET).</p>
+    <p class="sub">Premarket gappers (7:00 AM ET run) and Trend Join Long entry checks (hourly, 10:30–2:30 ET).</p>
     <h2 style="font-size:16px">Premarket gappers <span class="muted num" id="gap-when"></span></h2>
     <div class="tbl-wrap" id="gappers"></div>
     <h2 style="font-size:16px; margin-top:18px">TJL watchlist <span class="muted num" id="tjl-when"></span></h2>
@@ -160,7 +160,7 @@
   </section>
 
   <section>
-    <h2>Schedule — Mon–Fri, US Central</h2>
+    <h2>Schedule — Mon–Fri, US Eastern</h2>
     <p class="sub">Each run refreshes this page. Telegram pings only when noted.</p>
     <div class="sched" id="sched"></div>
   </section>
@@ -207,11 +207,12 @@ const DATA = {
     {t:"2026-01-01", what:"<b>Example entry.</b> Replace with latest TRADE-LOG.md / RESEARCH-LOG.md items."}
   ],
   schedule: [
-    {when:"6:00 AM — Pre-Market Research", does:"Account check, catalyst scan, 2–3 trade ideas → RESEARCH-LOG.md", ping:"Telegram: silent unless urgent"},
-    {when:"8:30 AM — Market Open", does:"Execute planned setups, stops set on every fill", ping:"Telegram: only if a trade was placed"},
-    {when:"Hourly — TJL Watch", does:"Trend Join Long entry check, 10:30–2:30 ET at :30 past; trades PASSes within rules", ping:"Telegram: first run, changed hits, or errors"},
-    {when:"12:00 PM — Midday Scan", does:"P&L check + TJL check, trail winners, cut thesis-breaks / −7%", ping:"Telegram: only if action taken"},
-    {when:"3:00 PM — Daily Summary", does:"Snapshot → TRADE-LOG.md, dashboard refresh", ping:"Telegram: always"}
+    {when:"5:00 AM — Morning Brief", does:"Quy's real Robinhood portfolio + market mood + VOO signal + crypto check", ping:"Telegram: always"},
+    {when:"7:00 AM — Pre-Market Research", does:"Account check, gappers, catalyst scan, 2–3 trade ideas → RESEARCH-LOG.md", ping:"Telegram: always"},
+    {when:"9:30 AM — Market Open", does:"Execute planned setups, stops set on every fill", ping:"Telegram: always"},
+    {when:"Hourly — TJL Watch", does:"Trend Join Long entry check, 10:30–2:30 ET at :30 past; trades PASSes within rules", ping:"Telegram: only if a trade was placed"},
+    {when:"1:00 PM — Midday Scan", does:"P&L check + TJL + crypto check, trail winners, cut thesis-breaks / −7%", ping:"Telegram: always"},
+    {when:"4:00 PM — Daily Summary", does:"Snapshot → TRADE-LOG.md, dashboard refresh", ping:"Telegram: always"}
   ]
 };
 
@@ -220,7 +221,7 @@ const usd = n => n==null ? "—" : n.toLocaleString("en-US",{style:"currency",cu
 const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
 
 $("updated").textContent = new Date(DATA.lastUpdated).toLocaleString("en-US",
-  {timeZone:"America/Chicago", month:"short", day:"numeric", hour:"numeric",
+  {timeZone:"America/New_York", month:"short", day:"numeric", hour:"numeric",
    minute:"2-digit", timeZoneName:"short"});
 
 $("chips").innerHTML = DATA.chips.map(c =>

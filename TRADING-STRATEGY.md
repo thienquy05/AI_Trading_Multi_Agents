@@ -102,8 +102,8 @@ Alpaca paper crypto: 24/7, long-only, fractional, **no bracket orders**.
   rule); the agent takes the 3R exit at a wake-up, or trails per §3.
   Max hold 30 days, then exit at market.
 - **Cooldown**: 3 days per symbol after any exit; one position per
-  symbol. Signal lands just after 00:00 UTC (7 PM CT); execution waits
-  for the 6 AM CT run — that ~11h gap is budgeted as slippage and is
+  symbol. Signal lands just after 00:00 UTC (8 PM EDT); execution waits
+  for the 7 AM ET run — that ~11h gap is budgeted as slippage and is
   exactly what the live paper gate below measures.
 - **Sizing — validation phase**: risk **0.25% of equity** per trade
   (half the sleeve's normal 0.5%, which is half the equities 1%) until
@@ -158,6 +158,46 @@ Alpaca paper crypto: 24/7, long-only, fractional, **no bracket orders**.
 - If equity draws down **-10% from its high-water mark**, stop opening
   new positions and Telegram Quy for a strategy review.
 
+## 3b. Guardrails (added 2026-07-08 — non-negotiable, checked before EVERY entry)
+
+These exist because most beginner losses come from a handful of known
+failure modes, not from bad stock picks. Guardrails don't create profit
+directly — they keep the account alive long enough for the 3R/1R edge
+to compound, which is where the profit actually comes from. Every
+guardrail check (pass or fail) that blocks a trade gets one line in
+`TRADE-LOG.md` so Quy can learn the pattern.
+
+1. **Daily circuit breaker**: if day P&L hits **-2% of equity**, no new
+   entries for the rest of the day (managing/exiting open positions is
+   still required). Telegram immediately. *Failure mode it stops:
+   revenge trading a bad tape.*
+2. **Weekly circuit breaker**: if the week is down **-4%**, no new
+   entries until Monday; Friday's review must name what went wrong.
+3. **Tilt stop**: after **2 consecutive stop-outs in the same day**,
+   done entering for the day even if the daily breaker hasn't tripped.
+   *Two stops in a row usually means the read on the tape is wrong.*
+4. **Event blackout**: no new entries from **30 minutes before to 15
+   minutes after** a tier-1 macro release (FOMC statement/minutes, CPI,
+   PPI, NFP, GDP). The 7 AM research run lists today's blackout
+   windows. *Spreads blow out and stops get run through news candles.*
+5. **Earnings no-entry**: no new position in a name reporting earnings
+   within the next **24 hours** — a coin-flip gap is gambling, not a
+   setup. (Holding through earnings an existing winner is allowed only
+   past +2R with the stop at breakeven or better.)
+6. **Correlation cap**: max **2 open positions in the same sector or
+   theme** (e.g. two AI-memory names = at the cap). Four positions in
+   one theme is one position at 4× size.
+7. **Spread check**: skip the trade if the bid-ask spread is more than
+   **10% of 1R** — the edge leaks out through the spread on entry+exit.
+8. **No averaging down. Ever.** (Restating §3 because it's the single
+   most account-destroying habit.)
+9. **Data-blind = flat**: if the Alpaca API (or price data) fails such
+   that positions can't be checked, take no new entries and Telegram
+   the failure immediately.
+10. **Honesty rule**: any violated guardrail is confessed in
+    `TRADE-LOG.md` and the weekly review the same day. Hidden mistakes
+    can't be learned from.
+
 ## 4. Trade selection filter (from research)
 
 A candidate needs ALL of:
@@ -202,6 +242,19 @@ real accounts, which carry no stop-loss orders):
   sell the core."
 - These are informational signals only — Quy acts on them manually.
 
+**Extra-watch list (Quy's standing request, 2026-07-08)**: **BTC, ETH,
+SOL, NVDA, ORCL** — the names Quy actually holds real money in. Rules:
+- Every scheduled Telegram brief carries live prices, day moves, and
+  position values for these five.
+- All position values come from the Robinhood connector LIVE at run
+  time — never hardcoded, never reused from a previous run ("get a
+  real/current number always").
+- Material news on any of them (earnings, guidance, regulatory action,
+  sector shock, crypto regime flip) is flagged in the same run's
+  Telegram message, not held for the next scheduled brief.
+- New Robinhood positions or deposits discovered on a pull are folded
+  into the watch automatically and noted once in the next brief.
+
 **Refresh**: recomputed every dashboard run alongside the Alpaca data (see
 `AGENT-INSTRUCTIONS.md` → Dashboard procedure). Historicals calls easily
 exceed tool output limits above ~5 symbols; request ≤10 symbols per call
@@ -210,7 +263,7 @@ payload.
 
 ## 6. Review cadence
 
-- Daily: snapshot + lessons in `TRADE-LOG.md` (3 PM run).
+- Daily: snapshot + lessons in `TRADE-LOG.md` (4 PM ET run).
 - Weekly (Fri): win rate, avg R won/lost, expectancy, rule violations,
   one change to test next week → `WEEKLY-REVIEW.md`.
 - Any rule change gets recorded here with a date and a one-line reason.
@@ -234,3 +287,10 @@ payload.
   48 months). Sleeve live at 0.25% risk pending the paper gate; regime
   currently BEAR so the sleeve is flat. Order mechanics verified on
   paper (crypto = no brackets, stop_limit placed as second call).
+- 2026-07-08: added §3b guardrails (daily/weekly circuit breakers, tilt
+  stop, event blackout, 24h earnings no-entry, correlation cap, spread
+  check) and the §5 extra-watch list (BTC/ETH/SOL/NVDA/ORCL, live
+  Robinhood numbers only) per Quy's request. All schedule references
+  relabeled from Central to Eastern time (same instants — the Routines
+  were already ET-aligned); Telegram policy changed to
+  every-main-run-reports, TJL hourly trade-only.

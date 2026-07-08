@@ -37,9 +37,11 @@ trade — the transparency requirements below are the control.
 
 ## Cadence
 
-Four automated runs, Mon–Fri (US Central): 6:00 pre-market research,
-8:30 open execution, 12:00 midday scan, 3:00 daily summary. Details in
-`AGENT-INSTRUCTIONS.md`.
+Automated runs, Mon–Fri (US Eastern): 5:00 AM morning brief (Quy's
+real portfolio), 7:00 AM pre-market research, 9:30 AM open execution,
+hourly TJL watch 10:30–2:30, 1:00 PM midday scan, 4:00 PM daily
+summary. Every main run reports via Telegram; TJL watches only on a
+trade. Details in `AGENT-INSTRUCTIONS.md`.
 
 ## Success criteria (first review after 4 weeks)
 

@@ -374,7 +374,9 @@ find the gap zone (midpoint of the lowest bar up to the first
 increasing/bullish bar), enter on retest, stop 1R below the gap low,
 target +3R. Risk ≤1% of equity per trade, max 4 concurrent positions,
 hard -7% bail, stops on everything, trail winners past +2R.
-**Guardrails (§3b): -2% day / -4% week circuit breakers, tier-1 event
-blackouts, 24h earnings no-entry, sector cap 2, no averaging down, stop
-after 2 consecutive same-day stop-outs.** Guardrails protect capital;
+**Guardrails (§3b): -2% day / -4% week circuit breakers, max 5 new
+entries per week (equities + crypto combined, resets Monday — count
+this week's entries in TRADE-LOG.md first), tier-1 event blackouts,
+24h earnings no-entry, sector cap 2, no averaging down, stop after 2
+consecutive same-day stop-outs.** Guardrails protect capital;
 the edge comes from the process — never skip one to chase a setup.

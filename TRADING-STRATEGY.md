@@ -155,6 +155,10 @@ Alpaca paper crypto: 24/7, long-only, fractional, **no bracket orders**.
   no discretionary crypto trades outside the sleeve.
 - No new entries in the last 30 minutes of the session.
 - Max **2 new positions per day** — quality over activity.
+- Max **5 new positions per week** (Mon–Fri, equities + crypto sleeve
+  combined; exits don't count). Once the 5th entry of the week is on,
+  the desk only manages — count entries in `TRADE-LOG.md` before every
+  new trade. (Quy's rule, 2026-07-08.)
 - If equity draws down **-10% from its high-water mark**, stop opening
   new positions and Telegram Quy for a strategy review.
 
@@ -173,28 +177,31 @@ guardrail check (pass or fail) that blocks a trade gets one line in
    revenge trading a bad tape.*
 2. **Weekly circuit breaker**: if the week is down **-4%**, no new
    entries until Monday; Friday's review must name what went wrong.
-3. **Tilt stop**: after **2 consecutive stop-outs in the same day**,
+3. **Weekly trade cap**: max **5 new entries per week** across equities
+   and the crypto sleeve (see §3). The count resets Monday; check
+   `TRADE-LOG.md` for this week's entries before every new position.
+4. **Tilt stop**: after **2 consecutive stop-outs in the same day**,
    done entering for the day even if the daily breaker hasn't tripped.
    *Two stops in a row usually means the read on the tape is wrong.*
-4. **Event blackout**: no new entries from **30 minutes before to 15
+5. **Event blackout**: no new entries from **30 minutes before to 15
    minutes after** a tier-1 macro release (FOMC statement/minutes, CPI,
    PPI, NFP, GDP). The 7 AM research run lists today's blackout
    windows. *Spreads blow out and stops get run through news candles.*
-5. **Earnings no-entry**: no new position in a name reporting earnings
+6. **Earnings no-entry**: no new position in a name reporting earnings
    within the next **24 hours** — a coin-flip gap is gambling, not a
    setup. (Holding through earnings an existing winner is allowed only
    past +2R with the stop at breakeven or better.)
-6. **Correlation cap**: max **2 open positions in the same sector or
+7. **Correlation cap**: max **2 open positions in the same sector or
    theme** (e.g. two AI-memory names = at the cap). Four positions in
    one theme is one position at 4× size.
-7. **Spread check**: skip the trade if the bid-ask spread is more than
+8. **Spread check**: skip the trade if the bid-ask spread is more than
    **10% of 1R** — the edge leaks out through the spread on entry+exit.
-8. **No averaging down. Ever.** (Restating §3 because it's the single
+9. **No averaging down. Ever.** (Restating §3 because it's the single
    most account-destroying habit.)
-9. **Data-blind = flat**: if the Alpaca API (or price data) fails such
+10. **Data-blind = flat**: if the Alpaca API (or price data) fails such
    that positions can't be checked, take no new entries and Telegram
    the failure immediately.
-10. **Honesty rule**: any violated guardrail is confessed in
+11. **Honesty rule**: any violated guardrail is confessed in
     `TRADE-LOG.md` and the weekly review the same day. Hidden mistakes
     can't be learned from.
 
@@ -294,3 +301,6 @@ payload.
   relabeled from Central to Eastern time (same instants — the Routines
   were already ET-aligned); Telegram policy changed to
   every-main-run-reports, TJL hourly trade-only.
+- 2026-07-08: added the weekly trade cap — max 5 new entries per week,
+  equities + crypto sleeve combined, reset Monday (§3 + §3b.3) — per
+  Quy's request.

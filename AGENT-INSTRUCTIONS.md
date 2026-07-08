@@ -153,9 +153,14 @@ fetch live data, so every workflow run regenerates it:
 1. Collect fresh JSON: Alpaca account/positions/orders, Robinhood
    portfolio + equity positions (READ-ONLY, via the Robinhood MCP
    connector), latest TRADE-LOG / RESEARCH-LOG entries.
-2. Rewrite the `const DATA = {...}` block near the top of the HTML with
+2. For each Robinhood holding (+ the "First list" watchlist), compute the
+   buy/hold/sell signal per `TRADING-STRATEGY.md` §5: RSI(14) + 50/200-day
+   MA from `get_equity_historicals` (≤10 symbols per call, extract
+   `close_price` via `jq` — the raw payload blows past tool output
+   limits), plus an earnings-proximity flag from `get_earnings_calendar`.
+3. Rewrite the `const DATA = {...}` block near the top of the HTML with
    the fresh data + `lastUpdated` ISO timestamp. Don't touch the rest.
-3. Publish with the Artifact tool — favicon `📈`, and **always pass the
+4. Publish with the Artifact tool — favicon `📈`, and **always pass the
    artifact's URL** so it updates in place instead of minting a new one:
    `https://claude.ai/code/artifact/6f2a645b-ee8e-448d-a6ba-7f2185ddd5ab`
 

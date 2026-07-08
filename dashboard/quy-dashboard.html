@@ -92,6 +92,16 @@
   .rh-card .val{font-size:21px; font-weight:600; margin-top:4px;}
   .rh-card .note{font-size:12.5px; color:var(--ink-2); margin-top:2px;}
 
+  .sig{display:inline-flex; align-items:center; gap:5px; font-size:11.5px; font-weight:600;
+    padding:3px 9px; border-radius:999px; white-space:nowrap;}
+  .sig .dot{width:7px; height:7px; border-radius:50%;}
+  .sig.buy{background:var(--good-bg); color:var(--good);} .sig.buy .dot{background:var(--good);}
+  .sig.neutral{background:var(--warn-bg); color:var(--warn);} .sig.neutral .dot{background:var(--warn);}
+  .sig.sell{background:var(--bad-bg); color:var(--bad);} .sig.sell .dot{background:var(--bad);}
+  .rh-notes{list-style:none; margin:10px 0 0; padding:0; font-size:13px; color:var(--ink-2);}
+  .rh-notes li{padding:6px 0; border-top:1px solid var(--line);}
+  .rh-notes b{color:var(--ink);}
+
   .alloc{display:flex; height:14px; border-radius:7px; overflow:hidden; gap:2px; margin:10px 0 6px;}
   .alloc div{min-width:8px;}
   .alloc-legend{display:flex; flex-wrap:wrap; gap:14px; font-size:13px; color:var(--ink-2);}
@@ -137,9 +147,20 @@
 
   <section>
     <h2>Robinhood — Quy’s real accounts (read-only)</h2>
-    <p class="sub">Displayed for reference only. Claude never trades these.</p>
+    <p class="sub">Displayed for reference only. Claude never trades these. Buy/hold/sell
+      signals are RSI(14) + 50/200-day MA + earnings-proximity — rules in
+      <code>TRADING-STRATEGY.md</code> §5, purely informational.</p>
     <div class="rh-cards" id="rh-cards"></div>
+    <h2 style="font-size:16px; margin-top:6px">Holdings &amp; signal</h2>
     <div class="tbl-wrap" id="rh-holdings"></div>
+    <ul class="rh-notes" id="rh-notes"></ul>
+  </section>
+
+  <section>
+    <h2>What to watch — signal scan</h2>
+    <p class="sub">Robinhood “First list” watchlist, ranked most-favourable entry first.
+      Same RSI/MA rule as Holdings — see <code>TRADING-STRATEGY.md</code> §5.</p>
+    <div class="tbl-wrap" id="rh-watchlist"></div>
   </section>
 
   <section>
@@ -166,16 +187,18 @@
   </section>
 
   <footer>
-    Strategy rulebook: <code>TRADING-STRATEGY.md</code> (3R/1R gap strategy — edit it any time;
-    Claude follows the file as written). Logs: <code>TRADE-LOG.md</code>, <code>RESEARCH-LOG.md</code>,
-    <code>WEEKLY-REVIEW.md</code>. This page is a snapshot regenerated after each run — it does not
+    Strategy rulebook: <code>TRADING-STRATEGY.md</code> (3R/1R gap strategy for Alpaca paper
+    trades, §5 for Robinhood signal thresholds — edit either any time; Claude follows the file
+    as written). Logs: <code>TRADE-LOG.md</code>, <code>RESEARCH-LOG.md</code>,
+    <code>WEEKLY-REVIEW.md</code>. Robinhood signals are informational only — Claude never
+    places Robinhood orders. This page is a snapshot regenerated after each run — it does not
     fetch live data.
   </footer>
 </div>
 
 <script>
 const DATA = {
-  lastUpdated: "2026-07-08T12:45:00Z",
+  lastUpdated: "2026-07-08T14:02:00Z",
   chips: [
     {label:"Alpaca connected — paper PA3Q8O23ZYJB", state:"ok"},
     {label:"Robinhood connected", state:"ok"},
@@ -187,16 +210,43 @@ const DATA = {
   orders: [],
   robinhood: {
     accounts: [
-      {name:"Individual", acct:"••••2849", value:6.16, note:"margin · default"},
-      {name:"Agentic", acct:"••••5238", value:100.72, note:"cash · $70.00 deposit pending",
-        alloc:[{label:"Equities", v:69.58},{label:"Crypto", v:31.14}]},
-      {name:"Roth IRA", acct:"••••1439", value:75.15, note:"cash"}
+      {name:"Individual", acct:"••••2849", value:6.25, note:"margin · default · small learning positions"},
+      {name:"Agentic", acct:"••••5238", value:102.05, note:"cash · $70.00 deposit pending",
+        alloc:[{label:"Equities", v:70.94},{label:"Crypto", v:31.11}]},
+      {name:"Roth IRA", acct:"••••1439", value:75.47, note:"cash · VOO core holding"}
     ],
     holdings: [
-      {acct:"Agentic", sym:"NVDA", qty:"0.358944", avg:195.10},
-      {acct:"Roth IRA", sym:"VOO", qty:"0.110322", avg:686.63},
-      {acct:"Individual", sym:"NVDA", qty:"0.026979", avg:199.79},
-      {acct:"Individual", sym:"TSLA", qty:"0.002340", avg:427.35}
+      {acct:"Individual + Agentic", sym:"NVDA", qty:"0.385923", avg:195.43, now:197.59,
+        dayPct:0.33, value:76.27, glPct:1.11, sig:"neutral", label:"NEUTRAL — DCA",
+        note:"RSI 43.5, 6.1% below its 50-day avg — leaning soft but not a buy signal yet. No earnings within 14 days."},
+      {acct:"Roth IRA", sym:"VOO", qty:"0.110322", avg:686.63, now:684.09,
+        dayPct:-0.43, value:75.48, glPct:-0.37, sig:"neutral", label:"NEUTRAL — DCA",
+        note:"Core holding — RSI 54.2, 1.1% above its 50-day avg. Steady DCA only; never flagged for trimming (§5 rule)."},
+      {acct:"Individual", sym:"TSLA", qty:"0.002340", avg:427.35, now:394.60,
+        dayPct:-2.06, value:0.92, glPct:-7.66, sig:"neutral", label:"NEUTRAL — DCA",
+        note:"RSI 49.6, roughly flat vs its 50-day avg. Earnings Jul 22 (14 days out) — size down or wait if adding. Down 7.7% is a $0.002-share test position, not a thesis break."}
+    ]
+  },
+  watchlist: {
+    when: "First list · Jul 8 signal scan",
+    rows: [
+      {sym:"WMT", price:112.55, dayPct:0.90, rsi:36.4, vs50:-8.73, sig:"buy", label:"FAVOURABLE ENTRY"},
+      {sym:"AMC", price:1.64, dayPct:-4.65, rsi:42.4, vs50:-4.68, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"F", price:13.48, dayPct:-0.63, rsi:42.8, vs50:-2.34, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"DIS", price:97.02, dayPct:-0.48, rsi:43.2, vs50:-4.27, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"SPCX", price:151.63, dayPct:1.44, rsi:43.4, vs50:-3.79, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"NFLX", price:75.06, dayPct:-1.47, rsi:44.2, vs50:-8.70, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"MSFT", price:383.84, dayPct:-1.29, rsi:49.2, vs50:-4.26, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"RIVN", price:15.91, dayPct:-3.55, rsi:50.4, vs50:5.42, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"AMD", price:519.02, dayPct:0.56, rsi:51.2, vs50:9.91, sig:"neutral", label:"HOLD — extended",
+        note:"83% above its 200-day avg — pause new buys even though RSI is neutral."},
+      {sym:"LCID", price:5.90, dayPct:-1.67, rsi:51.3, vs50:2.15, sig:"neutral", label:"NEUTRAL — DCA",
+        note:"47.6% below its 200-day avg — long-term downtrend, small size only."},
+      {sym:"AMZN", price:242.27, dayPct:-1.51, rsi:51.7, vs50:-3.54, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"GOOGL", price:362.08, dayPct:-1.35, rsi:54.0, vs50:-1.36, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"META", price:602.81, dayPct:-2.07, rsi:57.4, vs50:2.11, sig:"neutral", label:"NEUTRAL — DCA"},
+      {sym:"AAPL", price:308.98, dayPct:-0.54, rsi:60.7, vs50:5.29, sig:"neutral", label:"HOLD — pause buys"},
+      {sym:"KO", price:84.05, dayPct:0.00, rsi:61.6, vs50:4.79, sig:"neutral", label:"HOLD — pause buys"}
     ]
   },
   scanners: {
@@ -213,6 +263,7 @@ const DATA = {
       perTicker:"MU +12.82R · NVDA −1.90R · AMD −2.88R"}
   },
   feed: [
+    {t:"2026-07-08", what:"<b>Robinhood signals added.</b> Ported the buy/hold/sell RSI+MA+earnings signal concept from Quy's cowork portfolio dashboard into this one — Holdings now carry a live signal chip, plus a new watchlist signal scan. Read-only rule and thresholds recorded in TRADING-STRATEGY.md §5."},
     {t:"2026-07-08", what:"<b>Pre-market research.</b> Gappers scan came back empty (0 names >5% gap); FOMC minutes at 2 PM ET is the session's main catalyst risk. No gap setups met the filter — no trades planned at the open. Seeded today's watchlist (MU, STX, KLAC, LRCX, TER) off the AI memory-shortage/semi-equipment narrative for TJL trend-join checks."},
     {t:"2026-07-08", what:"<b>Dynamic ticker universe.</b> Removed the fixed AMD/NVDA/MU default from scan_tjl.py/backtest_tjl.py — both now resolve from the day's research watchlist, then the gappers scan, never a hardcoded list."},
     {t:"2026-07-08", what:"<b>Scanners online.</b> Premarket gappers + TJL entry scanner + 6-month TJL backtest built and verified live against Alpaca; strategy rulebook gains Strategy 2 (Trend Join Long)."},
@@ -288,10 +339,24 @@ $("rh-cards").innerHTML = DATA.robinhood.accounts.map(ac => {
     <div class="acct num">${esc(ac.acct)} · ${esc(ac.note)}</div>
     <div class="val num">${usd(ac.value)}</div>${alloc}</div>`;
 }).join("");
+const sigChip = (r) => `<span class="sig ${r.sig}"><span class="dot"></span>${esc(r.label)}</span>`;
 table($("rh-holdings"), DATA.robinhood.holdings, [
   {h:"Account", f:r=>esc(r.acct)}, {h:"Symbol", f:r=>`<b>${esc(r.sym)}</b>`},
-  {h:"Shares", r:1, f:r=>r.qty}, {h:"Avg cost", r:1, f:r=>usd(r.avg)}
+  {h:"Shares", r:1, f:r=>r.qty}, {h:"Avg cost", r:1, f:r=>usd(r.avg)},
+  {h:"Now", r:1, f:r=>usd(r.now)},
+  {h:"Day %", r:1, f:r=>`<span class="${r.dayPct>=0?"pos":"neg"}">${r.dayPct>=0?"+":""}${r.dayPct.toFixed(2)}%</span>`},
+  {h:"Value", r:1, f:r=>usd(r.value)},
+  {h:"Gain/Loss", r:1, f:r=>`<span class="${r.glPct>=0?"pos":"neg"}">${r.glPct>=0?"+":""}${r.glPct.toFixed(2)}%</span>`},
+  {h:"Signal", f:sigChip}
 ], "No holdings.");
+$("rh-notes").innerHTML = DATA.robinhood.holdings.map(r =>
+  `<li><b>${esc(r.sym)}</b> — ${esc(r.note)}</li>`).join("");
+table($("rh-watchlist"), (DATA.watchlist||{}).rows || [], [
+  {h:"Symbol", f:r=>`<b>${esc(r.sym)}</b>`}, {h:"Price", r:1, f:r=>usd(r.price)},
+  {h:"Day %", r:1, f:r=>`<span class="${r.dayPct>=0?"pos":"neg"}">${r.dayPct>=0?"+":""}${r.dayPct.toFixed(2)}%</span>`},
+  {h:"RSI(14)", r:1, f:r=>r.rsi}, {h:"vs 50-day", r:1, f:r=>`${r.vs50>=0?"+":""}${r.vs50.toFixed(2)}%`},
+  {h:"Signal", f:r=>sigChip(r) + (r.note?`<div class="muted" style="white-space:normal;font-size:12px;margin-top:3px">${esc(r.note)}</div>`:"")}
+], "No watchlist scan yet.");
 
 // — Scanners —
 const SC = DATA.scanners || {};

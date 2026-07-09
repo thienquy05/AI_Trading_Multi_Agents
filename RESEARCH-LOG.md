@@ -202,3 +202,26 @@ Append at the BOTTOM, one entry per pre-market run.
   risk); formal keep/drop after 20 logged §2 setups.
 - Artifacts: scans/backtest_tjl_2026-01-10_2026-07-09.json, *_rvol1.5,
   *_rvol2. Strategy §2d + changelog updated with verdicts.
+
+## 2026-07-09 — premarket analyst pipeline build (special entry, Quy's request — not a pre-market run)
+- Reviewed the "internet prompts" pipeline spec with Quy. Adopted hybrid:
+  Alpaca stays source of truth for gaps/PM volume/true premarket RVOL/levels;
+  yfinance adds market cap, index snapshot, earnings dates; RSS + ForexFactory
+  replace web searches for market news + econ calendar. Codex two-brain
+  dropped (rules pass vs discretion pass instead). Resend dropped; full
+  report goes to repo + email (AgentMail), Telegram brief unchanged.
+- New: WATCHLIST_CRITERIA.md, REPORT_TEMPLATE.md, PROMPT-PREMARKET.md,
+  scripts/scan_premarket.py (packet builder), scripts/send_report.py,
+  reports/ archive, .venv + requirements.txt.
+- **Exit-variant backtest (the internet spec's scale-out exits vs our
+  bracket, same 84 signals, 2026-01-10→2026-07-09, AMD/NVDA/MU)**:
+  bracket 33.3% WR / +11.04R / PF 1.20 vs scale-out 56.0% WR / +4.35R /
+  PF 1.42. The claimed 54.6% WR reproduced almost exactly — and made less
+  than half the money. Win rate is not profit. Brackets stay live;
+  variant stays on the bench (`backtest_tjl.py --exits pmh`).
+- Shakedown packet + sample report generated midday (12:44 ET): 12 gappers,
+  0 eligible (market caps blocked by this sandbox's network policy), catalyst
+  matcher + NAME_STOP hardening verified live (caught the AEHG/AEHR
+  leveraged-ETF headline cross-match). Network allowlist needs
+  yahoo/faireconomy/dowjones/cnbc/googlenews/agentmail domains — noted in
+  AGENT-INSTRUCTIONS Gotchas.

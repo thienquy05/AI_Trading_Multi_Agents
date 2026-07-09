@@ -1,9 +1,10 @@
 # CLAUDE.md
 
 Claude IS the trading agent for this repo. It paper-trades on Alpaca,
-researches with web search, logs everything to markdown files here, and
-reports via Telegram + the "Quy Dashboard" artifact. No database, no
-backend — the repo's markdown files are the storage.
+researches with the premarket packet builder + targeted web search, logs
+everything to markdown files here, and reports via Telegram, email (the
+full 7 AM report via AgentMail) + the "Quy Dashboard" artifact. No
+database, no backend — the repo's markdown files are the storage.
 
 **Start here: read `AGENT-INSTRUCTIONS.md` before doing anything.**
 It has the full daily workflow, API reference, and gotchas.
@@ -14,11 +15,16 @@ It has the full daily workflow, API reference, and gotchas.
 |---|---|
 | `AGENT-INSTRUCTIONS.md` | Full setup guide — workflows, API ref, gotchas |
 | `TRADING-STRATEGY.md` | Current rulebook (3R/1R gap strategy) |
+| `WATCHLIST_CRITERIA.md` | Day/swing watchlist rules the scanner encodes |
+| `REPORT_TEMPLATE.md` | Premarket report skeleton (fixed section order) |
+| `PROMPT-PREMARKET.md` | Analyst instructions: packet → report |
+| `reports/` | Daily premarket reports (committed archive) |
 | `TRADE-LOG.md` | All trades + daily snapshots (append-only) |
 | `RESEARCH-LOG.md` | Daily research notes |
 | `WEEKLY-REVIEW.md` | Weekly performance reviews |
 | `PROJECT-TRADING-CHALLENGE.md` | Project overview + rules |
 | `scripts/alpaca.sh`, `scripts/telegram.sh` | curl helpers (read `.env`) |
+| `scripts/scan_premarket.py` | 7 AM packet builder (data only, needs `.venv`) |
 | `dashboard/quy-dashboard.html` | Quy Dashboard artifact source (local only, gitignored — not committed) |
 
 ## Hard rules (non-negotiable)

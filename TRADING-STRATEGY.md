@@ -69,6 +69,34 @@ timeframe at once. Implemented by `scripts/scan_tjl.py` (live check) and
   expectancy but concentrated in MU — treat as validation of the
   mechanics, not proof of edge. Re-run periodically against the
   dynamic watchlist to see if the edge holds on live candidates.
+- **Premarket selection filter (2026-07-09, `WATCHLIST_CRITERIA.md`)**:
+  the 7 AM packet builder pre-screens day candidates on gap > 3%,
+  price > $3, market cap > $1B, premarket RVOL > 1.5, price > prior-day
+  high, prev close > SMA200 (the `day_eligible` flag). Selection only —
+  entries and exits stay per this section. The RVOL/mcap filters are
+  pending validation as edge improvers (§2d-R1 status applies).
+- **Exit-variant test (2026-07-09)**: the "scale-out" exits from the
+  internet spec (stop 1% below min(PMH, LOD), 1/3 off at +1R and +2R,
+  21-EMA trail on the last third, flat 15:51) were backtested
+  head-to-head vs the bracket on the same 84 signals (2026-01-10 →
+  2026-07-09, AMD/NVDA/MU, 5-min bars): bracket 33.3% WR / +11.04R /
+  PF 1.20 vs scale-out 56.0% WR / +4.35R / PF 1.42. The variant wins on
+  feel (higher hit rate), loses on money (avg win 0.31R vs 2.37R; less
+  than half the total R on identical risk). **Brackets stay live.**
+  Re-testable anytime with `backtest_tjl.py --exits pmh`.
+
+## 2b-ii. Swing watchlist (ideas only — NO live entries yet, 2026-07-09)
+
+Premarket selection per `WATCHLIST_CRITERIA.md` (`swing_eligible` flag):
+gap ≥ 8%, price > $3, open > prior-day high, open > 200-day SMA, market
+cap ≥ $800M, and a REAL catalyst (earnings on the gap day, or news with
+no earnings; `catalyst_found: false` disqualifies). Reference stats are
+external claims (57.6% WR / PF 5.34 news, 44.7% / PF 2.57 earnings) and
+are NOT reproduced here yet. Entry/exit management is still being built,
+so swing names appear in the premarket report as starter ideas only —
+no paper positions, no fake stops or targets, until the management rules
+are written and backtested. This section upgrades to a real strategy
+number only after that validation.
 
 ## 2c. Strategy 3 — Crypto Trend Join Long (C-TJL), regime-gated
 
@@ -422,6 +450,12 @@ earns trust. Conditions before that's reasonable, stated plainly:
 
 ## Changelog
 
+- 2026-07-09: premarket analyst pipeline adopted (Quy's internet-spec
+  review): `scan_premarket.py` packet builder + deterministic
+  `day_eligible`/`swing_eligible` flags per new `WATCHLIST_CRITERIA.md`;
+  swing watchlist added as §2b-ii (ideas only); scale-out exit variant
+  backtested and REJECTED (see §2b) — brackets stay live; full daily
+  report to `reports/` + email, Telegram brief unchanged.
 - 2026-07-08: v1 drafted by Claude (initial 3R/1R gap rulebook).
 - 2026-07-08: added Strategy 2 (Trend Join Long) + scanners/backtest
   per Quy's spec; backtest baseline recorded.

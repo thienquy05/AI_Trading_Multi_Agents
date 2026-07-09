@@ -21,7 +21,13 @@ where cumulative session volume at the signal bar is ≥ X× the average
 cumulative volume at that same minute over the prior 14 sessions (the
 "stock in play" measure from SSRN 4729284). Off by default.
 
+Optional --exits pmh: the scale-out exit variant from the 2026-07-09
+internet spec (stop 1% below min(PMH, LOD), 1/3 off at +1R and +2R,
+21-EMA trail on the last third, flat 15:51). Bench-only until it beats
+the bracket baseline here; see WATCHLIST_CRITERIA.md.
+
 Usage: backtest_tjl.py [--tickers AMD,NVDA,MU] [--months 6] [--rvol 1.5]
+                       [--exits bracket|pmh]
 Output: scans/backtest_tjl_<start>_<end>[_rvolX].json + printed stats table
 """
 import bisect
@@ -55,9 +61,17 @@ def universe():
     return syms
 
 
-def backtest(sym, bars5, daily, trade_from=None, rvol=None):
+def backtest(sym, bars5, daily, trade_from=None, rvol=None, exits="bracket"):
     """Return list of trade dicts for one symbol. Days before trade_from
-    supply volume history for the rvol filter but never trade."""
+    supply volume history for the rvol filter but never trade.
+
+    exits="bracket" (validated §2b): stop = signal bar low, +3R target,
+    flat 15:55.
+    exits="pmh" (the scale-out variant from the 2026-07-09 internet spec,
+    NOT live until it beats the baseline here): stop = 1% below
+    min(premarket high, LOD at signal) = 1R; scale 1/3 at +1R and 1/3 at
+    +2R; trail the last 1/3 on the 21-EMA of 5-min closes; flat 15:51.
+    Same-bar stop+scale counts as a stop (conservative, as baseline)."""
     # prior-day aggregates keyed by date
     done = sorted(daily, key=lambda b: b["t"])
     daily_meta = {}
@@ -97,6 +111,17 @@ def backtest(sym, bars5, daily, trade_from=None, rvol=None):
         base = sum(cum_at(d, minute) for d in prior) / len(prior)
         return base > 0 and cum_at(day, minute) / base >= rvol
 
+    def record(day, pos, legs):
+        """Weighted-average exit across scale-out legs, in R."""
+        r_mult = sum(f * (px - pos["entry"]) for f, px, _ in legs) / pos["r"]
+        exit_avg = sum(f * px for f, px, _ in legs) / sum(f for f, _, _ in legs)
+        trades.append({"symbol": sym, "date": str(day),
+                       "entry": round(pos["entry"], 2),
+                       "exit": round(exit_avg, 2),
+                       "reason": "+".join(dict.fromkeys(w for _, _, w in legs)),
+                       "r_multiple": round(r_mult, 2)})
+
+    THIRD, EMA_K = 1 / 3, 2 / 22   # 21-EMA smoothing on 5-min closes
     trades = []
     for day, bars in sorted(by_day.items()):
         if day not in daily_meta or (trade_from and day < trade_from):
@@ -109,21 +134,53 @@ def backtest(sym, bars5, daily, trade_from=None, rvol=None):
                   default=None)
         if pmh is None:
             continue
-        hod, pos = None, None
+        hod, lod, pos, ema = None, None, None, None
         for i, b in enumerate(bars):
             mins = b["t"].hour * 60 + b["t"].minute
+            ema = b["c"] if ema is None else ema + EMA_K * (b["c"] - ema)
             if mins < 570:            # before 09:30
                 continue
+            lod = b["l"] if lod is None else min(lod, b["l"])
             if pos is None and 600 <= mins <= 930:   # 10:00–15:30 gate
                 if (b["c"] > prev_high and b["c"] > pmh
                         and hod is not None and b["c"] > hod
                         and (rvol is None or in_play(day, mins))):
-                    entry, stop = b["c"], b["l"]
+                    entry = b["c"]
+                    stop = (0.99 * min(pmh, lod) if exits == "pmh"
+                            else b["l"])
                     if entry > stop:  # need positive R
                         pos = {"entry": entry, "stop": stop,
-                               "r": entry - stop,
+                               "r": entry - stop, "remaining": 1.0,
+                               "legs": [],
                                "target": entry + R_TARGET * (entry - stop),
                                "etime": b["t"]}
+            elif pos and exits == "pmh":
+                if b["l"] <= pos["stop"]:            # stop first (conservative)
+                    pos["legs"].append((pos["remaining"], pos["stop"], "stop"))
+                    pos["remaining"] = 0.0
+                else:
+                    if (pos["remaining"] > 2 * THIRD + 1e-9
+                            and b["h"] >= pos["entry"] + pos["r"]):
+                        pos["legs"].append((THIRD, pos["entry"] + pos["r"],
+                                            "scale_1R"))
+                        pos["remaining"] -= THIRD
+                    if (pos["remaining"] > THIRD + 1e-9
+                            and b["h"] >= pos["entry"] + 2 * pos["r"]):
+                        pos["legs"].append((THIRD, pos["entry"] + 2 * pos["r"],
+                                            "scale_2R"))
+                        pos["remaining"] -= THIRD
+                    if (0 < pos["remaining"] <= THIRD + 1e-9
+                            and b["c"] < ema):       # trail the last third
+                        pos["legs"].append((pos["remaining"], b["c"],
+                                            "ema_trail"))
+                        pos["remaining"] = 0.0
+                    if pos["remaining"] > 0 and mins >= 951:   # 15:51 flat
+                        pos["legs"].append((pos["remaining"], b["c"], "eod"))
+                        pos["remaining"] = 0.0
+                if pos["remaining"] <= 0:
+                    record(day, pos, pos["legs"])
+                    pos = None
+                    break                            # one trade/ticker/day
             elif pos:
                 if b["l"] <= pos["stop"]:            # stop first (conservative)
                     exit_px, why = pos["stop"], "stop"
@@ -134,20 +191,13 @@ def backtest(sym, bars5, daily, trade_from=None, rvol=None):
                 else:
                     hod = max(hod or 0, b["h"])
                     continue
-                trades.append({
-                    "symbol": sym, "date": str(day),
-                    "entry": round(pos["entry"], 2),
-                    "exit": round(exit_px, 2), "reason": why,
-                    "r_multiple": round((exit_px - pos["entry"]) / pos["r"], 2)})
+                record(day, pos, [(1.0, exit_px, why)])
                 pos = None
                 break                                # one trade/ticker/day
             hod = max(hod or 0, b["h"])
         if pos:                                      # day ended mid-trade
-            trades.append({"symbol": sym, "date": str(day),
-                           "entry": round(pos["entry"], 2),
-                           "exit": round(bars[-1]["c"], 2), "reason": "eod",
-                           "r_multiple": round(
-                               (bars[-1]["c"] - pos["entry"]) / pos["r"], 2)})
+            record(day, pos,
+                   pos["legs"] + [(pos["remaining"], bars[-1]["c"], "eod")])
     return trades
 
 
@@ -156,6 +206,9 @@ def main():
     months = int(arg("--months", LOOKBACK_MONTHS))
     rvol = arg("--rvol")
     rvol = float(rvol) if rvol else None
+    exits = arg("--exits", "bracket")
+    if exits not in ("bracket", "pmh"):
+        sys.exit(f"unknown --exits '{exits}' (bracket or pmh)")
     syms = universe()
     now = datetime.now(ET)
     start = now - timedelta(days=months * 30 + 320)
@@ -170,7 +223,8 @@ def main():
             daily = [b for b in get_bars([sym], "1Day", start)[sym]
                      if b["t"].date() < now.date()]
             bars5 = [b for b in get_bars([sym], TF, bars5_start)[sym]]
-            all_trades += backtest(sym, bars5, daily, bt_start.date(), rvol)
+            all_trades += backtest(sym, bars5, daily, bt_start.date(), rvol,
+                                   exits)
             print(f"{sym}: fetched {len(bars5)} bars, "
                   f"{sum(t['symbol'] == sym for t in all_trades)} trades")
         except Exception as e:
@@ -195,16 +249,21 @@ def main():
     }
     out = {"scanned_at": now.isoformat(),
            "params": {"tickers": syms, "months": months, "timeframe": TF,
-                      "rvol_filter": rvol,
-                      "rules": "entry TJL 10:00-15:30 ET; stop=signal bar low; "
-                               "target=+3R; flat 15:55; 1 trade/ticker/day"
+                      "rvol_filter": rvol, "exits": exits,
+                      "rules": "entry TJL 10:00-15:30 ET; "
+                               + ("stop=1% below min(PMH, LOD); scale 1/3 at "
+                                  "+1R and +2R; 21-EMA trail on last 1/3; "
+                                  "flat 15:51" if exits == "pmh" else
+                                  "stop=signal bar low; target=+3R; flat 15:55")
+                               + "; 1 trade/ticker/day"
                                + (f"; rvol>={rvol}x vs {RVOL_LOOKBACK}-session "
                                   f"same-minute avg" if rvol else ""),
                       "selection_bias_note": "universe picked from today's "
                       "gappers; past-window results describe behavior, not "
                       "an achievable historical portfolio"},
            "stats": stats, "trades": all_trades}
-    suffix = f"_rvol{rvol:g}" if rvol else ""
+    suffix = (f"_rvol{rvol:g}" if rvol else "") + \
+             (f"_exits{exits}" if exits != "bracket" else "")
     save_json(SCANS / f"backtest_tjl_{bt_start.date()}_{now.date()}{suffix}.json",
               out)
 

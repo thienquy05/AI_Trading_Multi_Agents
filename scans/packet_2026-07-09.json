@@ -1,0 +1,852 @@
+{
+  "generated_at": "2026-07-09T12:53:40.829922-04:00",
+  "candidate_source": "alpaca_screener_premarket",
+  "trading_day_note": "Thursday 2026-07-09 12:53 ET; OUTSIDE the premarket window: levels and gaps reflect the full session so far, not a live premarket read",
+  "scan_params": {
+    "gap_filter_abs_pct": 3.0,
+    "price_min": 3.0,
+    "top_n": 12,
+    "open_note": "before 09:30 ET the latest premarket price stands in for the official open in swing checks"
+  },
+  "criteria": {
+    "day_trading": "Trend Join Long selection: gap > 3% vs prev close, price > $3, market cap > $1B, premarket RVOL > 1.5, price above prior-day high, prev close above 200-day SMA. Execution per TRADING-STRATEGY.md 2b: trigger over PMH + prior HOD 10:00-15:30 ET, stop = signal bar low, 3R bracket, flat 15:55.",
+    "swing": "Gap >= 8%, price > $3, open above prior-day high, open above 200-day SMA, market cap >= $800M, and a real catalyst (earnings on gap day, or news with no earnings). Starter ideas only, swing management is still being built."
+  },
+  "market_snapshot": {
+    "S&P 500": {
+      "symbol": "^GSPC",
+      "error": "Failed to perform, curl: (56) CONNECT tunnel failed, response 403. See https://curl.se/libcurl/c/libcurl-errors.html fir"
+    },
+    "Dow": {
+      "symbol": "^DJI",
+      "error": "Failed to perform, curl: (56) CONNECT tunnel failed, response 403. See https://curl.se/libcurl/c/libcurl-errors.html fir"
+    },
+    "Nasdaq": {
+      "symbol": "^IXIC",
+      "error": "not enough history"
+    },
+    "Russell 2000": {
+      "symbol": "^RUT",
+      "error": "not enough history"
+    },
+    "VIX": {
+      "symbol": "^VIX",
+      "error": "not enough history"
+    },
+    "US 10Y": {
+      "symbol": "^TNX",
+      "error": "not enough history"
+    },
+    "US 3M": {
+      "symbol": "^IRX",
+      "error": "not enough history"
+    },
+    "WTI Oil": {
+      "symbol": "CL=F",
+      "error": "not enough history"
+    },
+    "Dollar (DXY)": {
+      "symbol": "DX-Y.NYB",
+      "error": "not enough history"
+    }
+  },
+  "econ_calendar": {
+    "source": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+    "filter": "country=USD, impact=High",
+    "today_date": "2026-07-09",
+    "tomorrow_date": "2026-07-10",
+    "today": [],
+    "tomorrow": [],
+    "error": "feed unavailable: <urlopen error Tunnel connection failed: 403 Forbidden>"
+  },
+  "gappers": [
+    {
+      "rank": 1,
+      "symbol": "VRAX",
+      "name": null,
+      "price": 8.72,
+      "prev_close": 3.03,
+      "gap_pct": 262.38,
+      "market_cap": null,
+      "premarket_volume": 18420,
+      "today_volume": 151606,
+      "rvol_premarket": 122.54,
+      "rvol_fullday": 106.54,
+      "vwap": 10.32,
+      "premarket_high": 11.76,
+      "hod": 13.18,
+      "lod": 8.5,
+      "today_open": 11.01,
+      "sma200": 8.03,
+      "prior_day_high": 3.06,
+      "prior_close": 3.03,
+      "avg_vol_20d": 1423,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Why Did Virax Biolabs Stock Triple In One Session?",
+      "headlines": [
+        {
+          "title": "Why Did Virax Biolabs Stock Triple In One Session?",
+          "source": "benzinga",
+          "published": "2026-07-09T14:31:31Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Virax Biolabs Shares Halted On Circuit Breaker To The Upside, Stock Now Up 296.86%",
+          "source": "benzinga",
+          "published": "2026-07-09T13:59:24Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Gold Gains Over 1%; PepsiCo Shares Fall After Q2 Results",
+          "source": "benzinga",
+          "published": "2026-07-09T16:02:06Z",
+          "n_symbols": 7
+        },
+        {
+          "title": "Nasdaq Gains 100 Points; US Initial Jobless Claims Edge Lower",
+          "source": "benzinga",
+          "published": "2026-07-09T13:46:43Z",
+          "n_symbols": 6
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": true,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": true,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 2,
+      "symbol": "JLHL",
+      "name": null,
+      "price": 6.92,
+      "prev_close": 3.25,
+      "gap_pct": 112.92,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 108718,
+      "rvol_premarket": 6.71,
+      "rvol_fullday": 74.21,
+      "vwap": 5.88,
+      "premarket_high": null,
+      "hod": 7.27,
+      "lod": 3.96,
+      "today_open": 3.96,
+      "sma200": 8.6,
+      "prior_day_high": 3.99,
+      "prior_close": 3.25,
+      "avg_vol_20d": 1465,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "12 Industrials Stocks Moving In Thursday's Pre-Market Session",
+      "headlines": [
+        {
+          "title": "12 Industrials Stocks Moving In Thursday's Pre-Market Session",
+          "source": "benzinga",
+          "published": "2026-07-09T12:05:31Z",
+          "n_symbols": 12
+        },
+        {
+          "title": "12 Industrials Stocks Moving In Wednesday's After-Market Session",
+          "source": "benzinga",
+          "published": "2026-07-08T21:05:37Z",
+          "n_symbols": 12
+        },
+        {
+          "title": "12 Industrials Stocks Moving In Wednesday's Intraday Session",
+          "source": "benzinga",
+          "published": "2026-07-08T17:05:39Z",
+          "n_symbols": 12
+        },
+        {
+          "title": "11 Industrials Stocks Moving In Tuesday's Intraday Session",
+          "source": "benzinga",
+          "published": "2026-07-07T17:05:33Z",
+          "n_symbols": 11
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": true,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 3,
+      "symbol": "LASC",
+      "name": null,
+      "price": 28.4,
+      "prev_close": 18.45,
+      "gap_pct": 53.93,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 484,
+      "rvol_premarket": 0.0,
+      "rvol_fullday": 4.32,
+      "vwap": 28.15,
+      "premarket_high": null,
+      "hod": 28.4,
+      "lod": 27.66,
+      "today_open": 27.66,
+      "sma200": null,
+      "prior_day_high": 18.87,
+      "prior_close": 18.45,
+      "avg_vol_20d": 112,
+      "next_earnings": null,
+      "catalyst_found": false,
+      "catalyst": null,
+      "headlines": [],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": false
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 4,
+      "symbol": "TRAX",
+      "name": null,
+      "price": 29.81,
+      "prev_close": 20.75,
+      "gap_pct": 43.66,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 113939,
+      "rvol_premarket": 2.68,
+      "rvol_fullday": 3.17,
+      "vwap": 28.22,
+      "premarket_high": null,
+      "hod": 30.14,
+      "lod": 22.52,
+      "today_open": 22.52,
+      "sma200": null,
+      "prior_day_high": 20.77,
+      "prior_close": 20.75,
+      "avg_vol_20d": 35906,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "HC Wainwright & Co. Reiterates Buy on First Tracks, Maintains $30 Price Target",
+      "headlines": [
+        {
+          "title": "HC Wainwright & Co. Reiterates Buy on First Tracks, Maintains $30 Price Target",
+          "source": "benzinga",
+          "published": "2026-07-08T13:44:12Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Aehr Test Systems, Lam Research, Applied Materials And Other Big Stocks Moving Higher On Thursday",
+          "source": "benzinga",
+          "published": "2026-07-09T14:01:44Z",
+          "n_symbols": 19
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": true,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 5,
+      "symbol": "PTLE",
+      "name": null,
+      "price": 10.1,
+      "prev_close": 7.23,
+      "gap_pct": 39.7,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 457,
+      "rvol_premarket": null,
+      "rvol_fullday": 1.85,
+      "vwap": 10.09,
+      "premarket_high": null,
+      "hod": 10.1,
+      "lod": 10.07,
+      "today_open": 10.07,
+      "sma200": 9.6,
+      "prior_day_high": 7.23,
+      "prior_close": 7.23,
+      "avg_vol_20d": 247,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "ON Semiconductor, SanDisk And Other Big Stocks Moving Lower In Friday\u2019s Pre-Market Session",
+      "headlines": [
+        {
+          "title": "ON Semiconductor, SanDisk And Other Big Stocks Moving Lower In Friday\u2019s Pre-Market Session",
+          "source": "benzinga",
+          "published": "2026-06-26T12:03:03Z",
+          "n_symbols": 14
+        },
+        {
+          "title": "Why Synaptics Shares Are Trading Higher By Over 5%; Here Are 20 Stocks Moving Premarket",
+          "source": "benzinga",
+          "published": "2026-06-26T08:41:10Z",
+          "n_symbols": 21
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": true,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": true,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 6,
+      "symbol": "AEHG",
+      "name": null,
+      "price": 8,
+      "prev_close": 6.12,
+      "gap_pct": 30.72,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 700,
+      "rvol_premarket": 1.0,
+      "rvol_fullday": 1.68,
+      "vwap": 8.01,
+      "premarket_high": null,
+      "hod": 8.04,
+      "lod": 8,
+      "today_open": 8.04,
+      "sma200": null,
+      "prior_day_high": 6.33,
+      "prior_close": 6.12,
+      "avg_vol_20d": 417,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Aehr Test Systems Gets New 2X Leveraged ETF Amid AI Semiconductor Rally",
+      "headlines": [
+        {
+          "title": "Aehr Test Systems Gets New 2X Leveraged ETF Amid AI Semiconductor Rally",
+          "source": "benzinga",
+          "published": "2026-06-26T20:44:27Z",
+          "n_symbols": 2
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 7,
+      "symbol": "SDOT",
+      "name": null,
+      "price": 26,
+      "prev_close": 20,
+      "gap_pct": 30.0,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 17711,
+      "rvol_premarket": 0.59,
+      "rvol_fullday": 0.82,
+      "vwap": 30.21,
+      "premarket_high": null,
+      "hod": 35.01,
+      "lod": 25.31,
+      "today_open": 25.68,
+      "sma200": 54.26,
+      "prior_day_high": 37.02,
+      "prior_close": 20,
+      "avg_vol_20d": 21582,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Sadot Group (SDOT) Stock Rises 17% After-Hours: Here's Why the Stock Is Trending Overnight",
+      "headlines": [
+        {
+          "title": "Sadot Group (SDOT) Stock Rises 17% After-Hours: Here's Why the Stock Is Trending Overnight",
+          "source": "benzinga",
+          "published": "2026-07-09T06:21:31Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Sadot Group Appoints Aleksandr Zhandov As COO And Deputy CEO",
+          "source": "benzinga",
+          "published": "2026-07-06T20:10:13Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Sadot Group Shares Rally Despite Fugazi Short Report: 'Zero Fundamental Value'",
+          "source": "benzinga",
+          "published": "2026-07-06T14:31:07Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Why Ultra Clean Shares Are Trading Higher By Over 6%; Here Are 20 Stocks Moving Premarket",
+          "source": "benzinga",
+          "published": "2026-07-09T08:53:08Z",
+          "n_symbols": 20
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 8,
+      "symbol": "LASR",
+      "name": null,
+      "price": 76.09,
+      "prev_close": 58.64,
+      "gap_pct": 29.77,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 92304,
+      "rvol_premarket": 2.7,
+      "rvol_fullday": 1.79,
+      "vwap": 72.49,
+      "premarket_high": null,
+      "hod": 76.41,
+      "lod": 61.32,
+      "today_open": 61.32,
+      "sma200": 51.6,
+      "prior_day_high": 58.7,
+      "prior_close": 58.64,
+      "avg_vol_20d": 51584,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "nLIGHT Stock Skyrockets on Laser Weapon System Contract Win",
+      "headlines": [
+        {
+          "title": "nLIGHT Stock Skyrockets on Laser Weapon System Contract Win",
+          "source": "benzinga",
+          "published": "2026-07-09T16:46:14Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "UPDATE: nLIGHT Secures $44M Initial U.S. Defense Laser Weapons Award With Program Worth Up To $627M",
+          "source": "benzinga",
+          "published": "2026-07-09T14:41:54Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "nLIGHT Secures $44M Initial U.S. Defense Laser Weapons Award With Program Worth Up To $627M",
+          "source": "benzinga",
+          "published": "2026-07-09T14:39:56Z",
+          "n_symbols": 2
+        },
+        {
+          "title": "Department Of War Announces Awards $86M Joint Laser Weapon System Agreements To Scale Directed Energy Capabilities",
+          "source": "benzinga",
+          "published": "2026-07-09T14:22:57Z",
+          "n_symbols": 2
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": true,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": true
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": true,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 9,
+      "symbol": "LITU",
+      "name": null,
+      "price": 17.69,
+      "prev_close": 14.09,
+      "gap_pct": 25.55,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 552,
+      "rvol_premarket": 0.0,
+      "rvol_fullday": 0.25,
+      "vwap": 17.7,
+      "premarket_high": null,
+      "hod": 17.9,
+      "lod": 17.57,
+      "today_open": 17.64,
+      "sma200": null,
+      "prior_day_high": 14.09,
+      "prior_close": 14.09,
+      "avg_vol_20d": 2185,
+      "next_earnings": null,
+      "catalyst_found": false,
+      "catalyst": null,
+      "headlines": [],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": false
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 10,
+      "symbol": "MRAL",
+      "name": null,
+      "price": 64.51,
+      "prev_close": 52,
+      "gap_pct": 24.06,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 6655,
+      "rvol_premarket": 0.0,
+      "rvol_fullday": 3.54,
+      "vwap": 67.72,
+      "premarket_high": null,
+      "hod": 71.3,
+      "lod": 60.9,
+      "today_open": 60.9,
+      "sma200": 90.55,
+      "prior_day_high": 52,
+      "prior_close": 52,
+      "avg_vol_20d": 1881,
+      "next_earnings": null,
+      "catalyst_found": false,
+      "catalyst": null,
+      "headlines": [],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": false
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 11,
+      "symbol": "LITX",
+      "name": null,
+      "price": 28.34,
+      "prev_close": 23,
+      "gap_pct": 23.22,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 50942,
+      "rvol_premarket": 3.27,
+      "rvol_fullday": 1.51,
+      "vwap": 28.04,
+      "premarket_high": null,
+      "hod": 28.86,
+      "lod": 25.94,
+      "today_open": 25.94,
+      "sma200": null,
+      "prior_day_high": 23.66,
+      "prior_close": 23,
+      "avg_vol_20d": 33626,
+      "next_earnings": null,
+      "catalyst_found": false,
+      "catalyst": null,
+      "headlines": [],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": true,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": false
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 12,
+      "symbol": "SNDG",
+      "name": null,
+      "price": 16.97,
+      "prev_close": 13.8,
+      "gap_pct": 22.97,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": 10546,
+      "rvol_premarket": 0.34,
+      "rvol_fullday": 0.46,
+      "vwap": 16.26,
+      "premarket_high": null,
+      "hod": 17.08,
+      "lod": 15.68,
+      "today_open": 16.11,
+      "sma200": null,
+      "prior_day_high": 13.8,
+      "prior_close": 13.8,
+      "avg_vol_20d": 22924,
+      "next_earnings": null,
+      "catalyst_found": false,
+      "catalyst": null,
+      "headlines": [],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": false
+      },
+      "swing_eligible": false
+    }
+  ],
+  "market_news": [
+    {
+      "title": "AT&T leaves rivals flat-footed as bankrupt carrier folds",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-08T18:33:00Z"
+    },
+    {
+      "title": "Three Enticing Clues Put This Broadcom Partner, Nvidia Rival In Focus",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:34:19Z"
+    },
+    {
+      "title": "US home prices just fell to $430,000 \u2014 but the $132/month savings is vanishing into taxes and insurance",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:30:00Z"
+    },
+    {
+      "title": "10% discount Gone? Progressive Ends Motive Dashcam Enrollments, Signals New Telematics Program",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:28:44Z"
+    },
+    {
+      "title": "America's Greatest Opportunities: Green Mountain Coffee Roasters",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:26:30Z"
+    },
+    {
+      "title": "The Market Prevails",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T11:47:39Z"
+    },
+    {
+      "title": "Novartis vs. Teva: Which Pharmaceutical Stock Is a Better Buy in 2026?",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:32:04Z"
+    },
+    {
+      "title": "What Makes Core Natural Resources (CNR) a Good Investment?",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:21:58Z"
+    },
+    {
+      "title": "Meta Stock Climbs As New AI Model, Enterprise Push Help Reverse Early Losses",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:19:56Z"
+    },
+    {
+      "title": "Apollo's Sl\u00f8k: The market faces big risks if hyperscalers' AI profits get delayed",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:17:08Z"
+    },
+    {
+      "title": "Data Center Builder Spikes After Goldman Initiates Coverage At Buy Rating",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:16:37Z"
+    },
+    {
+      "title": "Daily Spotlight: Global Stocks Still Offer Value",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T11:09:51Z"
+    },
+    {
+      "title": "Don\u2019t Let Your Kids\u2019 Braces Chew Up Your Retirement",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:30:55Z"
+    },
+    {
+      "title": "Mixed Drivers Fuel Optimism in Stryker Corporation\u2019s (SYK) Performance",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:04:10Z"
+    },
+    {
+      "title": "Mortgage rates edge higher as US-Iran ceasefire falls apart: Mortgage and refinance interest rates today",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T10:00:00Z"
+    },
+    {
+      "title": "MARA Stock Leads Digital Rally On Data Center Development Plans. Bitcoin Rises.",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:00:26Z"
+    },
+    {
+      "title": "A Missouri woman, 70, couldn't afford her $8K/month drug after Medicare Advantage denied coverage \u2014 and landed in the ER",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:00:00Z"
+    },
+    {
+      "title": "Technical Assessment: Bullish in the Intermediate-Term",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T11:09:12Z"
+    },
+    {
+      "title": "Let\u2019s Be Real. Most Retirees Can Only Afford One Corner of California.",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-09T16:30:14Z"
+    },
+    {
+      "title": "Stock market today: S&P 500, Dow, Nasdaq edge up as focus turns to AI despite war jitters",
+      "summary": "",
+      "source": "Yahoo Finance",
+      "published": "2026-07-08T22:31:49Z"
+    }
+  ],
+  "gaps_to_fill": [
+    "market-wide earnings calendar is only partial: next earnings dates come per gapper, there is no full day-by-day earnings list",
+    "intraday levels (VWAP/HOD/LOD/PMH) need intraday bars and are only available on the Alpaca path",
+    "premarket RVOL: yfinance reports about 0 premarket volume, so a true premarket RVOL needs a premarket feed (Alpaca supplies it here); on the keyless path full-day RVOL is the stand-in"
+  ]
+}

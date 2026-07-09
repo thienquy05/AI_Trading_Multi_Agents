@@ -54,58 +54,66 @@ the paper account. Educational tone, beginner level, honest signals.
 4. No repo commit needed unless something was logged; no trading — this
    run never places orders anywhere.
 
-### 7:00 AM ET — Pre-Market Research
+### 7:00 AM ET — Pre-Market Research (analyst pipeline, 2026-07-09)
 
-Files needed: `TRADING-STRATEGY.md`, `RESEARCH-LOG.md` (append only).
+Files needed: `TRADING-STRATEGY.md`, `PROMPT-PREMARKET.md`,
+`REPORT_TEMPLATE.md`, `RESEARCH-LOG.md` (append only). Rules reference:
+`WATCHLIST_CRITERIA.md`.
 
 1. `scripts/alpaca.sh account` and `scripts/alpaca.sh positions` — note
    equity, cash, open positions.
-2. Run `python3 scripts/scan_gappers.py --no-telegram`, then **rewrite
-   each gapper's `catalyst` into a one-sentence summary** (from its
-   headlines) in the saved JSON. The gappers go INTO the 7 AM Telegram
-   brief (format A, see Scanners section) — one message, not two.
-3. **Research sweep** (the engine — do all of these, in this order;
-   spawn one Explore/general sub-agent if it saves tokens over many
-   inline searches):
-   a. **Macro calendar**: every release today with its exact ET time —
-      CPI/PPI/NFP/FOMC/claims/auctions/Fed speakers. Mark tier-1 events
-      (they trigger the §3b event blackout).
-   b. **Earnings**: who reports today (pre/post market) and this week;
-      flag any name within 24h of earnings (no-entry rule §3b).
-   c. **Market tone**: S&P/Nasdaq futures, VIX, prior-day breadth,
-      leading/lagging sectors, any overnight global mover.
-   d. **Crypto regime + tape**: run `python3 scripts/scan_crypto.py`
-      (§2c sleeve). Note the regime state (BTC vs daily SMA200) and
-      BTC/ETH/SOL 24h moves in the brief. On a PASS inside sleeve
-      rules: `cbuy` then `cstop` immediately, log in `TRADE-LOG.md`.
-   e. **Held-names sweep (extra watch)**: news specifically on BTC,
-      ETH, SOL, NVDA, ORCL — Quy holds these for real. Anything
-      material (earnings, downgrades, regulatory, sector shock) gets a
-      callout in the brief.
-   f. **Verification rule**: any market-moving claim that will drive a
-      trade idea needs two independent sources or a primary source
-      (company PR, official data release). Headlines from the gappers
-      feed count as one source. Date-check everything — stale news
-      reposted premarket is a classic trap.
-4. Find 2–3 actionable trade ideas that fit `TRADING-STRATEGY.md`
-   (gap setups preferred; the gappers scan is the candidate pool). For
-   each: ticker, thesis, catalyst (+source), entry zone, stop, 3R
-   target, position size at 1% risk, what invalidates it, and which
-   §3b guardrails apply (earnings distance, event blackout windows,
-   sector-correlation count). **No idea that survives the §4 filter is
-   a failure state — "no trade today" is a valid, logged outcome.**
+2. Run `.venv/bin/python scripts/scan_premarket.py` (create the venv
+   first if missing — see Gotchas). One run gathers: market snapshot
+   (indices/VIX/rates/oil/DXY), premarket gappers with REAL premarket
+   gap/volume/RVOL from Alpaca, live levels (VWAP/PMH/HOD/LOD),
+   catalyst headlines with `catalyst_found` flags, market-wide RSS
+   news, the US high-impact econ calendar (today + tomorrow, ET), and
+   the deterministic `day_eligible`/`swing_eligible` flags encoding
+   `WATCHLIST_CRITERIA.md`. Output: `scans/packet_<date>.json`.
+3. **Fill the packet's gaps** (only what the packet could not get —
+   check its `gaps_to_fill` and error fields before searching):
+   a. If `market_snapshot` errored (yfinance blocked): pull index/VIX
+      tone via Robinhood `get_index_quotes` or one tight web search.
+   b. If `econ_calendar` errored: one web search for today's US macro
+      calendar with ET times. Mark tier-1 events (§3b blackouts).
+   c. **Earnings**: who reports today/this week beyond the per-gapper
+      `next_earnings` dates; flag names within 24h (§3b no-entry).
+   d. **Crypto regime + tape**: run `python3 scripts/scan_crypto.py
+      --no-telegram` (§2c sleeve). Regime state + BTC/ETH/SOL moves go
+      in the brief. On a PASS inside sleeve rules: `cbuy` then `cstop`
+      immediately, log in `TRADE-LOG.md`.
+   e. **Held-names sweep (extra watch)**: news on BTC, ETH, SOL, NVDA,
+      ORCL — Quy holds these for real; anything material gets a callout.
+   f. **Verification rule**: any packet headline that will drive a
+      trade idea needs a second independent source or a primary source
+      before the 9:30 run acts on it. Date-check — stale news reposted
+      premarket is a classic trap.
+4. **Analyst pass**: write `reports/premarket_<date>.md` following
+   `PROMPT-PREMARKET.md` + `REPORT_TEMPLATE.md` (rules decide watchlist
+   membership via the packet flags; judgment scores conviction
+   🟢🟡🔴). Then distill 2–3 actionable trade ideas that fit
+   `TRADING-STRATEGY.md` for the day list: ticker, thesis, catalyst
+   (+source), entry zone, stop, 3R target, 1%-risk size, invalidation,
+   §3b guardrails. **"No trade today" is a valid, logged outcome.**
 5. Append findings to `RESEARCH-LOG.md` (template at top of that file).
-   Also write their tickers to `scans/watchlist_<date>.json` —
+   Write the day-list tickers to `scans/watchlist_<date>.json` —
    `{"date": "YYYY-MM-DD", "symbols": [...], "source": "premarket research"}`
    — this is what `scan_tjl.py`/`backtest_tjl.py` check all day (see
    Scanners section; there is no fixed ticker universe anymore).
-6. Republish the dashboard locally (gitignored, not committed); commit +
-   push the scan JSON and logs.
-7. **Telegram the pre-market brief (ALWAYS)** — detailed, split into 2
-   messages if needed: gappers (format A), macro calendar with ET
-   times, market tone, crypto regime + BTC/ETH/SOL, extra-watch
-   callouts, the day's trade ideas (or "no qualifying setups — standing
-   aside" and why), and any §3b blackout windows in effect today.
+6. **Email the full report**: `python3 scripts/send_report.py
+   reports/premarket_<date>.md`. If AgentMail keys are missing it skips
+   cleanly — then create a Gmail DRAFT with the report via the Gmail
+   connector (it has no send tool) and say so in the Telegram brief.
+7. Republish the dashboard locally (gitignored, not committed) —
+   include `DATA.premarketReport` (report summary + watchlists);
+   commit + push the packet, report, watchlist, and logs.
+8. **Telegram the pre-market brief (ALWAYS)** — the condensed report,
+   split into 2 messages if needed: gappers (format A), macro calendar
+   with ET times, market tone, crypto regime + BTC/ETH/SOL, extra-watch
+   callouts, day/swing watchlists with conviction, the day's trade
+   ideas (or "no qualifying setups — standing aside" and why), and any
+   §3b blackout windows in effect today. The report is the archive; the
+   brief is the ping.
 
 ### 9:30 AM ET — Market Open
 
@@ -238,7 +246,9 @@ and satisfies the "stop on every position" rule atomically.
 
 | Script | What / when |
 |---|---|
-| `scan_gappers.py [--no-telegram]` | Premarket gappers: Alpaca screener ∪ most-actives → real premarket gap% + volume filters (>5%, >$3, >50k) → top 10 with Benzinga headlines via Alpaca news. Runs in the 7:00 AM workflow. Saves `scans/premarket_gappers_<date>.json`. |
+| `scan_premarket.py [--no-alpaca]` | **The 7:00 AM packet builder** (needs `.venv` — see Gotchas). Hybrid: Alpaca screener candidates with real premarket gap/volume/RVOL + live levels; yfinance market snapshot, market caps, earnings dates (and keyless fallback candidates); RSS market news; ForexFactory US high-impact econ calendar (cached ~4h). Stamps `day_eligible`/`swing_eligible` per `WATCHLIST_CRITERIA.md`. Data only, zero analysis. Saves `scans/packet_<date>.json`. |
+| `send_report.py report.md [subject]` | Emails the premarket report via AgentMail (`AGENTMAIL_API_KEY`/`AGENTMAIL_INBOX` in env). No key = clean skip; fall back to a Gmail draft via the connector. |
+| `scan_gappers.py [--no-telegram]` | LEGACY backup (superseded by `scan_premarket.py` in the daily workflow, kept because it runs on stdlib+Alpaca alone): screener ∪ most-actives → real premarket gap% + volume filters (>5%, >$3, >50k) → top 10 with Benzinga headlines. Saves `scans/premarket_gappers_<date>.json`. |
 | `scan_tjl.py [--force] [--no-telegram] [TICKERS…]` | Trend Join Long entry check. Universe: explicit args override, else `scans/watchlist_<date>.json` (today's research picks), else latest gappers scan top-10, else exits cleanly with "no candidates." Time-gated 10:00–15:30 ET (`--force` bypass for testing). Saves `scans/tjl_watchlist_<date>_<HHMM>ET.json`. **Run with `--no-telegram`** — since 2026-07-08 the agent owns all Telegram sends (trade-only policy for TJL runs). |
 | `backtest_tjl.py [--tickers A,B,C] [--months N]` | TJL backtest on 5-min bars; same universe resolution as `scan_tjl.py` (selection-bias caveat in its header). On demand only. |
 | `scan_crypto.py [--no-telegram] [PAIRS…]` | C-TJL crypto sleeve check (strategy §2c). Checks the BTC>daily-SMA200 regime gate FIRST — in a bear regime it stands down without scanning. Universe: fixed liquid majors in `backtest_crypto.py`. Run with `--no-telegram` in the 7:00 AM and 1:00 PM workflows (regime state goes into the agent's own brief). Saves `scans/crypto_tjl_<date>_<HHMM>UTC.json`. |
@@ -338,6 +348,30 @@ fetch live data, so every workflow run regenerates it:
   at :30, Midday 17:00, Summary 20:00 UTC. In early November (DST
   ends) shift all six cron expressions +1 hour; reverse in March. The
   Daily Summary run nearest the change should flag it via Telegram.
+- **Python venv for the packet builder**: `scan_premarket.py` and
+  `send_report.py` want `.venv` with `requirements.txt` installed
+  (yfinance, feedparser, requests, markdown). Fresh cron containers
+  don't have it: `python3 -m venv .venv && .venv/bin/pip install -q -r
+  requirements.txt` (~40s) — or add that to the environment's setup
+  script. Everything degrades gracefully without it (Alpaca-only
+  packet, `gaps_to_fill` says what's missing), and `scan_gappers.py`
+  remains the stdlib-only fallback.
+- **Network allowlist for full packet data**: the environment's egress
+  policy must allow `query1.finance.yahoo.com`, `query2.finance.yahoo.com`,
+  `fc.yahoo.com` (yfinance), `nfs.faireconomy.media` (econ calendar),
+  `feeds.content.dowjones.io`, `www.cnbc.com`, `news.google.com`,
+  `finance.yahoo.com` (RSS), and `api.agentmail.to` (email). Verified
+  2026-07-09: with these blocked the scan still completes but the
+  snapshot/market-caps/econ-calendar come back empty — the workflow's
+  step-3 fallbacks (Robinhood index quotes, one web search) cover it.
+- **ForexFactory calendar rate limit**: the feed 429s on rapid calls;
+  `scan_premarket.py` caches it in `scans/.ff_calendar_cache.json`
+  (gitignored) with a ~4h TTL and falls back to the stale cache on
+  fetch failure. Don't fetch it manually in the same session.
+- **AgentMail**: full-report email needs `AGENTMAIL_API_KEY` +
+  `AGENTMAIL_INBOX` (from agentmail.to) in the environment. Missing =
+  `send_report.py` skips cleanly; fall back to a Gmail DRAFT via the
+  connector (it cannot send) and mention it in the Telegram brief.
 - **Market holidays**: `scripts/alpaca.sh clock` says if the market is
   open — check it before trading; research runs can proceed anyway.
 - **Wash-trade rejections**: Alpaca rejects an order that would

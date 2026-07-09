@@ -1,0 +1,697 @@
+#!/usr/bin/env python3
+"""Premarket packet builder - data collection only, zero analysis.
+
+Collects raw premarket data into scans/packet_YYYY-MM-DD.json. No
+conviction, no buckets, no opinions: all judgment happens later in the
+analyst pass (PROMPT-PREMARKET.md). The deterministic watchlist flags
+(day_eligible, swing_eligible) encode WATCHLIST_CRITERIA.md in code,
+not in an AI's mood.
+
+Hybrid data policy (decided 2026-07-09):
+  - Alpaca (keys via .env or env vars) is the source of truth for
+    premarket gaps, premarket volume, TRUE premarket RVOL, and live
+    intraday levels.
+  - yfinance fills what the free Alpaca tier lacks: market cap, the
+    index/VIX/rates/oil/dollar snapshot, earnings dates, and a keyless
+    fallback candidate path when Alpaca is unavailable.
+  - feedparser RSS + the ForexFactory weekly JSON replace token-costly
+    web searches for market news and the econ calendar.
+
+Every network call is wrapped: one bad ticker or dead feed never kills
+the run. Progress prints to stdout. No em dashes in this file.
+
+Usage: scan_premarket.py [--no-alpaca]
+Output: scans/packet_YYYY-MM-DD.json
+"""
+import json
+import re
+import sys
+import urllib.request
+from datetime import datetime, timedelta
+
+from alpaca_common import (DATA, ET, SCANS, get, get_bars, latest_trades,
+                           load_env, save_json)
+
+try:
+    import yfinance as yf
+except ImportError:
+    yf = None
+try:
+    import feedparser
+except ImportError:
+    feedparser = None
+
+GAP_MIN, PRICE_MIN, TOP_N, CAND_CAP = 3.0, 3.0, 12, 60
+
+SNAPSHOT_SYMBOLS = {
+    "S&P 500": "^GSPC", "Dow": "^DJI", "Nasdaq": "^IXIC",
+    "Russell 2000": "^RUT", "VIX": "^VIX", "US 10Y": "^TNX",
+    "US 3M": "^IRX", "WTI Oil": "CL=F", "Dollar (DXY)": "DX-Y.NYB",
+}
+
+# Static fallback universe, only used when both screener paths fail.
+UNIVERSE = ["NVDA", "AMD", "AVGO", "SMCI", "MRVL", "TSLA", "AAPL", "MSFT",
+            "META", "AMZN", "GOOGL", "NFLX", "DELL", "SNOW", "PLTR", "COIN",
+            "MSTR", "SOFI", "RIVN", "NIO", "MARA", "RIOT", "BA", "DIS",
+            "JPM", "BAC", "XOM", "CVX", "HOOD", "UBER", "CRWD", "PANW",
+            "CELH", "LULU", "NKE", "CAVA", "DKNG", "ARM", "INTC", "MU"]
+
+RSS_FEEDS = [
+    ("MarketWatch Top", "https://feeds.content.dowjones.io/public/rss/mw_topstories"),
+    ("MarketWatch RealTime", "https://feeds.content.dowjones.io/public/rss/mw_realtimeheadlines"),
+    ("CNBC", "https://www.cnbc.com/id/100003114/device/rss/rss.html"),
+    ("Yahoo Finance", "https://finance.yahoo.com/news/rssindex"),
+    ("Google News Markets",
+     "https://news.google.com/rss/search?q=stock+market+OR+earnings+when:1d&hl=en-US&gl=US&ceid=US:en"),
+]
+# Obvious SEO spam: crypto price prediction mills and "NVDA 2025-2030" bait.
+SPAM_RE = re.compile(r"price prediction|20\d\d\s*-\s*20\d\d", re.I)
+TAG_RE = re.compile(r"<[^>]+>")
+
+PRIMARY_PUBS = ["bloomberg", "reuters", "cnbc", "marketwatch", "barron",
+                "wsj", "wall street journal", "dow jones", "yahoo finance",
+                "financial times", "benzinga", "associated press"]
+
+# Generic company-name words that must NEVER match a company on their own.
+# Without this, a headline saying "Applied Materials beats" would count as
+# a catalyst for Applied Digital and Applied Optoelectronics too; same for
+# "Digital", "Holdings", "Strategy" and friends. A name token only counts
+# as distinctive if it is 4+ letters AND not in this set.
+NAME_STOP = {"the", "inc", "corp", "corporation", "company", "co", "plc",
+             "ltd", "llc", "holdings", "holding", "group", "technologies",
+             "technology", "tech", "digital", "applied", "advanced",
+             "strategy", "strategies", "motors", "motor", "energy",
+             "platforms", "platform", "systems", "solutions", "sciences",
+             "science", "industries", "industrial", "global",
+             "international", "enterprises", "enterprise", "financial",
+             "capital", "partners", "resources", "materials", "media",
+             "communications", "networks", "labs", "pharmaceuticals",
+             "pharma", "therapeutics", "bancorp", "airlines", "brands",
+             "acquisition", "trust", "fund", "first", "united", "american",
+             "national", "new", "class", "series"}
+
+FF_URL = "https://nfs.faireconomy.media/ff_calendar_thisweek.json"
+FF_CACHE = SCANS / ".ff_calendar_cache.json"
+FF_TTL_HOURS = 4
+
+
+def step(msg):
+    print(f"[scan_premarket] {msg}", flush=True)
+
+
+# ---------------------------------------------------------------- snapshot
+
+def market_snapshot():
+    """Index/VIX/rates/oil/dollar snapshot via yfinance daily closes."""
+    out = {}
+    if yf is None:
+        return {"error": "yfinance not installed"}
+    for name, sym in SNAPSHOT_SYMBOLS.items():
+        try:
+            hist = yf.Ticker(sym).history(period="5d", interval="1d")
+            closes = [float(c) for c in hist["Close"].dropna()]
+            if len(closes) >= 2:
+                last, prev = closes[-1], closes[-2]
+                out[name] = {"symbol": sym, "last": round(last, 2),
+                             "prev_close": round(prev, 2),
+                             "change_pct": round((last / prev - 1) * 100, 2)}
+            else:
+                out[name] = {"symbol": sym, "error": "not enough history"}
+        except Exception as e:
+            out[name] = {"symbol": sym, "error": str(e)[:120]}
+    step(f"market snapshot: {sum(1 for v in out.values() if 'last' in v)}"
+         f"/{len(SNAPSHOT_SYMBOLS)} instruments")
+    return out
+
+
+# -------------------------------------------------------------- candidates
+
+def candidates_alpaca(now, today):
+    """Alpaca screener gainers + most-actives, gap from real premarket
+    trades vs previous daily close. Returns (rows, label) or (None, why)."""
+    syms, seen = [], set()
+    for url, key in ((f"{DATA}/v1beta1/screener/stocks/movers?top=50", "gainers"),
+                     (f"{DATA}/v1beta1/screener/stocks/most-actives?by=volume&top=50",
+                      "most_actives")):
+        try:
+            for row in get(url).get(key, []):
+                s = row["symbol"]
+                if s not in seen and s.isalpha():
+                    seen.add(s)
+                    syms.append(s)
+        except Exception as e:
+            step(f"alpaca screener {key} failed: {e}")
+    syms = syms[:CAND_CAP]
+    if not syms:
+        return None, "alpaca screeners returned nothing"
+
+    daily = get_bars(syms, "1Day", now - timedelta(days=10))
+    prev_close = {}
+    for s, bars in daily.items():
+        done = [b for b in bars if b["t"].date() < today]
+        if done:
+            prev_close[s] = done[-1]["c"]
+
+    pm_start = now.replace(hour=4, minute=0, second=0, microsecond=0)
+    pm_end = min(now, now.replace(hour=9, minute=30, second=0, microsecond=0))
+    pm = (get_bars(list(prev_close), "1Min", pm_start, pm_end)
+          if now >= pm_start else {})
+    try:
+        live = latest_trades(list(prev_close))
+    except Exception:
+        live = {}
+
+    rows = []
+    for s, pc in prev_close.items():
+        bars = [b for b in pm.get(s, []) if pm_start <= b["t"] < pm_end]
+        pm_last = bars[-1]["c"] if bars else None
+        px = live.get(s) or pm_last
+        ref = pm_last or px
+        if not px or not ref:
+            continue
+        rows.append({"symbol": s, "price": round(px, 2),
+                     "prev_close": round(pc, 2),
+                     "gap_pct": round((ref / pc - 1) * 100, 2),
+                     "premarket_volume": int(sum(b["v"] for b in bars)),
+                     "market_cap": None, "volume": None, "name": None})
+    return rows, "alpaca_screener_premarket"
+
+
+def candidates_yf():
+    """Keyless fallback: yfinance predefined screeners."""
+    if yf is None:
+        return None, "yfinance not installed"
+    quotes, seen = [], set()
+    for scr in ("day_gainers", "most_actives"):
+        try:
+            resp = yf.screen(scr, count=50)
+            for q in resp.get("quotes", []):
+                s = q.get("symbol")
+                if s and s not in seen:
+                    seen.add(s)
+                    quotes.append(q)
+        except Exception as e:
+            step(f"yfinance screener {scr} failed: {e}")
+    rows = []
+    for q in quotes:
+        px = q.get("regularMarketPrice")
+        pc = q.get("regularMarketPreviousClose")
+        if not px or not pc:
+            continue
+        rows.append({"symbol": q["symbol"], "price": round(px, 2),
+                     "prev_close": round(pc, 2),
+                     "gap_pct": round(q.get("regularMarketChangePercent")
+                                      or (px / pc - 1) * 100, 2),
+                     "premarket_volume": None,
+                     "market_cap": q.get("marketCap"),
+                     "volume": q.get("regularMarketVolume"),
+                     "name": q.get("shortName") or q.get("longName")})
+    if len(rows) >= 5:
+        return rows, "yfinance_screener"
+    return rows or None, "yfinance screener returned fewer than 5 names"
+
+
+def candidates_static():
+    """Last resort: static large/active universe, gap from the last two
+    daily closes via yfinance."""
+    if yf is None:
+        return None, "yfinance not installed"
+    rows = []
+    for s in UNIVERSE:
+        try:
+            hist = yf.Ticker(s).history(period="5d", interval="1d")
+            closes = [float(c) for c in hist["Close"].dropna()]
+            vols = [int(v) for v in hist["Volume"].dropna()]
+            if len(closes) >= 2:
+                rows.append({"symbol": s, "price": round(closes[-1], 2),
+                             "prev_close": round(closes[-2], 2),
+                             "gap_pct": round((closes[-1] / closes[-2] - 1) * 100, 2),
+                             "premarket_volume": None, "market_cap": None,
+                             "volume": vols[-1] if vols else None, "name": None})
+        except Exception as e:
+            step(f"static universe {s} failed: {e}")
+    return (rows, "static_universe") if rows else (None, "static universe empty")
+
+
+# ------------------------------------------------------------------- news
+
+def fetch_rss():
+    """Market-wide headlines from free RSS, HTML-stripped, spam-dropped."""
+    if feedparser is None:
+        return [], "feedparser not installed"
+    items = []
+    for src, url in RSS_FEEDS:
+        try:
+            feed = feedparser.parse(url)
+            for e in feed.entries[:25]:
+                title = TAG_RE.sub("", e.get("title", "")).strip()
+                if not title or SPAM_RE.search(title):
+                    continue
+                summary = TAG_RE.sub(" ", e.get("summary", ""))
+                summary = re.sub(r"\s+", " ", summary).strip()[:280]
+                items.append({"title": title, "summary": summary,
+                              "source": src,
+                              "published": e.get("published", "")})
+            step(f"rss {src}: {len(feed.entries)} entries")
+        except Exception as e:
+            step(f"rss {src} failed: {e}")
+    return items, None
+
+
+def name_matchers(sym, company):
+    """Regexes that decide whether a headline is about this company: the
+    ticker on a word boundary (case sensitive, headlines print tickers
+    uppercase) OR a DISTINCTIVE company-name token, 4+ letters and not in
+    NAME_STOP. See the NAME_STOP comment for the Applied/Digital
+    cross-match bug this prevents."""
+    tick_re = re.compile(rf"\b{re.escape(sym)}\b")
+    tokens = []
+    for tok in re.split(r"[^A-Za-z]+", company or ""):
+        t = tok.lower()
+        if len(t) >= 4 and t not in NAME_STOP:
+            tokens.append(re.compile(rf"\b{re.escape(t)}\b", re.I))
+    return tick_re, tokens
+
+
+def mentions(title, tick_re, tokens):
+    return bool(tick_re.search(title) or any(t.search(title) for t in tokens))
+
+
+def match_headlines(rss_items, tick_re, tokens):
+    return [it for it in rss_items if mentions(it["title"], tick_re, tokens)]
+
+
+def rank_headlines(headlines, tick_re, tokens):
+    """Headlines that actually name the company first (the Alpaca feed
+    tags market wraps with every symbol they brush past), then primary
+    publishers, then the rest, order preserved."""
+    def key(h):
+        named = 0 if mentions(h.get("title", ""), tick_re, tokens) else 1
+        # an Alpaca item tagged with 3+ symbols is almost always a wrap
+        wrap = 1 if h.get("n_symbols", 1) >= 3 else 0
+        src = (h.get("source") or "").lower()
+        for i, pub in enumerate(PRIMARY_PUBS):
+            if pub in src:
+                return (named, wrap, 0, i)
+        return (named, wrap, 1, 0)
+    return sorted(headlines, key=key)
+
+
+# ---------------------------------------------------------- econ calendar
+
+def econ_calendar(now):
+    """US High-impact events today + tomorrow (ET) from the ForexFactory
+    data-partner weekly JSON. Cached to a dotfile with a ~4h TTL because
+    the feed rate-limits (429) on rapid calls. Fully defensive: any
+    failure returns an empty calendar with an error note, never raises."""
+    today = now.date()
+    tomorrow = today + timedelta(days=1)
+    result = {"source": FF_URL, "filter": "country=USD, impact=High",
+              "today_date": str(today), "tomorrow_date": str(tomorrow),
+              "today": [], "tomorrow": []}
+    raw, note = None, None
+
+    cached = None
+    try:
+        if FF_CACHE.exists():
+            cached = json.loads(FF_CACHE.read_text())
+    except Exception:
+        cached = None
+    if cached:
+        age_h = (now.timestamp() - cached.get("fetched_at_ts", 0)) / 3600
+        if age_h < FF_TTL_HOURS:
+            raw, note = cached["data"], f"cache hit ({age_h:.1f}h old)"
+
+    if raw is None:
+        try:
+            req = urllib.request.Request(FF_URL, headers={
+                "User-Agent": "Mozilla/5.0 (zenith premarket scan)"})
+            with urllib.request.urlopen(req, timeout=30) as r:
+                raw = json.load(r)
+            SCANS.mkdir(exist_ok=True)
+            FF_CACHE.write_text(json.dumps(
+                {"fetched_at": now.isoformat(),
+                 "fetched_at_ts": now.timestamp(), "data": raw}))
+            note = "live fetch"
+        except Exception as e:
+            if cached:
+                raw = cached["data"]
+                note = (f"live fetch failed ({str(e)[:80]}); using stale "
+                        f"cache from {cached.get('fetched_at', '?')}")
+            else:
+                result["error"] = f"feed unavailable: {str(e)[:120]}"
+                step(f"econ calendar FAILED: {result['error']}")
+                return result
+
+    try:
+        for ev in raw:
+            if ev.get("country") != "USD" or ev.get("impact") != "High":
+                continue
+            try:
+                dt = datetime.fromisoformat(ev["date"]).astimezone(ET)
+            except Exception:
+                continue
+            rec = {"time_et": dt.strftime("%I:%M %p").lstrip("0"),
+                   "title": ev.get("title", ""),
+                   "forecast": ev.get("forecast", ""),
+                   "previous": ev.get("previous", ""), "_dt": dt}
+            if dt.date() == today:
+                result["today"].append(rec)
+            elif dt.date() == tomorrow:
+                result["tomorrow"].append(rec)
+        for k in ("today", "tomorrow"):
+            result[k].sort(key=lambda r: r.pop("_dt"))
+        result["note"] = note
+    except Exception as e:
+        result["error"] = f"parse failed: {str(e)[:120]}"
+    step(f"econ calendar: {len(result['today'])} today, "
+         f"{len(result['tomorrow'])} tomorrow ({note})")
+    return result
+
+
+# ------------------------------------------------------------- enrichment
+
+def yf_profile(sym):
+    """Market cap, company name, next earnings date via yfinance."""
+    cap = name = earn = None
+    if yf is None:
+        return cap, name, earn
+    try:
+        t = yf.Ticker(sym)
+        try:
+            cap = t.fast_info["market_cap"]
+        except Exception:
+            cap = None
+        try:
+            info = t.info
+            name = info.get("shortName") or info.get("longName")
+            cap = cap or info.get("marketCap")
+        except Exception:
+            pass
+        try:
+            cal = t.calendar or {}
+            dates = cal.get("Earnings Date") or []
+            if dates:
+                earn = str(dates[0])
+        except Exception:
+            pass
+    except Exception as e:
+        step(f"yfinance profile {sym} failed: {e}")
+    return cap, name, earn
+
+
+def alpaca_levels(syms, now, today):
+    """Live intraday levels from Alpaca 5-min bars (premarket included):
+    VWAP, HOD, LOD, premarket high, premarket volume, today's open."""
+    out = {s: {} for s in syms}
+    try:
+        start = now.replace(hour=4, minute=0, second=0, microsecond=0)
+        bars = get_bars(syms, "5Min", start)
+        open_t = now.replace(hour=9, minute=30, second=0, microsecond=0)
+        for s in syms:
+            bs = [b for b in bars.get(s, []) if b["t"].date() == today]
+            if not bs:
+                continue
+            pmb = [b for b in bs if b["t"] < open_t]
+            reg = [b for b in bs if b["t"] >= open_t]
+            vol = sum(b["v"] for b in bs)
+            out[s] = {
+                "vwap": round(sum(b.get("vw", b["c"]) * b["v"] for b in bs)
+                              / vol, 2) if vol else None,
+                "premarket_high": round(max(b["h"] for b in pmb), 2) if pmb else None,
+                "premarket_volume": int(sum(b["v"] for b in pmb)),
+                "hod": round(max(b["h"] for b in reg), 2) if reg else None,
+                "lod": round(min(b["l"] for b in reg), 2) if reg else None,
+                "today_open": round(reg[0]["o"], 2) if reg else None,
+            }
+    except Exception as e:
+        step(f"intraday levels failed: {e}")
+    return out
+
+
+def alpaca_daily(syms, now, today):
+    """Daily metrics from 1y of bars, excluding today's partial bar:
+    SMA200, prior-day high, prior close, 20-day average volume."""
+    out = {s: {} for s in syms}
+    try:
+        daily = get_bars(syms, "1Day", now - timedelta(days=380))
+        for s in syms:
+            done = [b for b in daily.get(s, []) if b["t"].date() < today]
+            if not done:
+                continue
+            closes = [b["c"] for b in done]
+            out[s] = {
+                "sma200": round(sum(closes[-200:]) / 200, 2)
+                          if len(closes) >= 200 else None,
+                "prior_day_high": round(done[-1]["h"], 2),
+                "prior_close": round(done[-1]["c"], 2),
+                "avg_vol_20d": int(sum(b["v"] for b in done[-20:])
+                                   / min(20, len(done))),
+                "today_volume_daily": None,
+            }
+        # today's partial daily bar gives full-day volume so far
+        for s, bs in daily.items():
+            todays = [b for b in bs if b["t"].date() == today]
+            if todays and s in out and out[s]:
+                out[s]["today_volume_daily"] = int(todays[-1]["v"])
+    except Exception as e:
+        step(f"daily metrics failed: {e}")
+    return out
+
+
+def alpaca_pm_rvol(syms, now, today):
+    """TRUE premarket RVOL: today's premarket volume so far vs the 20-day
+    average premarket volume at the same clock time, from 15-min bars.
+    This is the Alpaca advantage: yfinance reports about 0 premarket
+    volume, so a true premarket RVOL needs a premarket feed like this
+    one; full-day relative volume is the keyless stand-in."""
+    out = {s: None for s in syms}
+    try:
+        clock_cap = min(now.time(),
+                        now.replace(hour=9, minute=30).time())
+        pm_open = now.replace(hour=4, minute=0).time()
+        if clock_cap <= pm_open:
+            return out  # before 04:00 ET there is no premarket volume yet
+        bars = get_bars(syms, "15Min", now - timedelta(days=30))
+        for s in syms:
+            per_day = {}
+            for b in bars.get(s, []):
+                bt = b["t"]
+                if pm_open <= bt.time() < clock_cap:
+                    per_day[bt.date()] = per_day.get(bt.date(), 0) + b["v"]
+            hist = [v for d, v in sorted(per_day.items()) if d < today][-20:]
+            today_v = per_day.get(today, 0)
+            if hist and sum(hist):
+                out[s] = round(today_v / (sum(hist) / len(hist)), 2)
+    except Exception as e:
+        step(f"premarket rvol failed: {e}")
+    return out
+
+
+def alpaca_news(syms):
+    """Per-ticker headlines from Alpaca news (Benzinga), already
+    ticker-tagged by the feed so no name matching needed."""
+    out = {s: [] for s in syms}
+    try:
+        news = get(f"{DATA}/v1beta1/news",
+                   {"symbols": ",".join(syms), "limit": 50})
+        for item in news.get("news", []):
+            for s in item.get("symbols", []):
+                if s in out and len(out[s]) < 4:
+                    out[s].append({"title": item.get("headline", ""),
+                                   "source": item.get("source", "benzinga"),
+                                   "published": item.get("created_at", ""),
+                                   "n_symbols": len(item.get("symbols", []))})
+    except Exception as e:
+        step(f"alpaca news failed: {e}")
+    return out
+
+
+# ------------------------------------------------------------------- main
+
+def main():
+    now = datetime.now(ET)
+    today = now.date()
+    use_alpaca = "--no-alpaca" not in sys.argv
+    if use_alpaca:
+        try:
+            load_env()
+        except SystemExit as e:
+            step(f"alpaca unavailable ({e}); falling back to keyless path")
+            use_alpaca = False
+
+    gaps_to_fill = [
+        "market-wide earnings calendar is only partial: next earnings "
+        "dates come per gapper, there is no full day-by-day earnings list",
+        "intraday levels (VWAP/HOD/LOD/PMH) need intraday bars and are "
+        "only available on the Alpaca path",
+        "premarket RVOL: yfinance reports about 0 premarket volume, so a "
+        "true premarket RVOL needs a premarket feed (Alpaca supplies it "
+        "here); on the keyless path full-day RVOL is the stand-in",
+    ]
+
+    step("1/6 market snapshot")
+    snapshot = market_snapshot()
+
+    step("2/6 candidates")
+    rows, source = (None, "alpaca disabled")
+    if use_alpaca:
+        try:
+            rows, source = candidates_alpaca(now, today)
+        except Exception as e:
+            rows, source = None, f"alpaca candidates failed: {e}"
+            step(source)
+    if rows is None or len(rows) < 5:
+        rows2, source2 = candidates_yf()
+        if rows2 and len(rows2) >= 5:
+            rows, source = rows2, source2
+        elif rows is None:
+            rows, source = rows2, source2
+    if not rows:
+        rows, source = candidates_static()
+        rows = rows or []
+    step(f"candidates: {len(rows)} from {source}")
+
+    # gap filter: abs gap >= 3 (day rule needs >3, so do not starve it),
+    # price >= $3, top 12 by absolute gap
+    movers = [r for r in rows
+              if abs(r["gap_pct"]) >= GAP_MIN and r["price"] >= PRICE_MIN]
+    movers.sort(key=lambda r: -abs(r["gap_pct"]))
+    movers = movers[:TOP_N]
+    syms = [r["symbol"] for r in movers]
+    step(f"gap filter: {len(movers)} gappers kept: {', '.join(syms) or 'none'}")
+
+    step("3/6 market news (rss)")
+    rss_items, rss_err = fetch_rss()
+    if rss_err:
+        gaps_to_fill.append(f"market news unavailable: {rss_err}")
+
+    step("4/6 econ calendar")
+    econ = econ_calendar(now)
+
+    step("5/6 per-gapper enrichment")
+    levels = alpaca_levels(syms, now, today) if (use_alpaca and syms) else {}
+    dailym = alpaca_daily(syms, now, today) if (use_alpaca and syms) else {}
+    pm_rvol = alpaca_pm_rvol(syms, now, today) if (use_alpaca and syms) else {}
+    a_news = alpaca_news(syms) if (use_alpaca and syms) else {}
+
+    gappers = []
+    for i, r in enumerate(movers):
+        s = r["symbol"]
+        cap, name, earn = yf_profile(s)
+        cap = cap or r.get("market_cap")
+        name = name or r.get("name")
+        lv = levels.get(s) or {}
+        dm = dailym.get(s) or {}
+
+        tick_re, tokens = name_matchers(s, name)
+        headlines = list(a_news.get(s) or [])
+        headlines += match_headlines(rss_items, tick_re, tokens)
+        headlines = rank_headlines(headlines, tick_re, tokens)[:5]
+        catalyst_found = bool(headlines)
+
+        pm_vol = lv.get("premarket_volume")
+        if pm_vol is None:
+            pm_vol = r.get("premarket_volume")
+        today_vol = dm.get("today_volume_daily") or r.get("volume")
+        rvol_full = (round(today_vol / dm["avg_vol_20d"], 2)
+                     if today_vol and dm.get("avg_vol_20d") else None)
+        rvol_pm = pm_rvol.get(s)
+        rvol_used = rvol_pm if rvol_pm is not None else rvol_full
+
+        # before 09:30 there is no official open: the latest premarket
+        # price stands in for it (noted in scan_params)
+        open_proxy = lv.get("today_open") or r["price"]
+        prior_high = dm.get("prior_day_high")
+        sma200 = dm.get("sma200")
+        gap = r["gap_pct"]
+
+        day_checks = {
+            "gap_gt_3": gap > 3,
+            "price_gt_3": r["price"] > 3,
+            "mcap_gt_1b": bool(cap and cap > 1_000_000_000),
+            "rvol_gt_1.5": bool(rvol_used and rvol_used > 1.5),
+            "price_above_prior_high": bool(prior_high and r["price"] > prior_high),
+            "prev_close_above_sma200": bool(sma200 and dm.get("prior_close")
+                                            and dm["prior_close"] > sma200),
+        }
+        swing_checks = {
+            "gap_ge_8": gap >= 8,
+            "price_gt_3": r["price"] > 3,
+            "open_above_prior_high": bool(prior_high and open_proxy > prior_high),
+            "open_above_sma200": bool(sma200 and open_proxy > sma200),
+            "mcap_ge_800m": bool(cap and cap >= 800_000_000),
+            "catalyst_found": catalyst_found,
+        }
+
+        gappers.append({
+            "rank": i + 1, "symbol": s, "name": name,
+            "price": r["price"], "prev_close": r["prev_close"],
+            "gap_pct": gap, "market_cap": cap,
+            "premarket_volume": pm_vol, "today_volume": today_vol,
+            "rvol_premarket": rvol_pm, "rvol_fullday": rvol_full,
+            "vwap": lv.get("vwap"), "premarket_high": lv.get("premarket_high"),
+            "hod": lv.get("hod"), "lod": lv.get("lod"),
+            "today_open": lv.get("today_open"),
+            "sma200": sma200, "prior_day_high": prior_high,
+            "prior_close": dm.get("prior_close"),
+            "avg_vol_20d": dm.get("avg_vol_20d"),
+            "next_earnings": earn,
+            "catalyst_found": catalyst_found,
+            "catalyst": headlines[0]["title"] if headlines else None,
+            "headlines": headlines,
+            "day_checks": day_checks,
+            "day_eligible": all(day_checks.values()),
+            "swing_checks": swing_checks,
+            "swing_eligible": all(swing_checks.values()),
+        })
+        step(f"  {s}: gap {gap:+.1f}%  day={all(day_checks.values())} "
+             f"swing={all(swing_checks.values())} catalyst={catalyst_found}")
+
+    step("6/6 writing packet")
+    in_premarket = (now.replace(hour=4, minute=0) <= now
+                    < now.replace(hour=9, minute=30))
+    packet = {
+        "generated_at": now.isoformat(),
+        "candidate_source": source,
+        "trading_day_note": (
+            f"{now:%A %Y-%m-%d %H:%M} ET; "
+            + ("inside the 04:00-09:30 premarket window"
+               if in_premarket else
+               "OUTSIDE the premarket window: levels and gaps reflect "
+               "the full session so far, not a live premarket read")
+            + ("; weekend, stale data" if now.weekday() >= 5 else "")),
+        "scan_params": {
+            "gap_filter_abs_pct": GAP_MIN, "price_min": PRICE_MIN,
+            "top_n": TOP_N,
+            "open_note": "before 09:30 ET the latest premarket price "
+                         "stands in for the official open in swing checks",
+        },
+        "criteria": {
+            "day_trading": "Trend Join Long selection: gap > 3% vs prev "
+                           "close, price > $3, market cap > $1B, premarket "
+                           "RVOL > 1.5, price above prior-day high, prev "
+                           "close above 200-day SMA. Execution per "
+                           "TRADING-STRATEGY.md 2b: trigger over PMH + "
+                           "prior HOD 10:00-15:30 ET, stop = signal bar "
+                           "low, 3R bracket, flat 15:55.",
+            "swing": "Gap >= 8%, price > $3, open above prior-day high, "
+                     "open above 200-day SMA, market cap >= $800M, and a "
+                     "real catalyst (earnings on gap day, or news with no "
+                     "earnings). Starter ideas only, swing management is "
+                     "still being built.",
+        },
+        "market_snapshot": snapshot,
+        "econ_calendar": econ,
+        "gappers": gappers,
+        "market_news": rss_items[:20],
+        "gaps_to_fill": gaps_to_fill,
+    }
+    save_json(SCANS / f"packet_{today}.json", packet)
+    step(f"done: {len(gappers)} gappers, "
+         f"{len(econ.get('today', []))} econ events today, "
+         f"{len(rss_items[:20])} market headlines")
+
+
+if __name__ == "__main__":
+    main()

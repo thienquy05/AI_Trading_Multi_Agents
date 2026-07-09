@@ -1,0 +1,47 @@
+{
+  "scanned_at": "2026-07-09T12:51:25.956034-04:00",
+  "candidates_checked": 10,
+  "hits": [],
+  "all_results": [
+    {
+      "symbol": "VRAX",
+      "result": "fail_daily"
+    },
+    {
+      "symbol": "JLHL",
+      "result": "fail_daily"
+    },
+    {
+      "symbol": "LASC",
+      "result": "fail_daily"
+    },
+    {
+      "symbol": "TRAX",
+      "result": "fail_daily"
+    },
+    {
+      "symbol": "PTLE",
+      "result": "fail_daily"
+    },
+    {
+      "symbol": "AEHG",
+      "result": "fail_daily"
+    },
+    {
+      "symbol": "LASR",
+      "result": "fail_intraday"
+    },
+    {
+      "symbol": "SDOT",
+      "result": "fail_daily"
+    },
+    {
+      "symbol": "LITU",
+      "result": "fail_daily"
+    },
+    {
+      "symbol": "MRAL",
+      "result": "fail_daily"
+    }
+  ]
+}

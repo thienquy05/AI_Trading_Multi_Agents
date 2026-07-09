@@ -5,6 +5,7 @@ and quotes can lag SIP slightly. Fine for scanning; noted in reports.
 """
 import json
 import os
+import re
 import subprocess
 import time
 import urllib.parse
@@ -133,7 +134,9 @@ def resolve_universe(cli_tickers=None):
       1. explicit CLI override (manual testing)
       2. today's research watchlist (scans/watchlist_<date>.json), written
          by the premarket workflow from that morning's picked trade ideas
-      3. latest premarket gappers scan, top 10 by gap %
+      3. latest premarket scan — packet_*.json (scan_premarket.py, current)
+         or premarket_gappers_*.json (scan_gappers.py, legacy), whichever
+         is dated newest — top 10 by absolute gap %
       4. empty — caller must handle "no candidates today" cleanly
     Returns (symbols, source_label)."""
     if cli_tickers:
@@ -144,10 +147,18 @@ def resolve_universe(cli_tickers=None):
         syms = json.loads(wl.read_text()).get("symbols", [])
         if syms:
             return syms, f"today's research watchlist ({wl.name})"
-    gapper_files = sorted(SCANS.glob("premarket_gappers_*.json"))
-    if gapper_files:
-        g = json.loads(gapper_files[-1].read_text()).get("gappers", [])
+    dated = re.compile(r"(\d{4}-\d{2}-\d{2})")
+    scan_files = sorted(
+        list(SCANS.glob("packet_*.json"))
+        + list(SCANS.glob("premarket_gappers_*.json")),
+        # date in the filename decides recency; packet wins a same-day tie
+        key=lambda p: (dated.search(p.name).group(1) if dated.search(p.name)
+                       else "", p.name.startswith("packet_")))
+    if scan_files:
+        f = scan_files[-1]
+        g = json.loads(f.read_text()).get("gappers", [])
+        g = sorted(g, key=lambda r: -abs(r.get("gap_pct", 0)))
         syms = [r["symbol"] for r in g][:10]
         if syms:
-            return syms, f"latest gappers scan ({gapper_files[-1].name})"
-    return [], "no watchlist or gappers scan available"
+            return syms, f"latest premarket scan ({f.name})"
+    return [], "no watchlist or premarket scan available"

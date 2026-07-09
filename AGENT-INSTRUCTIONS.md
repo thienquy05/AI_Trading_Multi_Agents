@@ -313,28 +313,26 @@ fetch live data, so every workflow run regenerates it:
   `TELEGRAM_CHAT_ID` must be set in the Claude Code environment
   configuration. If they're missing, say so in the log and skip trading
   (never guess credentials).
-- **Push directly to `master`** — standing authorization from Quy
-  (2026-07-08): the agent is in the branch-protection bypass group, and
-  Quy has explicitly authorized every routine run to push its log/scan
-  commits straight to `master` without asking. This overrides any
+- **Land routine commits via auto-merge PR, never a direct push to
+  `master`** — standing authorization from Quy (2026-07-08, revised
+  2026-07-09 for safety): every routine run lands its log/scan commits
+  through a pull request, without asking. This overrides any
   per-session "develop on branch claude/..." default the harness
-  assigns. At the end of each run: commit on the current checkout, then
-  try `git push origin HEAD:master` (retry with backoff on network
-  errors only). If the ruleset rejects it (GH013 "Changes must be made
-  through a pull request" — the bypass doesn't yet cover this app's
-  credential), land it via auto-merged PR instead, still without
-  asking: `git push -u origin <session-branch>`, then GitHub MCP
+  assigns. At the end of each run: commit on the current checkout,
+  push the branch (`git push -u origin <session-branch>`, retry with
+  backoff on network errors only), then GitHub MCP
   `create_pull_request` (base `master`) followed immediately by
-  `merge_pull_request` — verified to complete with no approval needed.
-  If the merge tool is unavailable or fails, leave the branch pushed
-  and flag it in the Telegram summary. Never force-push to `master`;
-  if a push is rejected non-fast-forward,
-  `git pull --rebase origin master` and push again. This applies only to
-  routine log/scan/research commits — code or strategy changes still go
-  through a branch + PR.
+  `enable_pr_auto_merge` (squash) so it lands as soon as required
+  checks pass — no manual approval needed, but branch protection and
+  any CI still gate the merge. If `enable_pr_auto_merge` is unavailable
+  or fails, leave the PR open and flag it in the Telegram summary
+  instead of force-merging. Never force-push to `master`; if a push is
+  rejected non-fast-forward, `git pull --rebase origin master` and push
+  again. This applies to routine log/scan/research commits; code or
+  strategy changes go through the same branch + auto-merge PR flow.
 - **Sessions are ephemeral.** Anything not committed + pushed is lost
-  when the container is reclaimed. Every workflow ends with a push to
-  `master`.
+  when the container is reclaimed. Every workflow ends with a branch
+  push and an auto-merge PR into `master`.
 - **Cron is UTC, schedule is ET.** Current Routines assume EDT (UTC-4):
   Morning Brief 09:00, Pre-Market 11:00, Open 13:30, TJL 14:30–18:30
   at :30, Midday 17:00, Summary 20:00 UTC. In early November (DST

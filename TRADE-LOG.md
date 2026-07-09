@@ -88,3 +88,18 @@ a new dated line.
 - Lesson: day-TIF bracket legs silently expire at the close — treat
   "stop is on" as a per-session fact to re-verify, not a set-and-forget
   one, for any position meant to survive overnight.
+
+### 2026-07-09 07:14 ET — stop re-armed on AAPL (risk-management action)
+- Confirmed via `orders open` (empty) that AAPL's day-TIF bracket
+  stop/target from 2026-07-08 had expired at the prior close, leaving
+  the 1-share position with no protective stop overnight — a hard-rule
+  violation ("every position gets a stop set immediately").
+- Action: placed a standalone GTC stop, AAPL qty 1 @ stop $300 (same
+  level as the original bracket's 1R), order id
+  `7709c58e-aeda-4d01-9c5e-765d354a4af8`, status pending_new. No
+  resting 3R take-profit currently (original target leg also expired
+  and was not re-created — informational only, not a full re-bracket).
+- Guardrail/honesty note: this is the confessed fix for yesterday's
+  flagged gap, done at the 7:00 AM pre-market run rather than waiting
+  for the 9:30 AM open, since the position was unprotected in the
+  interim.

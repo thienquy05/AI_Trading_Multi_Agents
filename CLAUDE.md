@@ -44,9 +44,8 @@ This project is token-sensitive. Keep sessions lean:
   hourly TJL watches stay silent unless a trade was placed. Save
   tokens on file reads and tool calls, not on the briefs.
 - Commit + push log changes at the end of each run, one commit, landed
-  on `master` automatically without asking — direct push, or
-  self-merged PR if the ruleset rejects it. Quy's standing
-  authorization (2026-07-08); exact procedure in `AGENT-INSTRUCTIONS.md`
-  Gotchas. The
+  on `master` via an auto-merge pull request, without asking. Quy's
+  standing authorization (2026-07-08, revised 2026-07-09 for safety);
+  exact procedure in `AGENT-INSTRUCTIONS.md` Gotchas. The
   dashboard is regenerated and republished as an Artifact every run but
   is gitignored — it's worked on locally, never committed.

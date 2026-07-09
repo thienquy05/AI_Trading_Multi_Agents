@@ -141,3 +141,43 @@ Append at the BOTTOM, one entry per pre-market run.
   2. Memory/semi complex (MU, LRCX, KLAC) — Asia chip rally (SK Hynix
      IPO oversubscription, KOSPI/Nikkei up) is spilling into US names
      sympathetically; same watch as 7/8, still no gap trigger.
+
+## 2026-07-09 — strategy research (special entry, Quy's request — not a pre-market run)
+- Task: enhance TRADING-STRATEGY.md with verified expert/academic
+  evidence + full performance metrics (win rate, Sharpe, Sortino, PF,
+  expectancy, max DD). Quy may mirror trades with real money later, so
+  the bar was: primary/peer-reviewed sources, 2-source verification,
+  honest small-sample caveats.
+- Verification method: SSRN blocks direct fetch → every paper's numbers
+  cross-checked across ≥2 independent write-ups (QuantConnect, CXO
+  Advisory, Robust Trader, Quantpedia, Concretum/authors' own site).
+- Sources verified & adopted into §7 evidence table:
+  1. Zarattini & Aziz 2023 (SSRN 4416622) — 5-min ORB on QQQ 2016–23:
+     +675% net, Sharpe 1.12, alpha 33%. Validates TJL's momentum
+     bracket/EoD-exit template.
+  2. Zarattini, Barbon & Aziz 2024 (SSRN 4729284) — ORB on top-20
+     "Stocks in Play": +1,600% net, Sharpe 2.81, hit ratio ~43%,
+     convex payoff. → proposed §2d-R1 relative-volume TJL filter
+     (backtest-gated, per Quy's decision).
+  3. Lempérière et al. / Moskowitz-Ooi-Pedersen — trend following
+     Sharpe ~0.4 across 67 markets / 137 yrs, positive every decade;
+     TSMOM positive in all 58 futures. Validates C-TJL Donchian-55.
+  4. Faber (SSRN 962461) — 200d-SMA filter cuts max DD 46%→<10%.
+     Validates the BTC>SMA200 regime gate.
+  5. Kaminski & Lo (J. Fin. Markets) — stops add value ONLY in
+     momentum regimes. Validates our hard stops; also validates NOT
+     using stops on Quy's buy-and-hold Robinhood core (§5 trims).
+  6. Base-rate studies: Brazil (Chague et al.: 97% of persistent day
+     traders lose) + Taiwan (Barber et al.: <1% reliably profitable).
+     Adopted as §7d real-money warning.
+  7. FVG/gap-retest evidence reviewed and graded WEAK (practitioner
+     claims only, one falsification study against) — §2 gap setup now
+     explicitly flagged; §2d-R2 quality filter proposed.
+- New tooling: scripts/strategy_metrics.py (win rate, PF, expectancy +
+  95% bootstrap CI, max DD, per-trade & annualized Sharpe/Sortino).
+  Measured: TJL 32.5% WR / PF 1.15 / ann. Sharpe ~0.78; C-TJL 39.0% WR
+  / PF 1.50 / ann. Sharpe ~0.92 / Sortino ~2.0. BOTH expectancy CIs
+  include 0 — edge not statistically confirmed yet; recorded in §7b
+  and in the real-money warning.
+- Not adopted (rejected/deferred): immediate rule changes (Quy chose
+  backtest-gated adoption); FVG zone geometry as a standalone edge.

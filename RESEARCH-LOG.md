@@ -72,3 +72,72 @@ Append at the BOTTOM, one entry per pre-market run.
 - Sizing: 0.25% equity risk/trade during the live paper gate (≥15
   trades or 8 open-gate weeks, expectancy ≥0R), then 0.5%. Caps: 2
   concurrent crypto positions, 20% sleeve notional, 10% per position.
+
+## 2026-07-09 — pre-market
+- Account: equity $100,002.04 | cash $99,689.52 | open positions: AAPL
+  1@$310.47 (current $312.52, uP&L +$2.05/+0.66%). **Stop-loss gap
+  found and fixed this run**: yesterday's AAPL bracket used day-TIF
+  stop/target legs that expired at the 20:00 UTC close, leaving the
+  position unprotected overnight (`orders open` returned `[]`). Placed
+  a standalone GTC stop at $300 (same level as the original 1R) —
+  order `7709c58e...`, pending_new. Lesson carried to today: any
+  position meant to survive past the session needs a GTC (not day)
+  stop re-armed explicitly.
+- Gappers scan: 0 names (>5%/$3/50k premarket filters) — quiet
+  premarket, cross-checked against general market scanners
+  (TradingView/Barchart/stockanalysis.com), which show only
+  illiquid/low-float names with no verifiable catalyst. No gap
+  candidates today.
+- Macro/calendar (today 2026-07-09, ET): Initial Jobless Claims 8:30 AM
+  (~218K forecast vs 215K prior); Existing Home Sales later in the
+  session; Treasury 6-Week & 13/26-Week Bill auctions + a 30-Year bond
+  auction today (tail end of this week's $119B note/bond slate — 3-yr
+  Tue, 10-yr Wed, 30-yr today). Fed speakers this week: Gov. Waller
+  (ECB Research Network conf., Rome) and Vice Chair Bowman. **No
+  tier-1 event today** — no CPI/PPI/FOMC decision/NFP this week (June
+  FOMC minutes already released yesterday 7/8); no §3b event blackout
+  window in effect today.
+- Earnings: PepsiCo (PEP) reports pre-market today, ~6:00 AM materials
+  / 8:15 AM analyst call, consensus EPS $2.21 (PepsiCo IR — primary
+  source). ~13 companies report today, 7 tomorrow incl. Delta (DAL)
+  pre-market Fri 7/10 (EPS est. $1.47). AAPL next earnings 7/30 (not
+  within 24h — no flag). NVDA: no imminent date found. ORCL: next
+  earnings ~9/14 (not within 24h). No held/candidate name is inside
+  the 24h no-entry window today.
+- Market tone: S&P futures +0.1–0.3%, Nasdaq-100 futures +0.5%, Dow
+  flattish; VIX ~16.1–17.5 (up slightly). Yesterday (7/8): S&P -0.3%,
+  Dow -1.5%, Nasdaq-100 +0.3% — mixed/narrow breadth (NYSE advancers
+  led 1.3:1, Nasdaq decliners led 1.55:1). Sector leaders yesterday:
+  Tech (XLK +1.7%), Energy (oil >$75/bbl on renewed Iran tension);
+  laggards: Health Care, Staples, Utilities (all ~-1%). Overnight
+  mover: KOSPI +3.7%/Nikkei +1.65% on SK Hynix's oversubscribed (7x)
+  $28B Nasdaq IPO (ADR ticker SKHY, debuts Fri 7/10) — Samsung +4%,
+  Kioxia +8%, sympathy across the memory/equipment complex. Overhang:
+  Trump said the Iran ceasefire was "over" — oil and yields up on the
+  headline risk.
+- Crypto regime: **BEAR** (BTC prev daily close $62,244.95 < daily
+  SMA200 $74,356.29) — sleeve stands down, no entries
+  (`scan_crypto.py --no-telegram`, no PASS candidates even if regime
+  were open). BTC ~$62.4k -1.7% 24h, ETH ~$1,733 -2.3%, SOL ~$77-81
+  -5.2% (SOL the laggard) — broad ~-2% crypto-mcap risk-off tracking
+  the Iran-tension move in oil/yields, no crypto-specific catalyst
+  found.
+- Extra-watch (BTC/ETH/SOL/NVDA/ORCL): BTC/ETH/SOL — quiet on
+  name-specific news, just the broad risk-off drag above. NVDA — quiet,
+  live $204.14 (prev close $204.12, flat); sector chip volatility is
+  Asia-IPO-driven, nothing NVDA-specific. ORCL — quiet, live $140.55
+  (prev close $140.49, flat).
+- Ideas (2–3): **none met the §4 filter** — 0 premarket gappers, no
+  verified >5% gap-with-catalyst anywhere on a cross-check, and the
+  crypto sleeve is regime-gated flat. Not forcing a trade into a quiet,
+  catalyst-light tape (PEP earnings and the Treasury auctions are the
+  session's only real events, neither is a gap setup). No new entries
+  planned at the open.
+- Watching but not trading:
+  1. Energy sector (XLE/XOM/CVX) — real, verified catalyst (oil >$75 on
+     Iran-ceasefire breakdown, sector led gains yesterday) but no
+     defined gap entry yet; seeding for TJL trend-join if a name
+     breaks to new highs intraday.
+  2. Memory/semi complex (MU, LRCX, KLAC) — Asia chip rally (SK Hynix
+     IPO oversubscription, KOSPI/Nikkei up) is spilling into US names
+     sympathetically; same watch as 7/8, still no gap trigger.

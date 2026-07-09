@@ -138,6 +138,50 @@ Alpaca paper crypto: 24/7, long-only, fractional, **no bracket orders**.
 - Re-run `backtest_crypto.py` monthly (and at every regime flip) and
   record the result in `WEEKLY-REVIEW.md`.
 
+## 2d. Rule upgrades from the §7 research (validation results)
+
+Added 2026-07-09 from the expert-source research in §7; validated the
+same day per Quy's backtest-gated-adoption decision — evidence from
+papers is a reason to test, not a reason to trade. Outcome: **R1
+rejected by backtest, R2 adopted as a conservative pre-filter** pending
+its live-sample review.
+
+- **R1 — TJL "stock in play" filter: TESTED 2026-07-09 → REJECTED.**
+  Proposal was: TJL entries require relative volume ≥ 1.5–2× the
+  14-session same-minute average (source: SSRN 4729284, §7). The gate
+  was run (`backtest_tjl.py --rvol`, AMD/NVDA/MU, 6mo, same window as
+  baseline) and the filter FAILED it badly: baseline 84 trades / PF 1.20
+  / +11.0R vs rvol≥1.5× 14 trades / PF 0.24 / −9.3R and rvol≥2× 7
+  trades / PF 0.50 / −3.0R. Interpretation: the paper's in-play edge is
+  about *universe selection* (scanning the whole market each morning
+  for elevated-volume news names — which our gappers-scan→watchlist
+  flow already does), not an intraday volume gate on names that are
+  already liquid; on mega-caps, mid-session volume spikes mark chaos,
+  not follow-through. IEX-only volume (undercounted, per Gotchas) also
+  makes the ratio noisy. Verdict: **not adopted** — the in-play concept
+  stays implemented at the universe level, where it already lives. The
+  `--rvol` flag stays in `backtest_tjl.py` for future re-tests on
+  watchlist-style universes. Full records:
+  `scans/backtest_tjl_2026-01-10_2026-07-09*.json`.
+- **R2 — gap setup quality filter: still pending (needs live samples).**
+  A §2 gap setup is tradeable only on a **catalyst-confirmed,
+  high-relative-volume gap** (≥3× relative volume or a named news
+  catalyst); no-news, low-volume gaps are skipped. Source:
+  gap-continuation research (§7) — follow-through concentrates in
+  catalyst+volume gaps; quiet gaps tend to fade. **Gate**: log every §2
+  setup taken/skipped with its volume+catalyst state for 20+ setups,
+  then compare. Cannot be backtested today — there is no §2 gap-setup
+  backtester and zero live §2 trades yet (checked 2026-07-09). Since
+  R2 only *restricts* entries (never adds risk) and §4 already demands
+  a catalyst, it is applied as a **conservative pre-filter effective
+  immediately**, with the formal keep/drop decision after 20 logged
+  setups.
+- **Honesty note on §2 itself**: the gap-zone/retest entry is the
+  component with the *weakest* external evidence (§7 grades it weak —
+  practitioner claims only, no peer-reviewed support). Until we have our
+  own §2 trade sample, the §4 catalyst filter and the 3R/1R bracket are
+  what carry that strategy, not the zone geometry.
+
 ## 3. Risk & portfolio rules
 
 - Max **1% of equity risked per trade**; max **4 concurrent positions**;
@@ -275,6 +319,107 @@ payload.
   one change to test next week → `WEEKLY-REVIEW.md`.
 - Any rule change gets recorded here with a date and a one-line reason.
 
+## 7. Evidence base & measured performance (added 2026-07-09)
+
+Why each rule earns its place, what the published evidence says, and
+what OUR OWN backtests actually measure. Verification method: SSRN
+blocks direct fetching, so every paper's numbers were cross-checked
+across at least two independent write-ups (QuantConnect, CXO Advisory,
+Robust Trader, Quantpedia, the authors' own Concretum site) before being
+cited here — same two-source rule we apply to trade catalysts.
+
+### 7a. Metric definitions (plain language)
+
+- **Win rate**: % of trades that close positive. Low win rate is FINE if
+  winners are big — our whole design is ~35–40% win rate × 3R winners.
+- **Expectancy**: average R earned per trade. +0.30R means a typical
+  trade nets +0.30× the dollars risked. Positive expectancy is the edge;
+  everything else is decoration.
+- **Profit factor (PF)**: gross wins ÷ gross losses. >1 profitable,
+  ~1.5 solid for a retail system, >2 suspicious (usually overfit).
+- **Sharpe ratio**: return per unit of volatility. Rule of thumb: <0.5
+  weak, ~1 good, ~2 excellent, >3 almost never real out-of-sample. We
+  compute it per-trade on R-multiples and annualize by √(trades/year).
+- **Sortino ratio**: Sharpe but only penalizing downside volatility —
+  kinder to strategies with big winners (like 3R/1R), which Sharpe
+  unfairly punishes for upside variance.
+- **Max drawdown (DD)**: worst peak-to-trough equity drop. In R units
+  here; multiply by risk-per-trade for the % hit (8.9R × 0.25% ≈ 2.2%).
+- **95% bootstrap CI on expectancy**: resample our own trades 10,000×;
+  if the interval includes 0, the sample can't statistically rule out
+  "no edge." Run `python3 scripts/strategy_metrics.py <backtest.json>`
+  to reproduce every number below.
+
+### 7b. Our measured numbers (as of 2026-07-09)
+
+| Metric | TJL (equities, 5-min, 6mo) | C-TJL (crypto, daily, 48mo) |
+|---|---|---|
+| Trades | 83 (~179/yr) | 77 (~28/yr) |
+| Win rate | 32.5% | 39.0% |
+| Avg win / avg loss | +2.34R / −0.99R | +2.33R / −0.99R |
+| Profit factor | 1.15 | 1.50 |
+| Expectancy | +0.097R/trade (+8.04R net) | +0.303R/trade (+23.34R net) |
+| Expectancy 95% CI | **[−0.25R, +0.47R] — includes 0** | **[−0.07R, +0.70R] — includes 0** |
+| Max drawdown | 10.1R | 8.9R |
+| Sharpe (annualized est.) | 0.78 | 0.92 |
+| Sortino (annualized est.) | 1.59 | 2.03 |
+
+**Read the CI row first.** Both sleeves are net positive with healthy
+Sortinos, but neither sample statistically excludes zero edge yet.
+That is exactly why sizing is small (0.25–1% risk) and why the §2c
+paper gate exists. The gap setup (§2) has NO backtest sample yet —
+zero measured statistics, evidence grade weak.
+
+### 7c. Evidence per component (source → verified stat → why we picked it)
+
+| Our rule | Expert source | Verified stat | Why it's in the book | Grade |
+|---|---|---|---|---|
+| Momentum breakout entries w/ bracket stops, EoD exit (TJL, §2b) | Zarattini & Aziz 2023, *Can Day Trading Really Be Profitable?* (SSRN 4416622) | 5-min ORB on QQQ 2016–23: +675% net (TQQQ +1,484%), Sharpe 1.12, alpha 33% | Peer-circulated proof that rule-based intraday momentum with hard stops beat buy-and-hold net of costs — the template TJL follows | Strong |
+| Catalyst + relative-volume selection (§4, §2d-R1) | Zarattini, Barbon & Aziz 2024, *A Profitable Day Trading Strategy for the US Equity Market* (SSRN 4729284) | ORB on top-20 "Stocks in Play": +1,600% net 2016–23, Sharpe 2.81, alpha 36%, hit ratio ~43% w/ convex payoff | The single biggest documented edge-multiplier: same entry, but only in high-relative-volume news names. Our gappers scan ≈ their stock-in-play screen | Strong |
+| Low win rate × 3R design (§1) | Same two papers + trend-following literature | Profitable at 35–43% win rates because avg win ≫ avg loss | Frees us from needing to predict; we need 1-in-3, not most, to be right. Matches our measured 32.5%/39% × +2.3R | Strong |
+| Donchian-55 breakout (C-TJL, §2c) | Lempérière et al. *Two Centuries of Trend Following*; Moskowitz, Ooi & Pedersen 2012 *Time Series Momentum* (J. Fin. Econ.) | Trend following: Sharpe ~0.4 avg across 67 markets 1880–2016, positive every decade; TSMOM positive in all 58 futures tested | Century-scale, every-asset-class evidence that breakout/trend entries have a real, persistent edge — the strongest-documented anomaly we use | Strong |
+| BTC > SMA200 regime gate (§2c) | Faber, *A Quantitative Approach to Tactical Asset Allocation* (SSRN 962461) | 10-mo (~200d) SMA filter: equity-like returns, max DD cut from 46% to <10%, net of costs | Cheapest known drawdown protection; our own 48-mo backtest agrees (gate cost ~4R, avoided the entire 2025–26 bear) | Strong |
+| Hard stops on every position (§1, §3) | Kaminski & Lo, *When Do Stop-Loss Rules Stop Losses?* (J. Fin. Markets 2014) | Stops ADD value in momentum regimes (+50–100bp/mo during stop-outs); they SUBTRACT value in mean-reversion/random-walk regimes | Our strategies are momentum-type — precisely the regime where the academic result says stops help. (Corollary: don't bolt stops onto DCA/value holdings like VOO — §5 correctly uses trims, not stops) | Strong |
+| Gap-zone retest entry (§2) | Practitioner only (edgeful YM-futures stats, ICT/FVG community; a 2026 MNQ falsification study found gap-fill fades fail at every tested entry) | Claimed 60%+ win rates WITH confluence; no peer-reviewed support; counter-evidence exists | Kept because it gives a natural stop (structure low) and pairs with §4 catalysts — but flagged: weakest link, backtest-gated (§2d) | **Weak** |
+| 1% risk cap, circuit breakers, guardrails (§3, §3b) | Brazil day-trader study (Chague et al., FGV: 97% of 300+-day day traders lose; 0.4% beat minimum wage); Taiwan 15-yr study (Barber et al.: <1% reliably profitable net of fees) | The base rate for discretionary day trading is catastrophic | The guardrails ARE the response to the base rate: the papers show blow-ups come from oversizing, revenge trading and no stops — the exact failure modes §3b bans | Strong |
+
+### 7d. Real-money warning (Quy — read before mirroring any trade)
+
+Quy has said he may mirror these trades with real money if the record
+earns trust. Conditions before that's reasonable, stated plainly:
+
+1. **The statistical bar isn't met yet.** Both sleeves' expectancy CIs
+   include zero (§7b). Mirroring now = betting on a promising but
+   unproven sample. Wait for the §2c paper gate (and a TJL equivalent:
+   ≥100 trades with CI > 0) before real dollars.
+2. **Paper fills are optimistic.** Alpaca paper assumes perfect fills at
+   quoted prices — no slippage, no partial fills, no borrow costs, no
+   queue position. Real results on identical signals WILL be worse;
+   budget ~0.1–0.3R/trade of degradation (that alone would currently
+   put TJL near zero).
+3. **The base rate is the enemy.** 97% of persistent day traders lost
+   money in the Brazil study; <1% were reliably profitable in Taiwan.
+   Assume we are not special until ≥100 live trades say otherwise.
+4. **If mirroring ever starts**: half the paper size for the first
+   month, only sleeves that passed their gates, never a trade that's
+   already moved past its entry zone, and every §3b guardrail applies
+   doubly. Never mirror the §2 gap setup until it has its own measured
+   sample.
+5. **Nothing here is financial advice.** It's a monitored experiment
+   with a written rulebook — that's its only claim.
+
+### 7e. Keeping this honest
+
+- Re-run `scripts/strategy_metrics.py` on every new backtest and after
+  every ~20 live paper trades; update §7b (this table is versioned, not
+  append-only — but log the change here and in the changelog).
+- A rule whose evidence grade is *weak* for two more review cycles with
+  no supporting sample gets retired or demoted to paper-only.
+- Sources are cited so Quy can verify independently: SSRN 4416622,
+  SSRN 4729284, SSRN 962461, Kaminski & Lo (J. Financial Markets),
+  Moskowitz/Ooi/Pedersen (J. Financial Economics 2012), Chague et al.
+  (FGV Brazil), Barber/Lee/Liu/Odean (Taiwan).
+
 ## Changelog
 
 - 2026-07-08: v1 drafted by Claude (initial 3R/1R gap rulebook).
@@ -304,3 +449,18 @@ payload.
 - 2026-07-08: added the weekly trade cap — max 5 new entries per week,
   equities + crypto sleeve combined, reset Monday (§3 + §3b.3) — per
   Quy's request.
+- 2026-07-09: added §7 (evidence base & measured performance — expert
+  sources verified via 2-source rule, metric definitions, measured
+  Sharpe/Sortino/PF/win-rate tables from `scripts/strategy_metrics.py`,
+  per-rule evidence grades, real-money warning) and §2d (backtest-gated
+  rule upgrades R1 relative-volume TJL filter + R2 gap quality filter),
+  per Quy's request to enhance the strategy with verified expert
+  research. New script `scripts/strategy_metrics.py`. Rule changes are
+  pending validation, not live (Quy's choice: backtest-gated adoption).
+- 2026-07-09 (later): §2d gates run per Quy's "validate then merge".
+  R1 (intraday relative-volume gate on TJL) REJECTED — failed its
+  backtest decisively (PF 1.20/+11.0R baseline → PF 0.24/−9.3R at
+  rvol≥1.5×; the in-play edge belongs at universe selection, where the
+  gappers scan already applies it). R2 (gap quality filter) adopted as
+  a conservative pre-filter — restriction-only, keep/drop after 20
+  logged §2 setups. `backtest_tjl.py` gained a reusable `--rvol` flag.

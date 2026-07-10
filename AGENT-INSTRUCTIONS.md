@@ -14,14 +14,14 @@ expressions must be shifted by one hour** — see Gotchas.
 
 | ET time | Workflow | Telegram |
 |---|---|---|
-| 5:00 AM | Morning Brief (Quy's real portfolio) | ALWAYS — the brief IS the deliverable |
+| 5:00 AM | Morning Brief (Quy's real portfolio) | NONE — email only (AgentMail), see below |
 | 7:00 AM | Pre-Market Research | ALWAYS — detailed market brief |
 | 9:30 AM | Market Open | ALWAYS — open report (+ trades if placed) |
 | 10:30a–2:30p hourly | TJL Watch | ONLY if a trade was placed |
 | 1:00 PM | Midday Scan | ALWAYS — midday update |
 | 4:00 PM | Daily Summary | ALWAYS — daily summary |
 
-### 5:00 AM ET — Morning Brief (Quy's real portfolio, via Telegram)
+### 5:00 AM ET — Morning Brief (Quy's real portfolio, via Email)
 
 Purpose: Quy's personal investing brief — his REAL Robinhood money, not
 the paper account. Educational tone, beginner level, honest signals.
@@ -38,7 +38,11 @@ the paper account. Educational tone, beginner level, honest signals.
 2. Web-search (keep it tight): VIX level, S&P 500 / futures tone,
    BTC-ETH-SOL prices + Crypto Fear & Greed index, Fed/rates headline,
    any geopolitical or crypto-regulation driver.
-3. Telegram the brief (split into 2 messages if near the 4096 limit):
+3. **Email the brief (ALWAYS — no Telegram send for this workflow, Quy's
+   standing preference 2026-07-10)** via AgentMail (`AGENTMAIL_API_KEY` /
+   `AGENTMAIL_INBOX=zenith-alert@agentmail.to`, see Gotchas) to
+   `REPORT_EMAIL_TO`/Quy's Gmail. No 4096-char limit, so send one clean
+   HTML/plain-text email covering:
    - **Market mood**: VIX + one-line tone; futures direction.
    - **Your portfolio (real numbers)**: each account, each position —
      symbol, qty, avg cost, live price, $ value, $ / % P&L. Crypto:
@@ -51,6 +55,8 @@ the paper account. Educational tone, beginner level, honest signals.
      enough or a dip merits an extra contribution.
    - **Today's calendar**: earnings/data with exact ET times.
    - **Beginner tip**: 2–3 sentences tied to today's actual data.
+   If AgentMail fails, fall back to a Gmail DRAFT via the connector and
+   flag the failure in the next Telegram-bearing run (7:00 AM).
 4. No repo commit needed unless something was logged; no trading — this
    run never places orders anywhere.
 
@@ -281,7 +287,10 @@ NOT used; plain text + simple `*bold*` HTML mode — see script).
 
 **Quy wants ALL updates through Telegram, with as much market detail as
 fits.** Concretely:
-- 5:00 AM Morning Brief: ALWAYS (the brief is the deliverable).
+- 5:00 AM Morning Brief: **NONE — email only** (AgentMail to Quy's
+  Gmail; Quy's standing preference, 2026-07-10, revised from the prior
+  Telegram-always rule). See the 5:00 AM workflow section for the
+  AgentMail inbox and fallback.
 - 7:00 AM Pre-Market: ALWAYS — full research brief.
 - 9:30 AM Open: ALWAYS — trades or "no entries + why".
 - Hourly TJL: **only if a trade was placed** (Quy chose this to avoid
@@ -369,9 +378,15 @@ fetch live data, so every workflow run regenerates it:
   (gitignored) with a ~4h TTL and falls back to the stale cache on
   fetch failure. Don't fetch it manually in the same session.
 - **AgentMail**: full-report email needs `AGENTMAIL_API_KEY` +
-  `AGENTMAIL_INBOX` (from agentmail.to) in the environment. Missing =
-  `send_report.py` skips cleanly; fall back to a Gmail DRAFT via the
-  connector (it cannot send) and mention it in the Telegram brief.
+  `AGENTMAIL_INBOX` (from agentmail.to) in the environment. Working
+  inbox: `zenith-alert@agentmail.to` (verified live 2026-07-10 — the
+  earlier `stock-alert@agentmail.to` value was never provisioned and
+  every send 404'd; set as a project-level `env` default in
+  `.claude/settings.json` so fresh sessions pick it up automatically).
+  Missing keys = `send_report.py` skips cleanly; any other failure
+  (bad inbox, network) logs `send_report: FAILED - ...` and falls back
+  to a Gmail DRAFT via the connector (it cannot send) — mention it in
+  the next Telegram-bearing run.
 - **Market holidays**: `scripts/alpaca.sh clock` says if the market is
   open — check it before trading; research runs can proceed anyway.
 - **Wash-trade rejections**: Alpaca rejects an order that would

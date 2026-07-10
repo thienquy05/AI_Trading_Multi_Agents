@@ -225,3 +225,36 @@ Append at the BOTTOM, one entry per pre-market run.
   leveraged-ETF headline cross-match). Network allowlist needs
   yahoo/faireconomy/dowjones/cnbc/googlenews/agentmail domains — noted in
   AGENT-INSTRUCTIONS Gotchas.
+
+## 2026-07-10 — pre-market
+- Account: equity $100,004.46 | cash $99,689.52 | open positions: AAPL
+  1@$310.47, current $314.94, uP&L +$4.47/+1.44%.
+- Macro/calendar: 0 US high-impact events today (ForexFactory live
+  fetch + web confirm — FOMC minutes already out 7/8, no CPI/jobs
+  today). No §3b blackout window in effect. SK Hynix US listing debut
+  and Delta earnings beat (record revenue) are the session's watched
+  events but don't touch our screens.
+- Sector momentum / market tone: mixed-to-flat premarket (some reads
+  +0.2% SPX futures, others -0.2% with Polymarket implying only 20%
+  odds of a green open). 10Y yield sticky near 4.6%, VIX calm at 15.86.
+  Gappers scan returned only 2 illiquid small caps (JLHL +75.8%, VRAX
+  -12.4%), neither cleared day/swing eligibility (mcap/RVOL data
+  blocked by a yfinance network failure this run, packet's Alpaca path
+  otherwise intact).
+- Crypto regime: BEAR (BTC prior close $63,162.31 < daily SMA200
+  $74,228.84) — sleeve stands down. BTC/ETH/SOL all green today: BTC
+  $64,442 (+2.0%), ETH $1,799 (+2.6%), SOL $79.53 (+2.6%, still down
+  ~2.1% on the week).
+- Extra-watch (BTC/ETH/SOL/NVDA/ORCL): crypto three all bouncing (see
+  above, chip-rally/yen-strength driven per CoinDesk, not crypto-
+  specific news). NVDA $202.76 flat, ORCL $144.26 flat — quiet, no
+  material headlines found on either today.
+- Ideas (2-3): none. Both premarket gappers failed the day/swing
+  screens (yfinance-blocked mcap + RVOL data, defaults to fail) and
+  independently read as traps on discretion: JLHL's catalyst headline
+  is an unanswered question with a thin float, VRAX is fading a
+  dilutive $3.3M share-exercise raise the morning after a halt-up. No
+  qualifying setups — standing aside on equities. Crypto sleeve flat
+  (bear regime).
+- Watching but not trading: JLHL, VRAX (both — see Skips & Traps in
+  today's report for full reasoning).

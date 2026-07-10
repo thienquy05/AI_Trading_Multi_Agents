@@ -266,3 +266,30 @@ a new dated line.
   partial Robinhood pull above; Agentic/crypto rows carried over from
   the last confirmed pull (7/9 AM) with a note that they're not fresh
   this run.
+
+### 2026-07-10 16:00 ET — daily snapshot
+- Equity $100,004.52 | day P&L -$1.22 (-0.0012%) | cash $99,689.52
+- Open: AAPL 1@$310.47, current $315.00 (uP&L +$4.53 / +1.46%)
+- Trades today: 0 | notes:
+  - No new entries placed today (7 AM research found zero premarket
+    gappers meeting day_eligible criteria, crypto sleeve regime-gated
+    BEAR with BTC < SMA200; TJL hourly scans all failed the signal gates).
+  - AAPL position from 7/8 remains open and healthy; GTC stop still
+    resting at $300 (order `7709c58e...`, status `new`, placed 7/9 at
+    7:14 AM). 1R = $10.47; current unrealized gain ≈ +$4.53 ≈ +0.43R,
+    well clear of both the -7% level (~$288.73) and the +2R trail
+    trigger (~$331.41). No action warranted on the position.
+  - **Robinhood MCP server connectivity**: session encountered a stream
+    closure when attempting to pull live Robinhood positions + portfolio +
+    quotes for the dashboard (accounts 556092849 / 829651439 / 539785238,
+    extra-watch symbols BTC/ETH/SOL/NVDA/ORCL). No data retrieved this
+    run. Dashboard carried forward the 7/10 09:39 AM pull (Individual ORCL
+    / Roth VOO live, Agentic account + crypto estimates stale). Telegram
+    summary includes a note that Robinhood live refresh was unavailable.
+- Guardrail/breaker status: day P&L -0.0012%, well inside the -2% daily
+  / -4% weekly circuit breakers — no trip. Weekly trade cap: 1 of 5 new
+  entries used this week (AAPL test buy 7/8). No rule violations.
+- Lesson: flat days (0 new setups, 0 new entries) are valid and protect
+  capital — the waiting is part of the process. Focus stays on
+  gate/guardrail discipline, not activity. Trade-only when the setup
+  clears every filter.

@@ -361,3 +361,43 @@ a new dated line.
 - Dashboard republished (local, gitignored) with fresh Alpaca account/
   positions/orders + live Robinhood pull (all three accounts, VOO/NVDA/
   TSLA/ORCL RSI+SMA signals, crypto portfolio value) confirmed this run.
+
+### 2026-07-13 16:06 ET — daily snapshot
+- Equity $100,007.02 | day P&L -$3.70 (-0.0037%) | cash $99,689.52
+- Open: AAPL 1@$310.47, current $317.50 (uP&L +$7.03 / +2.26%)
+- Trades today: 0 | notes:
+  - No new entries placed today (7 AM research found one gapper SUNE
+    but it failed day_eligible screen — down-gap, mechanically
+    ineligible; no other premarket candidates cleared filters; crypto
+    regime-gated BEAR with BTC < SMA200). TJL scan at midday also
+    found no signal. Standing aside on equities and crypto.
+  - AAPL position from 7/8 remains open and healthy; GTC stop still
+    resting at $300 (order `7709c58e...`, status `new`, placed 7/9).
+    1R = $10.47; current unrealized gain ≈ +$7.03 ≈ +0.67R, clear of
+    both -7% level (~$288.73) and +2R trail trigger (~$331.41). No
+    action warranted. Stop did not gap through today despite the
+    geopolitical selloff (Iran shipping blockade reinstated by Trump).
+  - Session characterized by broad risk-off tape driven by Trump's
+    Iran Strait of Hormuz blockade (S&P -0.7%, Nasdaq -1.3% midday,
+    oil +4.5% to ~$75/bbl). Chip/tech names sold off hard (SK Hynix
+    -15% in Seoul, Micron -4.7%, SanDisk -10.2%, NVDA -2.9%). AAPL
+    showed relative resilience, ending the day green (+2.26%) in the
+    selloff — holding the setup. BTC/crypto remained weak (BTC
+    $62,320, still < SMA200 $73.9k regime line).
+  - **Robinhood Individual account (556092849)** state at close: $0
+    equity / no ORCL position, $104.15 cash + $100 pending deposit.
+    Persists from midday check — Quy appears to have liquidated or
+    transferred out. (Read-only, not traded by Claude.) Roth (829651439)
+    VOO holding confirmed. Agentic (539785238) had NVDA/TSLA, crypto
+    values per live pull.
+- Guardrail/breaker status: day P&L -0.0037%, well inside -2% daily /
+  -4% weekly circuit breakers — no trip. Weekly trade cap: 0/5 new
+  entries used this week (calendar reset Monday). No rule violations. No
+  tilt-stop triggers, no correlation-cap breaches (only 1 open position).
+- Lesson: geopolitical shocks (Iran escalation) can drive broad
+  sector selloffs that overwhelm stock-specific setups — the gap
+  filters (day_eligible screen on the gapper, crypto regime gate) are
+  earning their keep, protecting against chasing correlated downside.
+  AAPL's relative strength in the selloff (still green on the day, stop
+  not threatened) is a reminder that single-name setups can have asymmetry
+  even in a macro drawdown.

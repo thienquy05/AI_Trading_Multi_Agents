@@ -258,3 +258,42 @@ Append at the BOTTOM, one entry per pre-market run.
   (bear regime).
 - Watching but not trading: JLHL, VRAX (both — see Skips & Traps in
   today's report for full reasoning).
+
+## 2026-07-13 — pre-market
+- Account: equity $100,005.71 | cash $99,689.52 | open positions: AAPL
+  1@$310.47, current $316.19, uP&L +$5.72/+1.84%.
+- Macro/calendar: 0 US high-impact events today, no §3b blackout window
+  in effect today. Tomorrow (Tue 7/14) has CPI (core + headline, m/m +
+  y/y) at 8:30 AM ET and Fed Chairman Warsh testifying at 10:00 AM ET —
+  both tier-1, flagged for tomorrow's blackout window. Big bank earnings
+  (C, GS, WFC, JPM, BAC) start Tuesday too.
+- Sector momentum / market tone: dominant driver is a fresh US-Iran
+  escalation over the weekend — CENTCOM's fifth round of strikes since
+  the ceasefire broke down (140 targets, first use of one-way attack sea
+  drones), Iran retaliated against Gulf bases (confirmed via CNN/Al
+  Jazeera/CBS + the CENTCOM release). Chip stocks leading the selloff
+  premarket: SK Hynix -8%, Micron -5.2%, Sandisk -6.3%, NVDA dragged
+  ~-1.2%. Futures reads conflicting (some -0.3/-0.9% on geopolitics,
+  others +0.4% on cooling global inflation) — tape is genuinely
+  unsettled. Gappers scan found only 1 name (SUNE, -7.3%), gapping down
+  on a non-specific 12-stock roundup headline, never eligible (gap
+  direction alone disqualifies a down-gap from both day/swing lists).
+  yfinance market-snapshot path blocked again this run (Robinhood index
+  feed used instead, values are Friday 7/10's close, not live futures).
+- Crypto regime: BEAR (BTC prior close $63,745.49 < daily SMA200
+  $73,868.96) — sleeve stands down. BTC/ETH/SOL all red today: BTC
+  $63,049 (-1.1% vs today's open), ETH $1,783 (-1.2%), SOL $76.50
+  (-0.4%, still stuck under $80) — weekend risk-off tone / Asian-session
+  leverage flush per CoinDesk.
+- Extra-watch (BTC/ETH/SOL/NVDA/ORCL): NVDA $208.44 premarket (-1.2%),
+  caught in the chip-sector selloff, no NVDA-specific headline found.
+  ORCL $140.45 (roughly flat), quiet.
+- Ideas (2-3): none. The one gapper (SUNE) failed the screens
+  mechanically (down-gap) and independently reads as a non-catalyst
+  (generic roundup headline, no real explanation for the move). No
+  qualifying setups — standing aside on equities. Crypto sleeve flat
+  (bear regime, and broader crypto tape red today anyway).
+- Watching but not trading: SUNE (see Skips & Traps in today's report).
+  Also watching the chip-sector selloff and the Iran situation for
+  gap-risk on the open AAPL position, and tomorrow's CPI/Fed-testimony
+  blackout window.

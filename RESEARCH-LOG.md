@@ -297,3 +297,48 @@ Append at the BOTTOM, one entry per pre-market run.
   Also watching the chip-sector selloff and the Iran situation for
   gap-risk on the open AAPL position, and tomorrow's CPI/Fed-testimony
   blackout window.
+
+## 2026-07-14 — pre-market
+- Account: equity $100,004.41 | cash $99,689.52 | open positions: AAPL
+  1@$310.47, current $314.89, uP&L +$4.42/+1.42%.
+- Macro/calendar: HEAVY data day, 5 tier-1 US events today — Core/
+  headline CPI m/m+y/y at 8:30 AM ET (core y/y forecast 2.8% vs 2.9%
+  prior, still well above the Fed's 2% target) and Fed Chair Warsh's
+  congressional debut testimony at 10:00 AM ET. §3b blackout window IN
+  EFFECT today around 8:30-10:00 AM ET. Separately, the US begins
+  enforcing a Strait of Hormuz blockade (20% cargo fee) this afternoon —
+  an escalation beyond the scheduled calendar, energy-shock/inflation
+  risk. Big bank earnings (C/GS/WFC/JPM/BAC) also rolling out this week.
+- Sector momentum / market tone: Monday saw a broad selloff on the
+  Hormuz blockade announcement (chips hit hardest); today's futures
+  described as mixed/steadier ahead of CPI+Warsh. SPX 7,515.34 / NDX
+  29,264.10 / RUT 2,953.17 (Robinhood index feed, yfinance snapshot
+  blocked again). VIX 17.49, climbing for a third straight session
+  (15.86 Fri -> 16.30 Mon -> 17.49 today). Gappers: VEEE +19.4% (real
+  merger/spinoff catalyst, verified via company IR release, but already
+  faded from a 600%+ intraday spike and still below prior-day high +
+  200-day SMA — trap despite real news), AGEN -3.4% (roundup headline,
+  no real driver, down-gap). Neither cleared day/swing eligibility.
+- Crypto regime: BEAR (BTC prior close $62,274.38 < daily SMA200
+  $73,744.48) — sleeve stands down. BTC/ETH/SOL modestly green today
+  after yesterday's slide: BTC $62,691 (+0.7% vs today's open), ETH
+  $1,796 (+1.3%), SOL $75.46 (+0.8%).
+- Extra-watch (BTC/ETH/SOL/NVDA/ORCL): NVDA $205.10 premarket (+0.8%),
+  small bounce, no specific news. ORCL $128.80 premarket (-2.1%),
+  continuing a sharp slide — beat Q4/FY26 earnings (cloud rev +47%) but
+  fell ~6% Monday and is near a 14-month low on margin-compression /
+  capex ($16.5B/qtr) / debt concerns plus a 21,000-job restructuring
+  (verified via FX Leaders, TradingKey). Individual Robinhood account
+  (556092849) shows no ORCL position / $0 equity for the SECOND
+  consecutive check (first flagged yesterday's midday run) — likely
+  Quy sold manually, confirmed pattern now not a one-off glitch.
+- Ideas (2-3): none. Both gappers failed the screens (trend/mcap/RVOL);
+  VEEE has a real, verified catalyst but the pop already faded 97% and
+  the stock is still under its 200-day SMA — a trap, not a setup. Today
+  is also inside a live §3b blackout window (CPI + Fed testimony), so
+  even a borderline name would get held back until after 10 AM. No
+  qualifying setups — standing aside on equities. Crypto sleeve flat
+  (bear regime).
+- Watching but not trading: VEEE, AGEN (see Skips & Traps in today's
+  report). Reassess after CPI + Warsh testimony clear at 10 AM ET, and
+  watch for Hormuz-blockade-driven volatility this afternoon.

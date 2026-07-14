@@ -1,0 +1,379 @@
+{
+  "generated_at": "2026-07-14T07:09:40.286899-04:00",
+  "candidate_source": "alpaca_screener_premarket",
+  "trading_day_note": "Tuesday 2026-07-14 07:09 ET; inside the 04:00-09:30 premarket window",
+  "scan_params": {
+    "gap_filter_abs_pct": 3.0,
+    "price_min": 3.0,
+    "top_n": 12,
+    "open_note": "before 09:30 ET the latest premarket price stands in for the official open in swing checks"
+  },
+  "criteria": {
+    "day_trading": "Trend Join Long selection: gap > 3% vs prev close, price > $3, market cap > $1B, premarket RVOL > 1.5, price above prior-day high, prev close above 200-day SMA. Execution per TRADING-STRATEGY.md 2b: trigger over PMH + prior HOD 10:00-15:30 ET, stop = signal bar low, 3R bracket, flat 15:55.",
+    "swing": "Gap >= 8%, price > $3, open above prior-day high, open above 200-day SMA, market cap >= $800M, and a real catalyst (earnings on gap day, or news with no earnings). Starter ideas only, swing management is still being built."
+  },
+  "market_snapshot": {
+    "S&P 500": {
+      "symbol": "^GSPC",
+      "error": "Failed to perform, curl: (35) Recv failure: Connection reset by peer. See https://curl.se/libcurl/c/libcurl-errors.html "
+    },
+    "Dow": {
+      "symbol": "^DJI",
+      "error": "Failed to perform, curl: (35) Recv failure: Connection reset by peer. See https://curl.se/libcurl/c/libcurl-errors.html "
+    },
+    "Nasdaq": {
+      "symbol": "^IXIC",
+      "error": "not enough history"
+    },
+    "Russell 2000": {
+      "symbol": "^RUT",
+      "error": "not enough history"
+    },
+    "VIX": {
+      "symbol": "^VIX",
+      "error": "not enough history"
+    },
+    "US 10Y": {
+      "symbol": "^TNX",
+      "error": "not enough history"
+    },
+    "US 3M": {
+      "symbol": "^IRX",
+      "error": "not enough history"
+    },
+    "WTI Oil": {
+      "symbol": "CL=F",
+      "error": "not enough history"
+    },
+    "Dollar (DXY)": {
+      "symbol": "DX-Y.NYB",
+      "error": "not enough history"
+    }
+  },
+  "econ_calendar": {
+    "source": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+    "filter": "country=USD, impact=High",
+    "today_date": "2026-07-14",
+    "tomorrow_date": "2026-07-15",
+    "today": [
+      {
+        "time_et": "8:30 AM",
+        "title": "Core CPI m/m",
+        "forecast": "0.2%",
+        "previous": "0.2%"
+      },
+      {
+        "time_et": "8:30 AM",
+        "title": "Core CPI y/y",
+        "forecast": "2.8%",
+        "previous": "2.9%"
+      },
+      {
+        "time_et": "8:30 AM",
+        "title": "CPI m/m",
+        "forecast": "-0.1%",
+        "previous": "0.5%"
+      },
+      {
+        "time_et": "8:30 AM",
+        "title": "CPI y/y",
+        "forecast": "3.8%",
+        "previous": "4.2%"
+      },
+      {
+        "time_et": "10:00 AM",
+        "title": "Fed Chairman Warsh Testifies",
+        "forecast": "",
+        "previous": ""
+      }
+    ],
+    "tomorrow": [
+      {
+        "time_et": "8:30 AM",
+        "title": "Core PPI m/m",
+        "forecast": "0.4%",
+        "previous": "0.4%"
+      },
+      {
+        "time_et": "8:30 AM",
+        "title": "PPI m/m",
+        "forecast": "0.0%",
+        "previous": "1.1%"
+      },
+      {
+        "time_et": "10:00 AM",
+        "title": "Fed Chairman Warsh Testifies",
+        "forecast": "",
+        "previous": ""
+      }
+    ],
+    "note": "live fetch"
+  },
+  "gappers": [
+    {
+      "rank": 1,
+      "symbol": "VEEE",
+      "name": null,
+      "price": 29.7,
+      "prev_close": 24.87,
+      "gap_pct": 19.42,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": 41.56,
+      "prior_day_high": 35.45,
+      "prior_close": 24.87,
+      "avg_vol_20d": 14975,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Twin Vee PowerCats (VEEE) Stock Surges 416%: Here's Why It's Still Trending",
+      "headlines": [
+        {
+          "title": "Twin Vee PowerCats (VEEE) Stock Surges 416%: Here's Why It's Still Trending",
+          "source": "benzinga",
+          "published": "2026-07-14T06:27:18Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Twin Vee Shakes up Future With Merger, Spins off Boat Business Into Private Company",
+          "source": "benzinga",
+          "published": "2026-07-13T17:19:17Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Stock Market Today: Dow Jones Futures Fall, Nasdaq 100 Gains as Trump Calls US the 'Guardian' of Hormuz Strait\u2014Tower Semiconductor, Twin Vee, JPMorgan In Focus",
+          "source": "benzinga",
+          "published": "2026-07-14T09:28:06Z",
+          "n_symbols": 8
+        },
+        {
+          "title": "Oracle, Twin Vee PowerCats, Agenus, Micron Technology and SanDisk: Why These 5 Stocks Are on Investors' Radars Today",
+          "source": "benzinga",
+          "published": "2026-07-14T01:34:00Z",
+          "n_symbols": 5
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 2,
+      "symbol": "AGEN",
+      "name": null,
+      "price": 5.89,
+      "prev_close": 6.1,
+      "gap_pct": -3.44,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": 3.65,
+      "prior_day_high": 8.65,
+      "prior_close": 6.1,
+      "avg_vol_20d": 138719,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Stock Market Today: Dow Jones Futures Fall, Nasdaq 100 Gains as Trump Calls US the 'Guardian' of Hormuz Strait\u2014Tower Semiconductor, Twin Vee, JPMorgan In Focus",
+      "headlines": [
+        {
+          "title": "Stock Market Today: Dow Jones Futures Fall, Nasdaq 100 Gains as Trump Calls US the 'Guardian' of Hormuz Strait\u2014Tower Semiconductor, Twin Vee, JPMorgan In Focus",
+          "source": "benzinga",
+          "published": "2026-07-14T09:28:06Z",
+          "n_symbols": 8
+        },
+        {
+          "title": "Oracle, Twin Vee PowerCats, Agenus, Micron Technology and SanDisk: Why These 5 Stocks Are on Investors' Radars Today",
+          "source": "benzinga",
+          "published": "2026-07-14T01:34:00Z",
+          "n_symbols": 5
+        },
+        {
+          "title": "12 Health Care Stocks Moving In Monday's Intraday Session",
+          "source": "benzinga",
+          "published": "2026-07-13T17:05:39Z",
+          "n_symbols": 12
+        },
+        {
+          "title": "Crude Oil Surges Over 5%; Twin Vee Powercats Shares Jump",
+          "source": "benzinga",
+          "published": "2026-07-13T16:48:57Z",
+          "n_symbols": 7
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": false,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": true
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": false,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": true,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    }
+  ],
+  "market_news": [
+    {
+      "title": "JPMorgan beats profit expectations by the most in five years, as equity-markets revenue surges",
+      "summary": "JPMorgan\u2019s stock falls, even after a big profit beat, record revenue and a raised outlook for net interest income.",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 11:04:00 GMT"
+    },
+    {
+      "title": "These are the toughest places in America to sell a home right now",
+      "summary": "From Miami to Seattle, homeowners are seeing their homes sit on the market for longer before getting an offer.",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 11:00:00 GMT"
+    },
+    {
+      "title": "My husband and I are retired. Our financial adviser, who is in his 30s, called us \u2018you guyses.\u2019 Is that unprofessional?",
+      "summary": "\u201cI\u2019m wondering whether I should ask to work with someone closer to our generation.\u201d",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 11:00:00 GMT"
+    },
+    {
+      "title": "\u2018It\u2019s heartbreaking\u2019: My brother claimed Social Security at 70. He died from cancer after one payment. Why wait to claim?",
+      "summary": "\u201cI\u2019ve always been a little skeptical of the government\u2019s encouragement to delay claiming benefits.\u201d",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 10:38:00 GMT"
+    },
+    {
+      "title": "Ericsson ends up on the wrong side of memory-chip price spike. The stock slumps.",
+      "summary": "Ericsson shares on Tuesday saw their worst reaction to earnings in nearly three years after the telecom-equipment maker revealed that rising component costs were eating away at margins \u2014 likely the huge surge in memory-chip prices.",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 10:19:00 GMT"
+    },
+    {
+      "title": "My wife\u2019s 2011 Ford Fiesta was totaled. Should we accept a $2,000 insurance settlement or give up the car for $2,700?",
+      "summary": "\u201cThe hood is bent, the radiator is cracked, and the front bumper is destroyed.\u201d",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 10:00:00 GMT"
+    },
+    {
+      "title": "Oil prices see largest two-day percentage gain in four months on U.S.-Iran fighting",
+      "summary": "West Texas Intermediate and Brent crude\u2019s front-month contracts climbed on Tuesday as investors worry about further de-escalation in the Middle East",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 09:17:00 GMT"
+    },
+    {
+      "title": "One of the world\u2019s weakest currencies makes this Asian capital the world\u2019s cheapest major city \u2014 for now",
+      "summary": "After fifteen years of relative decline, the inexorably falling Japanese yen has made Tokyo one of the world\u2019s cheapest major cities",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 09:12:00 GMT"
+    },
+    {
+      "title": "\u2018Impeccably designed\u2019: You can rent Orlando Bloom\u2019s former Beverly Hills estate for just $31,000 a month",
+      "summary": "Actor Orlando Bloom\u2019s former Beverly Hills mansion is being offered up as a luxury rental, with a hefty asking price of $31,000 a month\u2014with many of the Hollywood star\u2019s custom upgrades still found throughout.",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 09:02:00 GMT"
+    },
+    {
+      "title": "The U.S. is maxing out its strategic oil reserves as Trump vows to control the Strait of Hormuz",
+      "summary": "Strategic Petroleum Reserve stockpiles are precariously low and have been hit by major equipment failures, leaks and spills, according to a government report.",
+      "source": "MarketWatch Top",
+      "published": "Tue, 14 Jul 2026 02:30:00 GMT"
+    },
+    {
+      "title": "Elon Musk in a post on X says some of his Trump posts \u2018went too far\u2019 and that he regrets them",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Wed, 11 Jun 2025 07:09:00 GMT"
+    },
+    {
+      "title": "Bank of England decision on Thursday will be at 12:02 p.m. local time instead of 12 p.m., due to VE Day\u2019s two minutes of silence",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Tue, 06 May 2025 11:59:00 GMT"
+    },
+    {
+      "title": "Swiss National Bank cuts interest rates by a half point to 0.5%",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Thu, 12 Dec 2024 08:32:00 GMT"
+    },
+    {
+      "title": "Dollar jumps 0.5% to 0.8890 francs",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Thu, 12 Dec 2024 08:32:00 GMT"
+    },
+    {
+      "title": "Germany flash manufacturing PMI rises to 4-month high of 43.2",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Fri, 22 Nov 2024 08:34:00 GMT"
+    },
+    {
+      "title": "Germany flash services PMI falls to 9-month low of 49.4",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Fri, 22 Nov 2024 08:34:00 GMT"
+    },
+    {
+      "title": "Powell says labor market not a source of significant inflation pressure",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Wed, 31 Jul 2024 18:48:00 GMT"
+    },
+    {
+      "title": "Fed\u2019s Powell says rate cut \u2018on the table\u2019 as soon as September",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Wed, 31 Jul 2024 18:41:00 GMT"
+    },
+    {
+      "title": "Final S&P U.S. manufacturing index is 52.2 in February vs. initial 51.5",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Fri, 01 Mar 2024 14:47:00 GMT"
+    },
+    {
+      "title": "Duolingo started at buy with $222 price target at Seaport",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Tue, 27 Feb 2024 12:40:00 GMT"
+    }
+  ],
+  "gaps_to_fill": [
+    "market-wide earnings calendar is only partial: next earnings dates come per gapper, there is no full day-by-day earnings list",
+    "intraday levels (VWAP/HOD/LOD/PMH) need intraday bars and are only available on the Alpaca path",
+    "premarket RVOL: yfinance reports about 0 premarket volume, so a true premarket RVOL needs a premarket feed (Alpaca supplies it here); on the keyless path full-day RVOL is the stand-in"
+  ]
+}

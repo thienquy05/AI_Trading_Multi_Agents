@@ -1,0 +1,694 @@
+{
+  "generated_at": "2026-07-15T07:09:00.916377-04:00",
+  "candidate_source": "alpaca_screener_premarket",
+  "trading_day_note": "Wednesday 2026-07-15 07:09 ET; inside the 04:00-09:30 premarket window",
+  "scan_params": {
+    "gap_filter_abs_pct": 3.0,
+    "price_min": 3.0,
+    "top_n": 12,
+    "open_note": "before 09:30 ET the latest premarket price stands in for the official open in swing checks"
+  },
+  "criteria": {
+    "day_trading": "Trend Join Long selection: gap > 3% vs prev close, price > $3, market cap > $1B, premarket RVOL > 1.5, price above prior-day high, prev close above 200-day SMA. Execution per TRADING-STRATEGY.md 2b: trigger over PMH + prior HOD 10:00-15:30 ET, stop = signal bar low, 3R bracket, flat 15:55.",
+    "swing": "Gap >= 8%, price > $3, open above prior-day high, open above 200-day SMA, market cap >= $800M, and a real catalyst (earnings on gap day, or news with no earnings). Starter ideas only, swing management is still being built."
+  },
+  "market_snapshot": {
+    "S&P 500": {
+      "symbol": "^GSPC",
+      "error": "Failed to perform, curl: (35) Recv failure: Connection reset by peer. See https://curl.se/libcurl/c/libcurl-errors.html "
+    },
+    "Dow": {
+      "symbol": "^DJI",
+      "error": "Failed to perform, curl: (35) Recv failure: Connection reset by peer. See https://curl.se/libcurl/c/libcurl-errors.html "
+    },
+    "Nasdaq": {
+      "symbol": "^IXIC",
+      "error": "not enough history"
+    },
+    "Russell 2000": {
+      "symbol": "^RUT",
+      "error": "not enough history"
+    },
+    "VIX": {
+      "symbol": "^VIX",
+      "error": "not enough history"
+    },
+    "US 10Y": {
+      "symbol": "^TNX",
+      "error": "not enough history"
+    },
+    "US 3M": {
+      "symbol": "^IRX",
+      "error": "not enough history"
+    },
+    "WTI Oil": {
+      "symbol": "CL=F",
+      "error": "not enough history"
+    },
+    "Dollar (DXY)": {
+      "symbol": "DX-Y.NYB",
+      "error": "not enough history"
+    }
+  },
+  "econ_calendar": {
+    "source": "https://nfs.faireconomy.media/ff_calendar_thisweek.json",
+    "filter": "country=USD, impact=High",
+    "today_date": "2026-07-15",
+    "tomorrow_date": "2026-07-16",
+    "today": [
+      {
+        "time_et": "8:30 AM",
+        "title": "Core PPI m/m",
+        "forecast": "0.3%",
+        "previous": "0.4%"
+      },
+      {
+        "time_et": "8:30 AM",
+        "title": "PPI m/m",
+        "forecast": "0.0%",
+        "previous": "1.1%"
+      },
+      {
+        "time_et": "10:00 AM",
+        "title": "Fed Chairman Warsh Testifies",
+        "forecast": "",
+        "previous": ""
+      }
+    ],
+    "tomorrow": [],
+    "note": "live fetch"
+  },
+  "gappers": [
+    {
+      "rank": 1,
+      "symbol": "SOXS",
+      "name": null,
+      "price": 4.28,
+      "prev_close": 43,
+      "gap_pct": -90.05,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": 417.68,
+      "prior_day_high": 44.9,
+      "prior_close": 43,
+      "avg_vol_20d": 2408583,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "SK Hynix ETF Race Heats Up As Direxion Files 2X Leveraged Fund",
+      "headlines": [
+        {
+          "title": "SK Hynix ETF Race Heats Up As Direxion Files 2X Leveraged Fund",
+          "source": "benzinga",
+          "published": "2026-07-06T20:29:58Z",
+          "n_symbols": 7
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": false,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": false,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 2,
+      "symbol": "TZA",
+      "name": null,
+      "price": 4.04,
+      "prev_close": 40.35,
+      "gap_pct": -90.0,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": 62.97,
+      "prior_day_high": 40.7,
+      "prior_close": 40.35,
+      "avg_vol_20d": 2479008,
+      "next_earnings": null,
+      "catalyst_found": false,
+      "catalyst": null,
+      "headlines": [],
+      "day_checks": {
+        "gap_gt_3": false,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": false,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": false
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 3,
+      "symbol": "CRMT",
+      "name": null,
+      "price": 3.77,
+      "prev_close": 4.27,
+      "gap_pct": -11.71,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": 17.92,
+      "prior_day_high": 4.34,
+      "prior_close": 4.27,
+      "avg_vol_20d": 23999,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Full Transcript: America's Car-Mart Q4 2026 Earnings Call",
+      "headlines": [
+        {
+          "title": "Full Transcript: America's Car-Mart Q4 2026 Earnings Call",
+          "source": "benzinga",
+          "published": "2026-07-14T13:45:27Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "UPDATE: America's Car-Mart Q4 Adj. EPS $0.48 Beats $(0.59) Estimate",
+          "source": "benzinga",
+          "published": "2026-07-14T12:07:42Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "12 Consumer Discretionary Stocks Moving In Tuesday's After-Market Session",
+          "source": "benzinga",
+          "published": "2026-07-14T21:05:41Z",
+          "n_symbols": 12
+        },
+        {
+          "title": "10 Consumer Discretionary Stocks Moving In Tuesday's Intraday Session",
+          "source": "benzinga",
+          "published": "2026-07-14T17:05:35Z",
+          "n_symbols": 10
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": false,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": false,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 4,
+      "symbol": "BMGL",
+      "name": null,
+      "price": 8.32,
+      "prev_close": 7.64,
+      "gap_pct": 8.83,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": 10.26,
+      "prior_day_high": 7.64,
+      "prior_close": 7.64,
+      "avg_vol_20d": 162,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Basel Medical Group Regains Nasdaq Compliance",
+      "headlines": [
+        {
+          "title": "Basel Medical Group Regains Nasdaq Compliance",
+          "source": "benzinga",
+          "published": "2026-07-10T10:31:24Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Why Aehr Test Systems Shares Are Trading Higher By Around 30%; Here Are 20 Stocks Moving Premarket",
+          "source": "benzinga",
+          "published": "2026-07-15T08:32:34Z",
+          "n_symbols": 20
+        },
+        {
+          "title": "12 Health Care Stocks Moving In Tuesday's After-Market Session",
+          "source": "benzinga",
+          "published": "2026-07-14T21:05:41Z",
+          "n_symbols": 12
+        },
+        {
+          "title": "12 Health Care Stocks Moving In Monday's Pre-Market Session",
+          "source": "benzinga",
+          "published": "2026-07-13T12:05:32Z",
+          "n_symbols": 12
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": true,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": true,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": true,
+        "price_gt_3": true,
+        "open_above_prior_high": true,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 5,
+      "symbol": "VEEE",
+      "name": null,
+      "price": 38.06,
+      "prev_close": 41.22,
+      "gap_pct": -7.67,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": 41.26,
+      "prior_day_high": 48.31,
+      "prior_close": 41.22,
+      "avg_vol_20d": 20758,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Why Aehr Test Systems Shares Are Trading Higher By Around 30%; Here Are 20 Stocks Moving Premarket",
+      "headlines": [
+        {
+          "title": "Why Aehr Test Systems Shares Are Trading Higher By Around 30%; Here Are 20 Stocks Moving Premarket",
+          "source": "benzinga",
+          "published": "2026-07-15T08:32:34Z",
+          "n_symbols": 20
+        },
+        {
+          "title": "12 Consumer Discretionary Stocks Moving In Tuesday's After-Market Session",
+          "source": "benzinga",
+          "published": "2026-07-14T21:05:41Z",
+          "n_symbols": 12
+        },
+        {
+          "title": "10 Consumer Discretionary Stocks Moving In Tuesday's Intraday Session",
+          "source": "benzinga",
+          "published": "2026-07-14T17:05:35Z",
+          "n_symbols": 10
+        },
+        {
+          "title": "Stock Market Today: Dow, S&P 500, Nasdaq 100 Futures Rise on Better-Than-Expected CPI Data\u2014Tower Semiconductor, Twin Vee, JPMorgan In Focus (UPDATED)",
+          "source": "benzinga",
+          "published": "2026-07-14T12:49:15Z",
+          "n_symbols": 8
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": false,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": false,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 6,
+      "symbol": "NXTC",
+      "name": null,
+      "price": 6.17,
+      "prev_close": 6.53,
+      "gap_pct": -5.51,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": 9.65,
+      "prior_day_high": 9.88,
+      "prior_close": 6.53,
+      "avg_vol_20d": 24143,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Nextcure Transforms Into Avere as Investors Back Oral Psoriasis Therapy",
+      "headlines": [
+        {
+          "title": "Nextcure Transforms Into Avere as Investors Back Oral Psoriasis Therapy",
+          "source": "benzinga",
+          "published": "2026-07-14T18:09:03Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Why Aehr Test Systems Shares Are Trading Higher By Around 30%; Here Are 20 Stocks Moving Premarket",
+          "source": "benzinga",
+          "published": "2026-07-15T08:32:34Z",
+          "n_symbols": 20
+        },
+        {
+          "title": "12 Health Care Stocks Moving In Tuesday's After-Market Session",
+          "source": "benzinga",
+          "published": "2026-07-14T21:05:41Z",
+          "n_symbols": 12
+        },
+        {
+          "title": "12 Health Care Stocks Moving In Tuesday's Intraday Session",
+          "source": "benzinga",
+          "published": "2026-07-14T17:05:35Z",
+          "n_symbols": 12
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": false,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": false,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 7,
+      "symbol": "BMNU",
+      "name": null,
+      "price": 9.14,
+      "prev_close": 9.57,
+      "gap_pct": -4.49,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": null,
+      "prior_day_high": 9.59,
+      "prior_close": 9.57,
+      "avg_vol_20d": 209969,
+      "next_earnings": null,
+      "catalyst_found": false,
+      "catalyst": null,
+      "headlines": [],
+      "day_checks": {
+        "gap_gt_3": false,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": false,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": false
+      },
+      "swing_eligible": false
+    },
+    {
+      "rank": 8,
+      "symbol": "LCID",
+      "name": null,
+      "price": 4.48,
+      "prev_close": 4.62,
+      "gap_pct": -3.03,
+      "market_cap": null,
+      "premarket_volume": 0,
+      "today_volume": null,
+      "rvol_premarket": null,
+      "rvol_fullday": null,
+      "vwap": null,
+      "premarket_high": null,
+      "hod": null,
+      "lod": null,
+      "today_open": null,
+      "sma200": 11.03,
+      "prior_day_high": 5.76,
+      "prior_close": 4.62,
+      "avg_vol_20d": 717024,
+      "next_earnings": null,
+      "catalyst_found": true,
+      "catalyst": "Lucid Stock Dives After Report Claims EV Company Is Weighing Strategic Options",
+      "headlines": [
+        {
+          "title": "Lucid Stock Dives After Report Claims EV Company Is Weighing Strategic Options",
+          "source": "benzinga",
+          "published": "2026-07-14T19:01:13Z",
+          "n_symbols": 1
+        },
+        {
+          "title": "Will Lucid File for Bankruptcy in 2026? Crypto Prediction Market Raises the Odds Despite EV Maker's Denial",
+          "source": "benzinga",
+          "published": "2026-07-15T09:26:14Z",
+          "n_symbols": 7
+        },
+        {
+          "title": "Gavin Newsom Unveils $3,500 California EV Rebate, Says State Is Filling 'Void Left by Trump' (UPDATED)",
+          "source": "benzinga",
+          "published": "2026-07-14T08:12:39Z",
+          "n_symbols": 4
+        },
+        {
+          "title": "IBM, CrowdStrike, SK Hynix, AEHR Test Systems and Lucid: Why These 5 Stocks Are on Investors' Radars Today",
+          "source": "benzinga",
+          "published": "2026-07-15T01:25:48Z",
+          "n_symbols": 5
+        }
+      ],
+      "day_checks": {
+        "gap_gt_3": false,
+        "price_gt_3": true,
+        "mcap_gt_1b": false,
+        "rvol_gt_1.5": false,
+        "price_above_prior_high": false,
+        "prev_close_above_sma200": false
+      },
+      "day_eligible": false,
+      "swing_checks": {
+        "gap_ge_8": false,
+        "price_gt_3": true,
+        "open_above_prior_high": false,
+        "open_above_sma200": false,
+        "mcap_ge_800m": false,
+        "catalyst_found": true
+      },
+      "swing_eligible": false
+    }
+  ],
+  "market_news": [
+    {
+      "title": "This Wall Street \u2018theme-o-meter\u2019 has a clear message: The artificial-intelligence bull market is back.",
+      "summary": "UBS says its top theme right now is that leadership for artificial-intelligence stocks is returning, and earnings season may prove how investors have been too pessimistic.",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 11:03:00 GMT"
+    },
+    {
+      "title": "Industrials could be the next big bottleneck trade. Here are some stocks that could benefit.",
+      "summary": "The next big bottleneck trade might have more to do with bearings than microchips.",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 11:00:00 GMT"
+    },
+    {
+      "title": "My husband and I are retired. Our financial adviser, who is in his 30s, called us \u2018you guyses.\u2019 Is that unprofessional?",
+      "summary": "\u201cI\u2019m wondering whether I should ask to work with someone closer to our generation.\u201d",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 11:00:00 GMT"
+    },
+    {
+      "title": "Luxury stocks rally on Richemont  sales beat \u2014 but the sector still needs China, says analyst",
+      "summary": "The luxury company that owns Cartier reported a 20% increase in sales year-on-year, boosting its stock.",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 10:54:00 GMT"
+    },
+    {
+      "title": "\u2018They are relentless\u2019: A scammer is trying to change the email on my empty Robinhood account. What do they have to gain?",
+      "summary": "\u201cI\u2019ve just been ignoring their attempts.\u201d",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 10:15:00 GMT"
+    },
+    {
+      "title": "\u2018They cut off online access\u2019: My mother\u2019s bank balance plummeted after her death. What\u2019s going on?",
+      "summary": "\u201cSince her death, her bank balance fell to $9,000 from $16,000.\u201d",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 10:15:00 GMT"
+    },
+    {
+      "title": "It\u2019s boom and bust in the hedge-fund world as both liquidations and new launches spike",
+      "summary": "The number of hedge-fund liquidations reached a two-year high in the first quarter, a period which also saw a boom in new launches.",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 09:49:00 GMT"
+    },
+    {
+      "title": "Why the huge premium on SK Hynix\u2019s U.S. listing may prove short-lived.",
+      "summary": "If the Korean depository allows conversion, then the ADR premium on SK Hynix may contract.",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 09:36:00 GMT"
+    },
+    {
+      "title": "Stripe and Advent reportedly team up to bid for battered PayPal. Michael Burry says the offer isn\u2019t enough.",
+      "summary": "PayPal, the struggling payments processor, rallied in premarket trade on Wednesday on a report that rival Stripe is teaming up with private-equity group Advent International on a bid.",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 09:20:00 GMT"
+    },
+    {
+      "title": "\u2018I don\u2019t want to sound callous\u2019: Why base your Social Security claim on life expectancy? We could die at any time.",
+      "summary": "\u201cThe actual date of death ultimately affects only the surviving beneficiaries.\u201d",
+      "source": "MarketWatch Top",
+      "published": "Wed, 15 Jul 2026 09:15:00 GMT"
+    },
+    {
+      "title": "Elon Musk in a post on X says some of his Trump posts \u2018went too far\u2019 and that he regrets them",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Wed, 11 Jun 2025 07:09:00 GMT"
+    },
+    {
+      "title": "Bank of England decision on Thursday will be at 12:02 p.m. local time instead of 12 p.m., due to VE Day\u2019s two minutes of silence",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Tue, 06 May 2025 11:59:00 GMT"
+    },
+    {
+      "title": "Swiss National Bank cuts interest rates by a half point to 0.5%",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Thu, 12 Dec 2024 08:32:00 GMT"
+    },
+    {
+      "title": "Dollar jumps 0.5% to 0.8890 francs",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Thu, 12 Dec 2024 08:32:00 GMT"
+    },
+    {
+      "title": "Germany flash manufacturing PMI rises to 4-month high of 43.2",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Fri, 22 Nov 2024 08:34:00 GMT"
+    },
+    {
+      "title": "Germany flash services PMI falls to 9-month low of 49.4",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Fri, 22 Nov 2024 08:34:00 GMT"
+    },
+    {
+      "title": "Powell says labor market not a source of significant inflation pressure",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Wed, 31 Jul 2024 18:48:00 GMT"
+    },
+    {
+      "title": "Fed\u2019s Powell says rate cut \u2018on the table\u2019 as soon as September",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Wed, 31 Jul 2024 18:41:00 GMT"
+    },
+    {
+      "title": "Final S&P U.S. manufacturing index is 52.2 in February vs. initial 51.5",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Fri, 01 Mar 2024 14:47:00 GMT"
+    },
+    {
+      "title": "Duolingo started at buy with $222 price target at Seaport",
+      "summary": "",
+      "source": "MarketWatch RealTime",
+      "published": "Tue, 27 Feb 2024 12:40:00 GMT"
+    }
+  ],
+  "gaps_to_fill": [
+    "market-wide earnings calendar is only partial: next earnings dates come per gapper, there is no full day-by-day earnings list",
+    "intraday levels (VWAP/HOD/LOD/PMH) need intraday bars and are only available on the Alpaca path",
+    "premarket RVOL: yfinance reports about 0 premarket volume, so a true premarket RVOL needs a premarket feed (Alpaca supplies it here); on the keyless path full-day RVOL is the stand-in"
+  ]
+}

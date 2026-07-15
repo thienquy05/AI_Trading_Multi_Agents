@@ -479,3 +479,58 @@ a new dated line.
   positions/orders + live Robinhood pull (all three accounts, VOO/NVDA/
   TSLA/ORCL RSI+SMA signals, crypto portfolio estimate) confirmed this
   run.
+
+### 2026-07-15 13:25 ET — midday scan
+- Equity $100,016.27 | cash $99,689.52 | day P&L +$11.89 (+0.012%), far
+  inside the -2% daily breaker — no trip. Weekly trade cap: 0 of 5
+  entries used this week (Mon 7/13–today).
+- Positions: AAPL 1@$310.47, current $326.75, uP&L +$16.28/+5.24%
+  (≈+1.55R off the $10.47 1R). Below the +2R trail-to-breakeven trigger
+  (~$331.41) — stop left as-is. GTC stop confirmed still resting
+  (`7709c58e...`, stop $300, status `new`), no gap-through. Not near
+  -7% (~$288.73); no thesis to break (infra-verification position). No
+  crypto positions open — no action needed either side.
+- `scan_tjl.py --no-telegram` (universe: SOXS, TZA, CRMT, BMGL, VEEE,
+  NXTC, BMNU, LCID, from today's `packet_2026-07-15.json` — today's
+  `watchlist_2026-07-15.json` is an empty list, no qualifying premarket
+  setups per this morning's research): 0/8 PASS, all `fail_daily`
+  (price ≤ prior-day high, one insufficient-data). No trade. Telegram
+  suppressed (unchanged vs the 12:32 PM hourly run).
+- `scan_crypto.py --no-telegram`: regime still BEAR (BTC $64,993.47 <
+  daily SMA200 $73,633.01) — sleeve stands down, no entries scanned.
+- Guardrail check: moot this run (no PASS to evaluate). Today's 8:30
+  AM PPI + 10:00 AM Fed Chair Warsh (Senate Banking) blackout window
+  cleared hours ago — no active §3b blackout right now. No
+  earnings-24h conflicts on AAPL. No tilt-stop triggers (no stop-outs
+  today).
+- Afternoon catalysts: no confirmed tier-1 macro print left for the
+  1–2 PM ET window (PPI already released this morning; routine
+  4-week/8-week T-bill auctions only, not a §3b blackout event). United
+  Airlines (UAL) reports after today's close (not a held/watchlist
+  name). Live tape: chip-sector weakness continuing — Micron -10%, SK
+  Hynix -13% despite an ASML beat/raise — relevant to the MU/LRCX/KLAC
+  TJL watch complex (no position, watch only). PayPal +~20% premarket
+  on a reported buyout offer — market-wide noise, not one of our names.
+- Extra-watch one-liners (live): BTC ~$64,993 (flat-to-firm, still <
+  daily SMA200 $73,633 — regime stays BEAR); ETH ~$1,874; SOL ~$77.5;
+  NVDA $208.21 (-1.7% vs yesterday's $211.80 close, dragged by the
+  Micron/SK Hynix selloff, no company-specific news); ORCL $133.22
+  (+4.1% vs yesterday's $127.94 close, continuing this week's bounce
+  off Monday/Tuesday's IBM-sympathy slide, RSI(14) 14 — still deeply
+  oversold, price ~31% below its ~196-day SMA).
+- **Robinhood account-structure note (confirmed again this run)**: the
+  Individual account (556092849) is fully empty ($0.38 cash, no
+  positions) for a third consecutive check. The full ORCL position
+  (0.790482 sh) sits in the Agentic account (539785238) alongside NVDA
+  and TSLA — `average_buy_price` is still omitted for ORCL there
+  (position shows as fully "intraday" again this pull), consistent
+  with yesterday's read that Quy consolidated the position rather than
+  sold it. Agentic total $213.88 (equity $180.90 + crypto $32.98).
+  Roth IRA: VOO 0.183159 sh, $126.62, avg $689.29, +$0.38 uPL, $50
+  pending deposit.
+- Dashboard republished (local, gitignored) with fresh Alpaca account/
+  positions/orders + live Robinhood pull (all three accounts) + fresh
+  RSI/MA historicals for VOO/NVDA/TSLA/ORCL (RSI 64/61/54/14 —
+  materially unchanged vs this morning's 9:30 AM read).
+- No entries, no exits, no stop adjustments this run — monitoring +
+  guardrail-check cycle only.

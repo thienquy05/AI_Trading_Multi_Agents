@@ -342,3 +342,47 @@ Append at the BOTTOM, one entry per pre-market run.
 - Watching but not trading: VEEE, AGEN (see Skips & Traps in today's
   report). Reassess after CPI + Warsh testimony clear at 10 AM ET, and
   watch for Hormuz-blockade-driven volatility this afternoon.
+
+## 2026-07-15 — pre-market
+- Account: equity $100,006.32 | cash $99,689.52 | open positions: AAPL
+  1@$310.47, current $316.80, uP&L +$6.33/+2.04%.
+- Macro/calendar: LIVE data day again — Core/headline PPI m/m at 8:30 AM
+  ET (headline forecast 0.0% vs 1.1% prior, core 0.3% vs 0.4% prior),
+  Fed Chair Warsh's SECOND day of testimony (Senate Banking, after
+  House Financial Services yesterday) at 10:00 AM ET. §3b blackout
+  window IN EFFECT today ~8:30-10:00 AM ET, same pattern as yesterday.
+  Yesterday's cool CPI (3.5% YoY vs ~3.8% exp) drove a relief rally
+  (S&P +0.37%, Nasdaq +1%) but Warsh called it "not mission
+  accomplished" (hawkish) — today could be two-sided again.
+- Sector momentum / market tone: SPX 7,543.59 / NDX 29,586.29 / RUT
+  2,964.76 (yesterday's close, up on the CPI relief rally; yfinance
+  snapshot blocked again). VIX 16.38, down from 17.49 yesterday.
+  Gappers: 8 total, 7 down / 1 up. SOXS (-90.1%) and TZA (-90.0%) are
+  leveraged-ETF reverse-split data artifacts, not real moves (confirmed
+  via prev_close vs sma200 being wildly inconsistent, e.g. SOXS $43 vs
+  sma200 $417.68). CRMT -11.7% (real post-earnings selloff), BMGL +8.8%
+  (real catalyst - Nasdaq compliance regained - but only 162 shares/day
+  avg volume, untradeable), VEEE -7.7% (continuing to fade its Monday
+  merger spike), NXTC -5.5% (real rebrand catalyst), LCID -3.0% (real
+  catalyst - weighing strategic options rumor), BMNU -4.5% (no
+  catalyst). None cleared day/swing eligibility - all down-gaps except
+  BMGL, which fails mcap+sma200+liquidity.
+- Crypto regime: BEAR (BTC prior close $64,993.47 < daily SMA200
+  $73,633.01) — sleeve stands down. BTC/ETH/SOL flat-to-slightly-down
+  today after a
+  strong prior 24h: BTC $64,717 (-0.5% vs today's open), ETH $1,880.6
+  (-0.6%), SOL $77.51 (-0.4%) — Ethereum ETF inflows (~$58M) and a
+  Morgan Stanley ETH/SOL ETF filing (Coinbase as custodian) cited as
+  tailwinds in broader coverage.
+- Extra-watch (BTC/ETH/SOL/NVDA/ORCL): NVDA $211.68 premarket, roughly
+  flat, no specific news. ORCL $129.11 premarket (+0.9%), small bounce
+  after Mon/Tue's slide, no new company-specific news.
+- Ideas (2-3): none. All 8 gappers failed the screens (down-gap
+  direction, or mcap/sma200/liquidity for the one up-gap). Two of the
+  down-gaps aren't even real moves (leveraged-ETF split artifacts).
+  Today is also inside a live §3b blackout window (PPI + Fed testimony)
+  — standing aside on equities regardless. Crypto sleeve flat (bear
+  regime).
+- Watching but not trading: none of today's gappers warrant a watch —
+  see Skips & Traps in today's report. Reassess after PPI + Warsh's
+  second testimony clear at 10 AM ET.

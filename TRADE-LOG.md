@@ -534,3 +534,49 @@ a new dated line.
   materially unchanged vs this morning's 9:30 AM read).
 - No entries, no exits, no stop adjustments this run — monitoring +
   guardrail-check cycle only.
+
+### 2026-07-15 16:00 ET — daily snapshot
+- Equity $100,017.05 | day P&L +$12.67 (+0.0126%) | cash $99,689.52
+- Open: AAPL 1@$310.47, current $327.53 (uP&L +$17.06 / +5.495%)
+- Trades today: 0 | notes:
+  - No new entries placed today (7 AM research found no qualifying
+    setups — 8 gappers all failed the day/swing screens; two were
+    leveraged-ETF reverse-split data artifacts, not real moves; crypto
+    sleeve regime-gated BEAR with BTC < SMA200; TJL hourly scans all
+    failed the signal gates).
+  - AAPL position from 7/8 remains open, up +5.5% unrealized, well clear
+    of both the -7% level (~$288.73) and the +2R trail trigger
+    (~$331.41). GTC stop still resting at $300 (order `7709c58e...`,
+    status `new`, placed 7/9 at 7:14 AM, unfilled). No action warranted
+    on the position.
+  - **Robinhood real-money accounts (live 4 PM pull)**: 
+    - Individual (556092849): $0.38 total value, no positions (ORCL moved
+      to Agentic account earlier this week).
+    - Roth IRA (829651439): VOO 0.183159 sh @ $689.29 avg, pending $50
+      deposit.
+    - Agentic (539785238): NVDA 0.358944 sh @ $195.10 avg, TSLA
+      0.002340 sh @ $427.35 avg, ORCL 0.790482 sh (intraday, no
+      average cost shown — consolidated trade), total account $214.95
+      (equity $182.02 + crypto $32.93 est.).
+  - **Extra-watch live prices (Alpaca 4:08 PM ET / 20:08 UTC)**:
+    - BTC $64,955.80 (bid $64,883.90, ask $64,955.80) — down from $65,323
+      at this morning's 9:39 open, -0.57% day move (BEAR regime intact,
+      < SMA200 $73,633). Crypto cryptic news low: no material coin-specific
+      driver found, broad stabilization off earlier week's lows.
+    - ETH $1,922.29 (bid $1,920.80, ask $1,922.29) — down from $1,934.79
+      open, -0.65% day move. No Ethereum-specific news.
+    - SOL $77.393 (bid $77.089, ask $77.393) — down from $78.70 open,
+      -1.67% day move. No Solana-specific news.
+    - NVDA $212.49 (Robinhood live) — up from $211.80 close, +0.33% day
+      move. Chip-sector strength continuing (ASML beat, TSMC upgrade talk
+      offsetting Micron/SK Hynix weakness from Monday's macro selloff).
+    - ORCL $132.53 (Robinhood live) — up from $127.94 close, +3.60% day
+      move. Multi-day bounce continuing off Tuesday's IBM-sympathy lows
+      (IBM -25% on 2025 profit warning, cloud-margin concerns cited).
+- Guardrail/breaker status: day P&L +0.0126%, well inside the -2% daily /
+  -4% weekly circuit breakers — no trip. Weekly trade cap: 0 of 5 new
+  entries used this week (Mon 7/13 through today) — account idle on
+  equities and crypto (regime-gated BEAR sleeve). No rule violations.
+- Lesson: a quiet day with no setups is exactly what guardrails are for —
+  the account is preserved, risk-managed, and ready for tomorrow's
+  opportunities. Process discipline beats activity.

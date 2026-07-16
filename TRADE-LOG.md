@@ -600,3 +600,20 @@ a new dated line.
   — noted for the record, not held against the agent-driven strategy's
   own entry count. No further equity/crypto entries planned by me
   today either way (zero research ideas, crypto sleeve still BEAR).
+
+### 2026-07-16 10:33 ET — Hourly TJL watch (no candidates)
+- `scan_tjl.py --no-telegram`: today's watchlist (`scans/watchlist_2026-07-16.json`)
+  is empty (zero premarket ideas) and no gappers scan exists to fall
+  back on — scanner exits cleanly with "no candidates," nothing to
+  check against §2b.
+- §3b guardrail note (moot, no candidate to gate): position count is
+  still 7 open (AAPL/NVDA/ORCL/VOO/BTC/ETH/SOL) vs the 4-concurrent
+  cap, and today's/this-week's new-entry caps are already exceeded by
+  Quy's manual adds logged at the 9:30 AM open — no new entry would be
+  permitted this run even if the scan had produced a PASS. Day P&L
+  ~+$2.90 (equity $100,019.92 vs last_equity $100,017.02), nowhere
+  near the -2% breaker.
+- No trade placed. Hit set unchanged (empty → empty) — dashboard not
+  republished this run per the cheap-hourly-run rule.
+- Telegram: none sent (quiet run, no trade, no emergency action —
+  Quy's standing preference).

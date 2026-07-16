@@ -720,3 +720,26 @@ a new dated line.
   republished this run per the cheap-hourly-run rule.
 - Telegram: none sent (quiet run, no trade, no emergency action —
   Quy's standing preference).
+
+### 2026-07-16 16:00 ET — daily snapshot
+- Equity $100,012.77 | day P&L -$4.25 (-0.004%) | cash $98,584.48
+- Open: AAPL 1@$310.47 (current $332.89, uP&L +$22.42/+7.22%), NVDA 1@$209.84 (current $207.19, uP&L -$2.65/-1.26%), ORCL 1@$127.93 (current $124.03, uP&L -$3.90/-3.05%), VOO 1@$692.29 (current $689.49, uP&L -$2.80/-0.40%), BTC 0.0007@$64,132.85 (current $64,173.39, uP&L +$0.028/+0.06%), ETH 0.0106@$1,880.36 (current $1,872.32, uP&L -$0.085/-0.43%), SOL 0.1309@$76.086 (current $75.708, uP&L -$0.049/-0.50%)
+- Trades today: 6 | notes:
+  - **All six trades placed by Quy manually this morning** (6:35-8:36 AM ET per order timestamps, not agent-driven, confirmed in the 9:41 AM market-open log entry above).
+  - **Equities (3)**: NVDA, ORCL, VOO — each 1 share entered at limit prices; all three protective -7% stops placed this run at 9:41 AM (order ids `327083b0`, `95bedfa0`, `5fcaed25`). None of these names were part of this morning's research plan (RESEARCH-LOG.md 07-16 listed zero equity ideas, empty watchlist).
+  - **Crypto (3)**: BTC, ETH, SOL — purchased at market this morning; each has a stop_limit set at -7% off entry (BTC $59,643.60, ETH $1,748.70, SOL $70.76). Today's crypto regime read was BEAR (BTC < SMA200); the sleeve normally stands down in BEAR — these entries contradict that gate, flagged honestly in the 9:41 AM log.
+  - **Position count breach**: 7 concurrent positions (AAPL + 6 Quy trades) vs the strategy's max-4 rule. Today's 2-new-entries/day cap and this week's 5-new-entries/week cap were both exceeded by this single batch, noted for the record (Quy authorized these manually; agent entry-count stays at 0 this week).
+  - **AAPL position note**: still holding the system-test trade from 7/8; current unrealized +$22.42 (≈+2.14R off the original $10.47 1R), well above the +2R trail-to-breakeven trigger. Stop was raised from $300 to $310.47 (breakeven) at the 1:10 PM midday scan (order `f1aab1b7`), protecting the gain.
+  - **Guardrail/breaker status**: day P&L -0.004%, far inside the -2% daily / -4% weekly circuit breakers — no trip. Weekly entry count: 6 (Quy's manual adds, not agent-driven). No rule violations on the agent's side; position-count and entry-cap breaches are Quy's manual trades.
+- **Robinhood real-account status** (read-only, live pull 4:06 PM ET):
+  - Individual (556092849): empty, $0.38 cash (changed from ORCL ~$100 invested per 7/8 baseline; Quy consolidated/moved the position).
+  - Roth IRA (829651439): VOO 0.183159 sh @ avg $689.29 (current Robinhood close $689.29, flat).
+  - Agentic (539785238): NVDA 0.358944 sh @ avg $195.10 (current ~$207.46, uP&L ~+$4.41), TSLA 0.002340 sh @ avg $427.35 (current ~$208 per prior session data, dust position), ORCL 0.790482 sh @ avg $131.76 (current ~$124.24, uP&L ~-$5.80).
+  - Note: Robinhood quote for "BTC" symbol returned $28.41 (likely an ETF proxy), not spot crypto price; actual BTC spot ~$64,173 per Alpaca crypto data. Using Alpaca crypto quotes for the brief below.
+- **Extra-watch one-liners** (live, close-of-day 4:00-4:06 PM ET):
+  - BTC ~$64,173 (Alpaca spot, from Alpaca positions close), -0.9% vs prior close $64,740 — bear regime intact (still < SMA200 $73,518).
+  - ETH ~$1,872 (Alpaca, -2.7% vs prior close $1,923).
+  - SOL ~$75.71 (Alpaca, -1.4% vs prior close $76.788).
+  - NVDA $207.46 (Robinhood close), -2.5% vs prior close $212.50 — chip sector weakness (TSM beat but sold on spending concerns, dragging NVDA).
+  - ORCL $124.24 (Robinhood close), -6.2% vs prior close $132.49 — continued weakness (down ~33% YTD, caution on cloud-margin sustainability per analyst commentary).
+- Lesson: today's manual trades (Quy's direct entries outside the research workflow) revealed a misalignment — the agent's guardrails (position count, weekly entry cap) are rigid and assume agent-driven trading only. Quy's manual flexibility bypasses them. Flagged honestly; recommend clarifying whether the "max 4 concurrent" rule applies to the agent's entries only (recommend: yes) or to the account holistically (would require a different gate design for mixed workflows). No trading strategy change needed — the edge in gap-retest discipline + guardrails on the agent side stands; Quy's real-money Robinhood management is orthogonal.

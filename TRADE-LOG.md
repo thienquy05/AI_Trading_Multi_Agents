@@ -534,3 +534,45 @@ a new dated line.
   materially unchanged vs this morning's 9:30 AM read).
 - No entries, no exits, no stop adjustments this run — monitoring +
   guardrail-check cycle only.
+
+### 2026-07-16 08:36 ET — ad hoc: mirror Quy's Robinhood holdings into paper account
+- Quy asked to make the Alpaca paper account match his real Robinhood
+  holdings. Not a 3R/1R strategy signal — a one-off portfolio mirror,
+  still governed by the hard rules (stop-loss on every new position,
+  logged here). Live Robinhood pull this run (all 3 accounts):
+  Individual (556092849) empty; Roth IRA (829651439) VOO 0.183159 sh
+  @avg $689.29; Agentic (539785238) NVDA 0.358944 sh @avg $195.10,
+  ORCL 0.790482 sh @avg $131.76, TSLA 0.002340 sh @avg $427.35 (dust),
+  crypto_value $32.41 (est. $18/$8/$4 BTC/ETH/SOL basis split, i.e.
+  ~9:4:2 ratio).
+- Mirrored as whole-share equity positions (paper account is $100k vs.
+  Robinhood's ~$213 total — matched composition/tickers, not dollar
+  amounts) + a crypto sleeve scaled to preserve the 9:4:2 BTC:ETH:SOL
+  ratio at ≥$10 min notional each. Skipped TSLA — 0.002340 sh (~$1) is
+  immaterial dust per Quy's own account, and a 1-share buy would
+  massively overweight it vs. the real position.
+- **Crypto (filled immediately, 24/7 market)**:
+  - BTC/USD buy 0.000699945 @ $64,132.85 (~$44.89) → stop_limit sell
+    same qty, stop $59,643.60 / limit $59,345.40 (-7%).
+  - ETH/USD buy 0.010610407 @ $1,880.36 (~$19.93) → stop_limit sell
+    same qty, stop $1,748.70 / limit $1,739.96 (-7%).
+  - SOL/USD buy 0.130862025 @ $76.086 (~$9.97) → stop_limit sell same
+    qty, stop $70.76 / limit $70.41 (-7%).
+- **Equities (market closed at submission — 8:36 AM ET, opens 9:30 —
+  limit day orders queued for the open, stops to follow once filled)**:
+  - VOO buy 1 sh, limit $725 (last ask ~$714).
+  - NVDA buy 1 sh, limit $235 (last ask ~$230).
+  - ORCL buy 1 sh, limit $128 (last bid ~$125.78).
+  - Rationale for limit-not-market: avoids placing a stop-loss sell
+    before shares are actually owned — this account has shorting
+    enabled, so an unmatched stop sell could open a short instead of
+    protecting a long. Will confirm fills after the 9:30 open and
+    attach standalone -7% stops immediately, per the hard rule.
+- Guardrail note: this is a portfolio-mirroring action, not a new
+  strategy signal, so the 5-entries/week cap and 1%-risk sizing don't
+  apply the same way — flagging here for visibility rather than
+  skipping the guardrail check silently. Position count after fills:
+  AAPL (existing) + VOO + NVDA + ORCL + BTC + ETH + SOL = 7 open
+  positions, above the strategy's normal max-4-concurrent guidance;
+  acceptable since these are hold-and-track mirrors, not active 3R/1R
+  trades competing for the same risk budget.

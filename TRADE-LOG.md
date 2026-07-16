@@ -534,3 +534,69 @@ a new dated line.
   materially unchanged vs this morning's 9:30 AM read).
 - No entries, no exits, no stop adjustments this run — monitoring +
   guardrail-check cycle only.
+
+### 2026-07-16 09:41 ET — market open (⚠️ unexplained pre-open trades found)
+- `clock`: market OPEN (regular session). Equity $100,014.19 | cash
+  $98,584.48 | last_equity $100,017.02 (day P&L ≈ -$2.83, nowhere near
+  the -2% breaker).
+- **Anomaly found on the pre-check sweep**: `positions`/`orders all`
+  showed SIX new fills that are not in today's (or any) research plan
+  and were never logged here — all timestamped 2026-07-16 12:35-12:36
+  UTC (8:35-8:36 AM ET), a time that matches none of the five
+  documented workflow cron times (5/7/9:30/13:00/16:00 ET):
+  - **NVDA** 1 sh @ $209.84 limit-filled, **ORCL** 1 sh @ $127.93
+    limit-filled, **VOO** 1 sh @ $692.29 limit-filled — **zero stop-loss
+    orders attached to any of the three**, a direct hard-rule violation
+    (CLAUDE.md: "every new position gets a stop loss set immediately").
+    These three symbols are explicitly informational-only Robinhood
+    advisory names per `TRADING-STRATEGY.md` §5, never paper-account
+    trade candidates — today's `RESEARCH-LOG.md` 07-16 pre-market entry
+    lists zero equity ideas and no watchlist tickers at all.
+  - **BTC** 0.0007017 @ $64,132.85, **ETH** 0.010637 @ $1,880.36,
+    **SOL** 0.13119 @ $76.086, each immediately followed by a
+    stop_limit sell at essentially exactly -7% off entry (BTC
+    $59,643.60, ETH $1,748.70, SOL $70.76) — mechanically matches the
+    documented cbuy→cstop sleeve pattern, but directly contradicts
+    today's own research call minutes earlier: "Crypto regime: BEAR
+    ... sleeve stands down, no entries" (RESEARCH-LOG.md 07-16;
+    confirmed again live this run: BTC prior close still < SMA200).
+  - None of these six trades has any TRADE-LOG entry, thesis, or
+    guardrail pre-check on record. Combined with AAPL, open count is
+    now 4 equities + 3 crypto = 7 concurrent positions, over the **max
+    4 concurrent** rule; today's 2 new positions/day and this week's 5
+    new positions/week caps are both blown past by this one batch;
+    crypto sleeve's own max-2-positions cap is exceeded (3 open). I did
+    not authorize, plan, or execute any of these six trades this
+    session, and cannot find a workflow run that accounts for them.
+- **Immediate mitigation taken (this run, 9:41 AM ET)**: placed
+  standalone -7%-off-entry protective stops on the three naked equity
+  positions per the hard stop-loss rule — NVDA stop $195.15
+  (order `327083b0`), ORCL stop $118.97 (order `95bedfa0`), VOO stop
+  $643.83 (order `5fcaed25`). All positions are now stopped; no
+  unwinding/selling done — that's Quy's call, flagging for review
+  rather than acting unilaterally on trades I don't have context for.
+- AAPL: GTC stop `7709c58e` still resting at $300, status `new`,
+  current $327.56 (+5.5%) — no gap-through, no action needed.
+- **Guardrail pre-check (§3b) for today's planned trades**: moot —
+  today's research (RESEARCH-LOG.md 07-16) listed zero trade ideas
+  (clean "no qualifying setups," zero gappers, zero econ events).
+  Nothing was in the day's plan to execute at the open regardless of
+  the anomaly above. Daily/weekly circuit breakers clear either way
+  (day P&L ~flat). Given the position-count and weekly/daily-cap
+  breaches already caused by the unexplained trades, no further new
+  entries would be permitted today even if a setup existed.
+- Trades executed by me this run: **0 new entries** (protective stops
+  only, on positions I did not open).
+- **Flagged to Quy via urgent Telegram** this run — six-trade anomaly,
+  missing stops now fixed, request for guidance on whether to unwind
+  NVDA/ORCL/VOO/BTC/ETH/SOL.
+- **Resolved same run**: Quy confirmed directly ("i'm the one who
+  placed the order") — these were his own manual trades, not a bug or
+  unauthorized action. No unwind needed. Protective stops added above
+  stay in place (NVDA $195.15 / ORCL $118.97 / VOO $643.83; crypto
+  already had -7% stops from entry). Net effect: account now legitimately
+  carries 7 concurrent positions (over the strategy's normal 4-max) and
+  this week's/today's entry caps are exceeded by Quy's own manual adds
+  — noted for the record, not held against the agent-driven strategy's
+  own entry count. No further equity/crypto entries planned by me
+  today either way (zero research ideas, crypto sleeve still BEAR).

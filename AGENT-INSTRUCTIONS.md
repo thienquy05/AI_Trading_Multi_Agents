@@ -78,19 +78,30 @@ Files needed: `TRADING-STRATEGY.md`, `PROMPT-PREMARKET.md`,
    `WATCHLIST_CRITERIA.md`. Output: `scans/packet_<date>.json`.
 3. **Fill the packet's gaps** (only what the packet could not get —
    check its `gaps_to_fill` and error fields before searching):
-   a. If `market_snapshot` errored (yfinance blocked): pull index/VIX
-      tone via Robinhood `get_index_quotes` or one tight web search.
+   a. `market_snapshot` is now always empty (yfinance removed
+      2026-07-16, see Gotchas): pull index/VIX tone via Robinhood
+      `get_index_quotes` or one tight web search, every run.
    b. If `econ_calendar` errored: one web search for today's US macro
       calendar with ET times. Mark tier-1 events (§3b blackouts).
-   c. **Earnings**: who reports today/this week beyond the per-gapper
-      `next_earnings` dates; flag names within 24h (§3b no-entry).
-   d. **Crypto regime + tape**: run `python3 scripts/scan_crypto.py
+   c. **Earnings**: `next_earnings` is no longer populated per-gapper
+      (yfinance removed) — check who reports today/this week via
+      `get_earnings_calendar`/`get_earnings_results` for any gapper
+      that clears the other day/swing gates; flag names within 24h
+      (§3b no-entry).
+   d. **Market cap**: `market_cap` is now always null (yfinance
+      removed) — the `mcap_gt_1b`/`mcap_ge_800m` gates in
+      `WATCHLIST_CRITERIA.md` can never pass on their own. Until a
+      replacement source is wired in, treat day/swing eligibility as
+      "would pass but for market cap" on discretion and say so
+      explicitly in the report; do not silently wave a gapper onto the
+      list.
+   e. **Crypto regime + tape**: run `python3 scripts/scan_crypto.py
       --no-telegram` (§2c sleeve). Regime state + BTC/ETH/SOL moves go
       in the brief. On a PASS inside sleeve rules: `cbuy` then `cstop`
       immediately, log in `TRADE-LOG.md`.
-   e. **Held-names sweep (extra watch)**: news on BTC, ETH, SOL, NVDA,
+   f. **Held-names sweep (extra watch)**: news on BTC, ETH, SOL, NVDA,
       ORCL — Quy holds these for real; anything material gets a callout.
-   f. **Verification rule**: any packet headline that will drive a
+   g. **Verification rule**: any packet headline that will drive a
       trade idea needs a second independent source or a primary source
       before the 9:30 run acts on it. Date-check — stale news reposted
       premarket is a classic trap.
@@ -248,7 +259,7 @@ and satisfies the "stop on every position" rule atomically.
 
 | Script | What / when |
 |---|---|
-| `scan_premarket.py [--no-alpaca]` | **The 7:00 AM packet builder** (needs `.venv` — see Gotchas). Hybrid: Alpaca screener candidates with real premarket gap/volume/RVOL + live levels; yfinance market snapshot, market caps, earnings dates (and keyless fallback candidates); RSS market news; ForexFactory US high-impact econ calendar (cached ~4h). Stamps `day_eligible`/`swing_eligible` per `WATCHLIST_CRITERIA.md`. Data only, zero analysis. Saves `scans/packet_<date>.json`. |
+| `scan_premarket.py [--no-alpaca]` | **The 7:00 AM packet builder** (needs `.venv` — see Gotchas). Alpaca-only since 2026-07-16 (yfinance removed, was permanently rate-limited): screener candidates with real premarket gap/volume/RVOL + live levels; RSS market news; ForexFactory US high-impact econ calendar (cached ~4h). No keyless fallback candidates, no market cap, no market snapshot, no per-gapper earnings dates anymore — agent fills those per workflow step 3. Stamps `day_eligible`/`swing_eligible` per `WATCHLIST_CRITERIA.md` (mcap gates can never pass until a replacement source exists). Data only, zero analysis. Saves `scans/packet_<date>.json`. |
 | `scan_gappers.py [--no-telegram]` | LEGACY backup (superseded by `scan_premarket.py` in the daily workflow, kept because it runs on stdlib+Alpaca alone): screener ∪ most-actives → real premarket gap% + volume filters (>5%, >$3, >50k) → top 10 with Benzinga headlines. Saves `scans/premarket_gappers_<date>.json`. |
 | `scan_tjl.py [--force] [--no-telegram] [TICKERS…]` | Trend Join Long entry check. Universe: explicit args override, else `scans/watchlist_<date>.json` (today's research picks), else latest gappers scan top-10, else exits cleanly with "no candidates." Time-gated 10:00–15:30 ET (`--force` bypass for testing). Saves `scans/tjl_watchlist_<date>_<HHMM>ET.json`. **Run with `--no-telegram`** — since 2026-07-08 the agent owns all Telegram sends (trade-only policy for TJL runs). |
 | `backtest_tjl.py [--tickers A,B,C] [--months N]` | TJL backtest on 5-min bars; same universe resolution as `scan_tjl.py` (selection-bias caveat in its header). On demand only. |
@@ -353,22 +364,28 @@ fetch live data, so every workflow run regenerates it:
   ends) shift all six cron expressions +1 hour; reverse in March. The
   Daily Summary run nearest the change should flag it via Telegram.
 - **Python venv for the packet builder**: `scan_premarket.py` wants
-  `.venv` with `requirements.txt` installed (yfinance, feedparser,
-  requests, markdown). Fresh cron containers
-  don't have it: `python3 -m venv .venv && .venv/bin/pip install -q -r
-  requirements.txt` (~40s) — or add that to the environment's setup
-  script. Everything degrades gracefully without it (Alpaca-only
-  packet, `gaps_to_fill` says what's missing), and `scan_gappers.py`
-  remains the stdlib-only fallback.
-- **Network allowlist for full packet data**: the environment's egress
-  policy must allow `query1.finance.yahoo.com`, `query2.finance.yahoo.com`,
-  `fc.yahoo.com` (yfinance), `nfs.faireconomy.media` (econ calendar),
+  `.venv` with `requirements.txt` installed (feedparser, requests,
+  markdown). Fresh cron containers don't have it: `python3 -m venv
+  .venv && .venv/bin/pip install -q -r requirements.txt` (~10s) — or
+  add that to the environment's setup script. `scan_gappers.py` remains
+  the stdlib-only fallback if even that is unavailable.
+- **yfinance removed 2026-07-16**: it filled market snapshot, market
+  cap, per-gapper earnings dates, and a keyless candidate fallback, but
+  Yahoo's edge rate-limited (HTTP 429) every call from this sandbox's
+  shared egress IP on every single run since 2026-07-09 — confirmed via
+  direct curl (real 429 "Too Many Requests" responses, not a
+  network/firewall block, so allowlisting `query1/2.finance.yahoo.com`
+  doesn't fix it). `scan_premarket.py` is Alpaca-only now; those four
+  gaps are permanent until a replacement data source is wired in (SEC
+  EDGAR's keyless company-facts API is a candidate for market cap — ask
+  Quy before adding it or any paid API key). The workflow's step-3
+  fallbacks (Robinhood index quotes, `get_earnings_calendar`, one web
+  search) cover snapshot/earnings every run now, not just on error.
+- **Network allowlist for packet data**: the environment's egress
+  policy must allow `nfs.faireconomy.media` (econ calendar),
   `feeds.content.dowjones.io`, `www.cnbc.com`, `news.google.com`,
-  `finance.yahoo.com` (RSS), and `api.agentmail.to` (5:00 AM Morning
-  Brief email). Verified 2026-07-09: with these blocked the scan still
-  completes but the snapshot/market-caps/econ-calendar come back empty
-  — the workflow's step-3 fallbacks (Robinhood index quotes, one web
-  search) cover it.
+  `finance.yahoo.com` (RSS headlines only — no longer the yfinance API),
+  and `api.agentmail.to` (5:00 AM Morning Brief email).
 - **ForexFactory calendar rate limit**: the feed 429s on rapid calls;
   `scan_premarket.py` caches it in `scans/.ff_calendar_cache.json`
   (gitignored) with a ~4h TTL and falls back to the stale cache on

@@ -7,13 +7,25 @@ analyst pass (PROMPT-PREMARKET.md). The deterministic watchlist flags
 (day_eligible, swing_eligible) encode WATCHLIST_CRITERIA.md in code,
 not in an AI's mood.
 
-Hybrid data policy (decided 2026-07-09):
-  - Alpaca (keys via .env or env vars) is the source of truth for
-    premarket gaps, premarket volume, TRUE premarket RVOL, and live
-    intraday levels.
-  - yfinance fills what the free Alpaca tier lacks: market cap, the
-    index/VIX/rates/oil/dollar snapshot, earnings dates, and a keyless
-    fallback candidate path when Alpaca is unavailable.
+Data policy (revised 2026-07-16, yfinance removed):
+  - Alpaca (keys via .env or env vars) is the sole source of truth for
+    candidates, premarket gaps, premarket volume, TRUE premarket RVOL,
+    and live intraday levels. There is no keyless fallback candidate
+    path anymore: without Alpaca credentials this packet has no
+    gappers.
+  - yfinance previously filled what the free Alpaca tier lacks (market
+    cap, the index/VIX/rates/oil/dollar snapshot, earnings dates, a
+    keyless screener fallback) but was removed 2026-07-16: Yahoo's
+    edge rate-limits (HTTP 429 "Too Many Requests") this sandbox's
+    shared egress IP, so every yfinance call failed every single run
+    since 2026-07-09 (confirmed via direct curl: real 429 responses,
+    not a network/firewall block). Dead, misleading code, not a real
+    fallback. market_cap, next_earnings, and market_snapshot are now
+    ALWAYS None/empty from this script; see gaps_to_fill. That means
+    the mcap_gt_1b / mcap_ge_800m WATCHLIST_CRITERIA.md gates can never
+    pass until a replacement market-cap source is wired in (SEC EDGAR's
+    keyless company-facts API is a candidate; ask before adding a new
+    paid data source).
   - feedparser RSS + the ForexFactory weekly JSON replace token-costly
     web searches for market news and the econ calendar.
 
@@ -33,10 +45,6 @@ from alpaca_common import (DATA, ET, SCANS, get, get_bars, latest_trades,
                            load_env, save_json)
 
 try:
-    import yfinance as yf
-except ImportError:
-    yf = None
-try:
     import feedparser
 except ImportError:
     feedparser = None
@@ -48,13 +56,6 @@ SNAPSHOT_SYMBOLS = {
     "Russell 2000": "^RUT", "VIX": "^VIX", "US 10Y": "^TNX",
     "US 3M": "^IRX", "WTI Oil": "CL=F", "Dollar (DXY)": "DX-Y.NYB",
 }
-
-# Static fallback universe, only used when both screener paths fail.
-UNIVERSE = ["NVDA", "AMD", "AVGO", "SMCI", "MRVL", "TSLA", "AAPL", "MSFT",
-            "META", "AMZN", "GOOGL", "NFLX", "DELL", "SNOW", "PLTR", "COIN",
-            "MSTR", "SOFI", "RIVN", "NIO", "MARA", "RIOT", "BA", "DIS",
-            "JPM", "BAC", "XOM", "CVX", "HOOD", "UBER", "CRWD", "PANW",
-            "CELH", "LULU", "NKE", "CAVA", "DKNG", "ARM", "INTC", "MU"]
 
 RSS_FEEDS = [
     ("MarketWatch Top", "https://feeds.content.dowjones.io/public/rss/mw_topstories"),
@@ -102,25 +103,13 @@ def step(msg):
 # ---------------------------------------------------------------- snapshot
 
 def market_snapshot():
-    """Index/VIX/rates/oil/dollar snapshot via yfinance daily closes."""
-    out = {}
-    if yf is None:
-        return {"error": "yfinance not installed"}
-    for name, sym in SNAPSHOT_SYMBOLS.items():
-        try:
-            hist = yf.Ticker(sym).history(period="5d", interval="1d")
-            closes = [float(c) for c in hist["Close"].dropna()]
-            if len(closes) >= 2:
-                last, prev = closes[-1], closes[-2]
-                out[name] = {"symbol": sym, "last": round(last, 2),
-                             "prev_close": round(prev, 2),
-                             "change_pct": round((last / prev - 1) * 100, 2)}
-            else:
-                out[name] = {"symbol": sym, "error": "not enough history"}
-        except Exception as e:
-            out[name] = {"symbol": sym, "error": str(e)[:120]}
-    step(f"market snapshot: {sum(1 for v in out.values() if 'last' in v)}"
-         f"/{len(SNAPSHOT_SYMBOLS)} instruments")
+    """Index/VIX/rates/oil/dollar snapshot. No keyless source is wired in
+    (yfinance removed 2026-07-16, see module docstring) - the agent fills
+    this gap via Robinhood get_index_quotes or one web search per the
+    7:00 AM workflow step 3a."""
+    out = {name: {"symbol": sym, "error": "no market-snapshot source configured"}
+           for name, sym in SNAPSHOT_SYMBOLS.items()}
+    step("market snapshot: no source configured, skipped (agent fills via Robinhood/web search)")
     return out
 
 
@@ -175,62 +164,6 @@ def candidates_alpaca(now, today):
                      "premarket_volume": int(sum(b["v"] for b in bars)),
                      "market_cap": None, "volume": None, "name": None})
     return rows, "alpaca_screener_premarket"
-
-
-def candidates_yf():
-    """Keyless fallback: yfinance predefined screeners."""
-    if yf is None:
-        return None, "yfinance not installed"
-    quotes, seen = [], set()
-    for scr in ("day_gainers", "most_actives"):
-        try:
-            resp = yf.screen(scr, count=50)
-            for q in resp.get("quotes", []):
-                s = q.get("symbol")
-                if s and s not in seen:
-                    seen.add(s)
-                    quotes.append(q)
-        except Exception as e:
-            step(f"yfinance screener {scr} failed: {e}")
-    rows = []
-    for q in quotes:
-        px = q.get("regularMarketPrice")
-        pc = q.get("regularMarketPreviousClose")
-        if not px or not pc:
-            continue
-        rows.append({"symbol": q["symbol"], "price": round(px, 2),
-                     "prev_close": round(pc, 2),
-                     "gap_pct": round(q.get("regularMarketChangePercent")
-                                      or (px / pc - 1) * 100, 2),
-                     "premarket_volume": None,
-                     "market_cap": q.get("marketCap"),
-                     "volume": q.get("regularMarketVolume"),
-                     "name": q.get("shortName") or q.get("longName")})
-    if len(rows) >= 5:
-        return rows, "yfinance_screener"
-    return rows or None, "yfinance screener returned fewer than 5 names"
-
-
-def candidates_static():
-    """Last resort: static large/active universe, gap from the last two
-    daily closes via yfinance."""
-    if yf is None:
-        return None, "yfinance not installed"
-    rows = []
-    for s in UNIVERSE:
-        try:
-            hist = yf.Ticker(s).history(period="5d", interval="1d")
-            closes = [float(c) for c in hist["Close"].dropna()]
-            vols = [int(v) for v in hist["Volume"].dropna()]
-            if len(closes) >= 2:
-                rows.append({"symbol": s, "price": round(closes[-1], 2),
-                             "prev_close": round(closes[-2], 2),
-                             "gap_pct": round((closes[-1] / closes[-2] - 1) * 100, 2),
-                             "premarket_volume": None, "market_cap": None,
-                             "volume": vols[-1] if vols else None, "name": None})
-        except Exception as e:
-            step(f"static universe {s} failed: {e}")
-    return (rows, "static_universe") if rows else (None, "static universe empty")
 
 
 # ------------------------------------------------------------------- news
@@ -371,35 +304,6 @@ def econ_calendar(now):
 
 # ------------------------------------------------------------- enrichment
 
-def yf_profile(sym):
-    """Market cap, company name, next earnings date via yfinance."""
-    cap = name = earn = None
-    if yf is None:
-        return cap, name, earn
-    try:
-        t = yf.Ticker(sym)
-        try:
-            cap = t.fast_info["market_cap"]
-        except Exception:
-            cap = None
-        try:
-            info = t.info
-            name = info.get("shortName") or info.get("longName")
-            cap = cap or info.get("marketCap")
-        except Exception:
-            pass
-        try:
-            cal = t.calendar or {}
-            dates = cal.get("Earnings Date") or []
-            if dates:
-                earn = str(dates[0])
-        except Exception:
-            pass
-    except Exception as e:
-        step(f"yfinance profile {sym} failed: {e}")
-    return cap, name, earn
-
-
 def alpaca_levels(syms, now, today):
     """Live intraday levels from Alpaca 5-min bars (premarket included):
     VWAP, HOD, LOD, premarket high, premarket volume, today's open."""
@@ -462,9 +366,8 @@ def alpaca_daily(syms, now, today):
 def alpaca_pm_rvol(syms, now, today):
     """TRUE premarket RVOL: today's premarket volume so far vs the 20-day
     average premarket volume at the same clock time, from 15-min bars.
-    This is the Alpaca advantage: yfinance reports about 0 premarket
-    volume, so a true premarket RVOL needs a premarket feed like this
-    one; full-day relative volume is the keyless stand-in."""
+    A true premarket RVOL needs a premarket feed; Alpaca is the only one
+    wired in here now."""
     out = {s: None for s in syms}
     try:
         clock_cap = min(now.time(),
@@ -521,13 +424,21 @@ def main():
             use_alpaca = False
 
     gaps_to_fill = [
-        "market-wide earnings calendar is only partial: next earnings "
-        "dates come per gapper, there is no full day-by-day earnings list",
+        "market_snapshot: no source configured (yfinance removed "
+        "2026-07-16, permanently rate-limited on this sandbox) - agent "
+        "fills via Robinhood get_index_quotes or one web search",
+        "market_cap: no source configured (yfinance removed 2026-07-16) "
+        "- mcap_gt_1b / mcap_ge_800m day/swing gates can never pass "
+        "until a replacement source is wired in",
+        "market-wide earnings calendar is only partial: no per-gapper "
+        "next_earnings source either (yfinance removed) - use "
+        "get_earnings_calendar/get_earnings_results for gappers that "
+        "clear the other gates",
         "intraday levels (VWAP/HOD/LOD/PMH) need intraday bars and are "
         "only available on the Alpaca path",
-        "premarket RVOL: yfinance reports about 0 premarket volume, so a "
-        "true premarket RVOL needs a premarket feed (Alpaca supplies it "
-        "here); on the keyless path full-day RVOL is the stand-in",
+        "candidates have no keyless fallback anymore (yfinance removed "
+        "2026-07-16): without Alpaca credentials this packet has zero "
+        "gappers",
     ]
 
     step("1/6 market snapshot")
@@ -541,15 +452,7 @@ def main():
         except Exception as e:
             rows, source = None, f"alpaca candidates failed: {e}"
             step(source)
-    if rows is None or len(rows) < 5:
-        rows2, source2 = candidates_yf()
-        if rows2 and len(rows2) >= 5:
-            rows, source = rows2, source2
-        elif rows is None:
-            rows, source = rows2, source2
-    if not rows:
-        rows, source = candidates_static()
-        rows = rows or []
+    rows = rows or []
     step(f"candidates: {len(rows)} from {source}")
 
     # gap filter: abs gap >= 3 (day rule needs >3, so do not starve it),
@@ -578,9 +481,8 @@ def main():
     gappers = []
     for i, r in enumerate(movers):
         s = r["symbol"]
-        cap, name, earn = yf_profile(s)
-        cap = cap or r.get("market_cap")
-        name = name or r.get("name")
+        cap, earn = r.get("market_cap"), None
+        name = r.get("name")
         lv = levels.get(s) or {}
         dm = dailym.get(s) or {}
 

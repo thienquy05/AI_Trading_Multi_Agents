@@ -29,9 +29,16 @@ intraday, not before.
 
 RVOL note: with Alpaca premarket bars we compute TRUE premarket RVOL
 (today's premarket volume vs the 20-day average premarket volume at the
-same clock time). On the keyless yfinance fallback path, premarket volume
-reads as roughly zero, so full-day relative volume is the stand-in and the
-packet says so honestly.
+same clock time).
+
+Market cap note (2026-07-16): yfinance, the only market-cap source this
+scanner had, was removed — it was permanently rate-limited (HTTP 429)
+on this sandbox's shared egress IP, not a real fallback. Rule 3 (day)
+and rule 5 (swing) can never pass on their own until a replacement
+source is wired in; `scan_premarket.py`'s `gaps_to_fill` says so on
+every run. Until then, treat a gapper that clears every other gate as
+"would qualify but for market cap" on discretion, and say so explicitly
+in the report rather than silently waving it onto the list.
 
 ### Intraday plan (execution stays per TRADING-STRATEGY.md 2b, the validated ruleset)
 

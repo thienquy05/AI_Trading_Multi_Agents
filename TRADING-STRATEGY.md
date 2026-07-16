@@ -450,6 +450,15 @@ earns trust. Conditions before that's reasonable, stated plainly:
 
 ## Changelog
 
+- 2026-07-16: yfinance removed from `scan_premarket.py` per Quy's
+  request, confirmed permanently rate-limited (HTTP 429 from Yahoo's
+  own edge on this sandbox's shared egress IP, not a network block) —
+  it had failed every run since 2026-07-09. Market snapshot, market
+  cap, per-gapper earnings dates, and the keyless candidate fallback
+  are gone with it; `WATCHLIST_CRITERIA.md` rules 3/5 (market cap
+  gates) can never pass until a replacement source is wired in.
+  Workflow step 3 fallbacks (Robinhood, web search) now run every time,
+  not just on error. `requirements.txt` no longer lists yfinance.
 - 2026-07-09: premarket analyst pipeline adopted (Quy's internet-spec
   review): `scan_premarket.py` packet builder + deterministic
   `day_eligible`/`swing_eligible` flags per new `WATCHLIST_CRITERIA.md`;

@@ -647,3 +647,61 @@ a new dated line.
   republished this run per the cheap-hourly-run rule.
 - Telegram: none sent (quiet run, no trade, no emergency action —
   Quy's standing preference).
+
+### 2026-07-16 13:10 ET — Midday Scan
+- `clock`: market OPEN. Equity $100,016.97 | cash $98,584.48 |
+  last_equity $100,017.02 (day P&L ≈ -$0.05, flat — nowhere near the
+  -2% breaker).
+- **Position review (7 open — AAPL/NVDA/ORCL/VOO/BTC/ETH/SOL, all
+  Quy's manual adds from this morning's open, per 09:41 ET log entry)**:
+  - **AAPL** 1 sh @ $310.47, now $332.09 (+$21.62 / +6.96%), stop was
+    resting at $300 (1R = $10.47 → unrealized ≈ **+2.06R**, past the
+    +2R trail-to-breakeven trigger in §3). **Action: raised stop to
+    breakeven.** Canceled order `7709c58e` ($300 stop), placed new GTC
+    stop at **$310.47** (order `f1aab1b7`).
+  - NVDA 1 sh @ $209.84, now ~$207.65 (-1.04%), stop $195.15 unchanged
+    — small loser, nowhere near -7%, no thesis to break (informational
+    Robinhood-advisory name, no agent thesis on file).
+  - ORCL 1 sh @ $127.93, now ~$126.58 (-1.06%), stop $118.97 unchanged
+    — same as NVDA, small loser only.
+  - VOO 1 sh @ $692.29, now $691.83 (-0.07%), stop $643.83 unchanged —
+    flat, no action.
+  - BTC 0.0007 @ $64,132.85, now ~$64,230 (+0.15%), stop_limit
+    $59,643.60/$59,345.40 unchanged — flat, well below the +2R trail
+    trigger.
+  - ETH 0.0106 @ $1,880.36, now ~$1,871.40 (-0.48%), stop_limit
+    $1,748.70/$1,739.96 unchanged — small loser, no action.
+  - SOL 0.1309 @ $76.086, now ~$75.90 (-0.24%), stop_limit
+    $70.76/$70.41 unchanged — small loser, no action.
+  - No position at/below -7% or thesis-broken; only AAPL crossed +2R.
+- `scan_tjl.py --no-telegram`: no candidates — today's watchlist
+  (`scans/watchlist_2026-07-16.json`) is empty and no gappers scan
+  exists to fall back on. Saved
+  `scans/tjl_watchlist_2026-07-16_1310ET.json`.
+- `scan_crypto.py --no-telegram`: regime BEAR (BTC $64,724 <
+  daily SMA200 $73,518) — sleeve stands down, no entries scanned.
+  Saved `scans/crypto_tjl_2026-07-16_1710UTC.json`.
+- **Guardrail note (moot either way)**: position count is 7 open vs.
+  the §3 max-4-concurrent cap — no new equity or crypto entry could be
+  taken this run even on a scanner PASS, independent of the weekly/
+  daily entry-cap question already flagged at the open. Both scans
+  returned no candidates regardless, so nothing to gate.
+- Afternoon catalysts (web check): morning's tier-1 prints (retail
+  sales, initial claims, Philly Fed) already released and cleared;
+  no confirmed FOMC-tier release left in the 1-2 PM ET window today —
+  no active §3b blackout. **Netflix (NFLX) reports after today's
+  close** (not a held/watchlist name, but a market-mover to watch).
+  Tape since the open: S&P 500 -0.3%, Nasdaq -0.9% (chip-sector
+  weakness), Dow -0.1% — TSM beat/raised but sold off on spending
+  concerns, dragging the chip complex incl. NVDA.
+- Extra-watch one-liners (live): BTC ~$64,230 (regime BEAR, still <
+  SMA200 $73,518); ETH ~$1,871; SOL ~$75.90; NVDA ~$207.65 (-1.0%,
+  chip-sector drag, no company-specific news); ORCL ~$126.58 (-1.1%,
+  giving back some of this week's bounce).
+- Trades executed this run: **0 new entries** (stop trail only, on an
+  existing position).
+- Dashboard republished (local, gitignored) with fresh Alpaca account/
+  positions/orders + updated AAPL stop.
+- Telegram: midday update sent (ALWAYS-send workflow) — positions,
+  stop trail, no-candidate scans, afternoon catalysts, extra-watch
+  one-liners.

@@ -793,3 +793,66 @@ a new dated line.
   differs) — dashboard not republished per the cheap-hourly-run rule.
 - Telegram: none sent (quiet run, no trade, no emergency action —
   Quy's standing preference).
+
+### 2026-07-17 13:10 ET — Midday Scan
+- `clock`: market OPEN, next close 4:00 PM ET today.
+- **Position review (7 open — unchanged: AAPL/NVDA/ORCL/VOO/BTC/ETH/SOL)**:
+  - **AAPL** 1 sh @ $310.47, now $330.23 (+$19.76 / +6.37% ≈ +1.89R off
+    the $10.47 1R). Stop already at breakeven $310.47 from yesterday's
+    1:10 PM trail (order `f1aab1b7`) — price has pulled back off this
+    morning's highs (~$334.81) and is now *below* the +2R re-trigger
+    (1.89R < 2.0R), so no further trail this run; breakeven stop stands.
+  - NVDA 1 sh @ $209.84, now $206.45 (-1.62%), stop $195.15 (-7%)
+    unchanged — small loser, chip-sector drag continues, no thesis on
+    file to break.
+  - ORCL 1 sh @ $127.93, now $128.24 (+0.24%), stop $118.97 (-7%)
+    unchanged — flat/slight winner despite negative ORCL headlines
+    today (S&P downgrade to BBB-, ~13% workforce cut reported) — market
+    shrugging it off intraday, no action.
+  - VOO 1 sh @ $692.29, now $686.59 (-0.82%), stop $643.83 (-7%)
+    unchanged — small loser, no action.
+  - BTC 0.000699945 @ $64,132.85, now $63,932.22 (-0.31%), stop_limit
+    $59,643.60/$59,345.40 (-7%) unchanged — flat, no action.
+  - ETH 0.010610407 @ $1,880.36, now $1,840.02 (-2.15%), stop_limit
+    $1,748.70/$1,739.96 (-7%) unchanged — small loser, no action.
+  - SOL 0.130862025 @ $76.086, now $75.21 (-1.16%), stop_limit
+    $70.76/$70.41 (-7%) unchanged — small loser, no action.
+  - **No position at/below -7% or thesis-broken. No stop changes this
+    run** (AAPL's breakeven trail from last run already covers it).
+- `scan_tjl.py --no-telegram`: universe ATPC, STAK (today's premarket
+  packet). Both `fail_daily` (ATPC px $3.38 ≤ prev high $4.81; STAK px
+  $2.04 ≤ prev high $4.36) — same as the 11:33 AM and 12:33 PM reads,
+  no PASS. Saved `scans/tjl_watchlist_2026-07-17_1310ET.json`.
+- `scan_crypto.py --no-telegram`: regime BEAR (BTC $63,783.12 <
+  daily SMA200 $73,397.04) — sleeve stands down, no entries scanned.
+  Saved `scans/crypto_tjl_2026-07-17_1710UTC.json`.
+- **Guardrail note (moot, no PASS to gate either scan)**: position
+  count still 7 open vs. the §3 max-4-concurrent cap, and this week's
+  new-entry count (6, Quy's manual trades 7/16) still exceeds the
+  5/week cap — no new agent entry would be permitted this run even on
+  a PASS.
+- Afternoon catalysts (web check): today's tier-1 data (import/export
+  prices, housing starts, industrial production, prelim UMich
+  sentiment 10:00 AM) already released and cleared by midday; no
+  confirmed FOMC-tier release in the 1-2 PM ET window — no active §3b
+  blackout. Fed's Bowman and Waller have scheduled remarks today (not
+  policy-decision events). NY Fed staff nowcast at 12:45 PM (data
+  release, not price-moving for equities). Tape since the open:
+  S&P 500 ~-0.7%, Nasdaq ~-1.5% (semiconductor sell-off deepening on
+  AI-capex spending concerns), Netflix -11% after weak guidance
+  dragging broader sentiment; Dow near flat. NVDA -3.78% today in the
+  broad tape read (chip-sector leader of the decline).
+- Extra-watch one-liners (live): BTC $63,932 (regime BEAR, still <
+  SMA200 $73,397); ETH $1,840 (-0.85% today); SOL $75.21 (-0.07%
+  today); NVDA $206.45 (-1.6%, chip-sector drag, no NVDA-specific
+  news); ORCL $128.24 (+0.24% intraday despite negative headlines —
+  S&P downgraded ORCL to BBB- this week on AI-capex debt concerns,
+  Moody's negative outlook, ~13% / 21K workforce cut in FY26 annual
+  report; stock still up on the day, shrugging it off so far).
+- Trades executed this run: **0** (no scanner PASS, no stop changes
+  needed).
+- Dashboard republished (local, gitignored) with fresh Alpaca
+  account/positions/orders + live Robinhood pull (3 accounts +
+  RSI/MA signals for VOO/NVDA/TSLA/ORCL).
+- Telegram: midday update sent (ALWAYS-send workflow) — positions,
+  "no action needed", afternoon catalysts, extra-watch one-liners.

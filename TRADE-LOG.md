@@ -743,3 +743,39 @@ a new dated line.
   - NVDA $207.46 (Robinhood close), -2.5% vs prior close $212.50 — chip sector weakness (TSM beat but sold on spending concerns, dragging NVDA).
   - ORCL $124.24 (Robinhood close), -6.2% vs prior close $132.49 — continued weakness (down ~33% YTD, caution on cloud-margin sustainability per analyst commentary).
 - Lesson: today's manual trades (Quy's direct entries outside the research workflow) revealed a misalignment — the agent's guardrails (position count, weekly entry cap) are rigid and assume agent-driven trading only. Quy's manual flexibility bypasses them. Flagged honestly; recommend clarifying whether the "max 4 concurrent" rule applies to the agent's entries only (recommend: yes) or to the account holistically (would require a different gate design for mixed workflows). No trading strategy change needed — the edge in gap-retest discipline + guardrails on the agent side stands; Quy's real-money Robinhood management is orthogonal.
+
+### 2026-07-17 09:30 ET — Market open (no entries)
+- `clock`: market open, next close 4:00 PM ET today. `positions`: 7 open,
+  unchanged from premarket read — AAPL 1@$310.47 (now $334.81,
+  uP&L +$24.34/+7.84%), NVDA 1@$209.84 (now $199.61, uP&L -$10.23/-4.88%),
+  ORCL 1@$127.93 (now $123.21, uP&L -$4.72/-3.69%), VOO 1@$692.29
+  (now $681.64, uP&L -$10.65/-1.54%), BTC 0.000699945@$64,132.85
+  (now $62,549.64, uP&L -$1.11/-2.47%), ETH 0.010610407@$1,880.36
+  (now $1,804.30, uP&L -$0.81/-4.05%), SOL 0.130862025@$76.086
+  (now $73.50, uP&L -$0.34/-3.40%). Nothing gapped through a stop —
+  worst position (NVDA -4.9%) still has real cushion above both its
+  stop ($195.15) and the -7% hard-bail.
+- `orders open`: confirmed all 7 stops still resting — AAPL $310.47,
+  VOO $643.83, ORCL $118.97, NVDA $195.15, SOL stop_limit
+  70.76/70.4062, ETH stop_limit 1748.70/1739.96, BTC stop_limit
+  59643.60/59345.40. No emergency action needed.
+- **§3b guardrail pre-check**: daily P&L -$17.09/-0.017% (equity
+  $99,996.40 vs last_equity $100,013.49) — nowhere near the -2% daily
+  breaker; weekly P&L flat, nowhere near -4%. Position count 7 open vs
+  the strategy's 4-concurrent max, and this week's new-entry count (6,
+  all Quy's manual trades 7/16) already exceeds the 5/week cap —
+  **no new agent entry permitted today regardless of setup quality**,
+  consistent with this morning's premarket flag. Moot anyway: today's
+  premarket research produced zero trade ideas (RESEARCH-LOG.md
+  2026-07-17), so there was nothing in the entry-zone to check against
+  the other guardrails (blackout window: none in effect; earnings:
+  n/a; correlation: n/a; spread: n/a; tilt stop: n/a, no stop-outs
+  today).
+- **Trades executed this run: 0.** No entries — no research ideas +
+  position-count/weekly-cap guardrail both independently veto any new
+  entry today.
+- Dashboard republished (local, gitignored) with fresh Alpaca
+  account/positions/orders + live Robinhood pull (all 3 accounts +
+  RSI/MA signals for ORCL/VOO/NVDA/TSLA).
+- Telegram: open report sent (ALWAYS-send workflow) — no entries + why,
+  position status, extra-watch one-liners.

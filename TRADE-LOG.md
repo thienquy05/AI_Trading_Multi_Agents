@@ -1016,3 +1016,25 @@ a new dated line.
   account/positions/orders.
 - Telegram: midday update sent (ALWAYS-send workflow) — positions,
   "no action needed", afternoon catalysts, extra-watch one-liners.
+
+### 2026-07-20 16:00 ET — Daily Summary (market close)
+
+- **Account**: equity $99,994.05 | day P&L -$10.71 (-0.0107%) | cash $98,584.47
+- **Open positions** (7 total, unchanged since midday scan 13:11 ET):
+  - AAPL 1 @ $310.47 → $326.81 (uP&L +$16.34 / +5.26%)
+  - NVDA 1 @ $209.84 → $203.10 (uP&L -$6.74 / -3.21%)
+  - ORCL 1 @ $127.93 → $121.55 (uP&L -$6.38 / -4.99%)
+  - VOO 1 @ $692.29 → $682.33 (uP&L -$9.96 / -1.44%)
+  - BTC 0.000699945 @ $64,132.85 → $65,081 (uP&L +$0.66 / +1.48%)
+  - ETH 0.010610407 @ $1,880.36 → $1,896 (uP&L +$0.17 / +0.83%)
+  - SOL 0.130862025 @ $76.086 → $77.339 (uP&L +$0.16 / +1.65%)
+  - **Net unrealized P&L: +$5.76 / +0.41%**
+- **Trades executed today**: 0 (no premarket watchlist ideas; position-count guardrail [7 open vs 4-max] blocks new entries)
+- **Guardrail/breaker status**:
+  - Daily P&L -0.0107%, well inside -2% circuit breaker
+  - Weekly P&L near flat, well inside -4% circuit breaker
+  - Position count 7 open vs 4-max — exceeds cap (all Quy's manual trades from 7/16)
+  - Weekly new-entry cap: 6 entries of 5 allowed — over cap (no agent entries permitted this week)
+  - No §3b blackout windows active; no near-term earnings within 24h; no stop-outs; no thesis breaks
+  - **Note**: Robinhood MCP unavailable at 4:00 PM run — real account data not pulled (last live pull 9:39 AM this morning documented NVDA/ORCL/TSLA/VOO positions + RSI/MA signals)
+- **Lesson from today**: Position-count guardrail working as designed. Portfolio in "observe mode" with 7 open (exceeds 4-max). Strategy respects the cap to prevent over-concentration; Quy's standing authorization allows manual overrides on his own trades, but the agent enforces discipline by blocking new entries until the count normalizes.

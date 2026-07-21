@@ -1054,3 +1054,19 @@ a new dated line.
   account/positions/orders.
 - Telegram: midday update sent (ALWAYS-send workflow) — positions,
   "no action needed", afternoon catalysts, extra-watch one-liners.
+
+### 2026-07-21 10:33 ET — Hourly TJL watch (no candidates)
+- `scan_tjl.py --no-telegram`: universe SNDQ/ZYBT/ADVB/GMM (today's
+  premarket packet, 4 gappers). All `fail_daily`: SNDQ insufficient
+  data, ZYBT $3.67 ≤ prev high $6.15, ADVB $7.35 ≤ prev high $9.30, GMM
+  $3.28 ≤ prev high $4.42. No PASS. Saved
+  `scans/tjl_watchlist_2026-07-21_1033ET.json`.
+- §3b guardrail note (moot, no PASS to gate): position count still 7
+  open (AAPL/NVDA/ORCL/VOO/BTC/ETH/SOL) vs the §3 4-concurrent max —
+  no new agent entry would be permitted this run even on a PASS,
+  fourth straight day.
+- No trade placed. Hit set consistent with premarket/open assessment
+  (all gappers ineligible) — dashboard not republished per the
+  cheap-hourly-run rule.
+- Telegram: none sent (quiet run, no trade, no emergency action —
+  Quy's standing preference).

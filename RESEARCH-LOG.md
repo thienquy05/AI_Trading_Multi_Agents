@@ -616,3 +616,50 @@ Append at the BOTTOM, one entry per pre-market run.
   today's report). Bigger picture: Alphabet + Tesla earnings tonight
   (TSLA is the real dust holding), and watching for further Iran
   ceasefire whiplash given how fast yesterday's optimism reversed.
+
+## 2026-07-23 — pre-market
+- Account: equity $100,006.80 | cash $98,584.47 | open positions: 7
+  total, all healthy — AAPL +4.3% (stop at breakeven $310.47), NVDA
+  +0.5%, ORCL -1.3%, VOO -1.1%, BTC +2.5%, ETH +2.4%, SOL +2.3%
+  (crypto stop_limits unchanged). None near their stops. Note: today's
+  account snapshot showed some unusual fields (multiplier reset to 1,
+  last_equity/sma reading 0) — likely a paper-account rollover
+  artifact, position values/P&L all checked out normal, flagged for a
+  light re-check next run.
+- **Guardrail flag (standing, unchanged)**: position count still 7
+  open vs the strategy's 4-concurrent max — sixth straight trading day
+  pinned at the ceiling (since 7/18). No new agent entry permitted
+  today regardless of scan results.
+- Macro/calendar: 0 US high-impact events today (ForexFactory live
+  fetch) — no §3b blackout window today. TSLA (held, dust position)
+  and Alphabet both reported earnings last night.
+- Sector momentum / market tone: Wednesday's session sold off hard on
+  the Iran/oil headline risk flagged in yesterday's report — SPX fell
+  to 7,407.20 (-1.4%), NDX to 28,455.10 (-2.4%), RUT to 2,937.08. VIX
+  climbed to 19.48 live this morning, the week's highest read. TSLA
+  down ~6.7% premarket ($349.03 vs $374.01 prior close) after its
+  earnings miss — a real hit to Quy's real dust holding. Gappers: NOK
+  +4.4% (Nokia — REAL verified earnings beat: comparable op profit
+  +18% to EUR434M vs EUR382M est, EPS beat, AI/cloud sales doubled,
+  reaffirmed FY guidance, confirmed via Nokia IR + Business Recorder +
+  Euronext; clears 4 of 6 day-eligibility checks, blocked only by
+  missing mcap/RVOL data — a genuine near-miss, not promoted per the
+  never-promote-unflagged rule). ZCMD -22.8% (fading a +351% halt-pump
+  from yesterday, down-gap regardless).
+- Crypto regime: BEAR (BTC prior close $66,081.59 < daily SMA200
+  $72,691.42) — sleeve stands down. BTC $65,562 (-0.8% vs today's
+  open), ETH $1,926 (-0.5%), SOL $77.80 (-0.2%) — pulling back
+  slightly with the broader risk-off tone from Wednesday.
+- Extra-watch (BTC/ETH/SOL/NVDA/ORCL): NVDA $209.99 premarket (-1.0%),
+  no specific news. ORCL $125.65 premarket (flat), no new
+  company-specific news.
+- Ideas (2-3): none actionable. NOK is a real, verified setup but
+  stays off the watchlist per the rules (data gap on mcap/RVOL, never
+  promote unflagged) and would be vetoed regardless by the
+  position-count guardrail (7 open vs 4-max, 6th straight day). No
+  qualifying setups on the actionable list — standing aside on
+  equities. Crypto sleeve flat (bear regime).
+- Watching but not trading: NOK (genuine near-miss, worth remembering
+  if the data feed recovers and this pattern repeats), ZCMD (pump
+  fade, skip). Bigger picture: watching for GOOGL's earnings reaction
+  and any TSLA follow-through today, plus the ongoing Iran situation.

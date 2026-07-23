@@ -1295,3 +1295,20 @@ a new dated line.
   run (keeping hourly watches cheap per policy).
 - No trade placed. Telegram: suppressed (quiet-run policy, no trade
   and no emergency action needed).
+
+### 2026-07-23 14:33 ET — Hourly TJL Watch
+- `scan_tjl.py --no-telegram`: universe ZCMD/NOK (same `packet_2026-07-23.json`
+  watchlist). Both `fail_daily`: ZCMD $1.86 ≤ prev high $11.60, NOK
+  $9.84 ≤ prev high $10.47. No PASS. Saved
+  `scans/tjl_watchlist_2026-07-23_1433ET.json`.
+- §3b guardrail note (moot, no PASS to gate): max-position lock still
+  binding — 7 concurrent open (AAPL/NVDA/ORCL/VOO/BTC/ETH/SOL) vs the
+  §3 4-concurrent max, unchanged since 2026-07-18. No new entry would
+  be permitted this run regardless of scan results. ORCL noted at
+  -6.45% unrealized (closest to the -7% hard bail) from positions seen
+  in this run's scan context — not yet at the threshold, no action
+  required by this workflow's scope.
+- Hit set unchanged vs the 13:33 run (both fail_daily) — dashboard not
+  republished this run (keeping hourly watches cheap per policy).
+- No trade placed. Telegram: suppressed (quiet-run policy, no trade
+  and no emergency action needed).

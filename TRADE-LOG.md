@@ -1361,3 +1361,8 @@ a new dated line.
 - **ORCL stop-out (discovered this run)**: resting stop-loss filled 09:41:51 ET at $118.95 (stop was $118.97), qty 1, entry $127.93 → realized **-7.02%** (-$8.98), tripping the §3 hard -7% exit exactly as designed. Not a gap-through (fill essentially at the stop price) — no emergency Telegram needed, logging here since it postdates the 09:40 Market Open check. Open positions now 6 (AAPL/NVDA/VOO/BTC/ETH/SOL); max-position lock (§3, cap 4) remains binding.
 - `scan_tjl.py --no-telegram`: universe INTC (today's premarket watchlist). Result: **fail_daily** — px $96.62 ≤ prev daily high $104.17. No PASS; no entry regardless (position lock still binding at 6/4).
 - No trade placed. No Telegram (quiet-run policy, no trade / no emergency).
+
+### 2026-07-24 12:32 ET — Hourly TJL Watch
+- `scan_tjl.py --no-telegram`: universe INTC (today's premarket watchlist). Result: **fail_daily** — px $95.25 ≤ prev daily high $104.17. No PASS; no entry regardless (position lock still binding, 6 open vs §3 cap 4).
+- Positions re-check: 6 open (AAPL/NVDA/VOO/BTC/ETH/SOL), all within stops, none near -7% (SOL worst at -2.6%). No emergency action needed.
+- No trade placed. No Telegram (quiet-run policy — no trade, no emergency).

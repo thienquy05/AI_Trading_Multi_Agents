@@ -1356,3 +1356,8 @@ a new dated line.
   - Note: Robinhood's real-time SIP feed shows ORCL down more sharply today (-2.71%) than Alpaca's IEX-delayed paper quote (-0.23% intraday) — normal feed-lag divergence, not a data error (see Gotchas).
 - Dashboard republished (local, gitignored) with fresh Alpaca account/positions/orders + live Robinhood pull (3 accounts).
 - Telegram: open report sent (ALWAYS policy), including "no entries" reason and extra-watch one-liners.
+
+### 2026-07-24 10:34 ET — Hourly TJL Watch
+- **ORCL stop-out (discovered this run)**: resting stop-loss filled 09:41:51 ET at $118.95 (stop was $118.97), qty 1, entry $127.93 → realized **-7.02%** (-$8.98), tripping the §3 hard -7% exit exactly as designed. Not a gap-through (fill essentially at the stop price) — no emergency Telegram needed, logging here since it postdates the 09:40 Market Open check. Open positions now 6 (AAPL/NVDA/VOO/BTC/ETH/SOL); max-position lock (§3, cap 4) remains binding.
+- `scan_tjl.py --no-telegram`: universe INTC (today's premarket watchlist). Result: **fail_daily** — px $96.62 ≤ prev daily high $104.17. No PASS; no entry regardless (position lock still binding at 6/4).
+- No trade placed. No Telegram (quiet-run policy, no trade / no emergency).

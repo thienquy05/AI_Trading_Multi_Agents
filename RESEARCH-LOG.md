@@ -663,3 +663,48 @@ Append at the BOTTOM, one entry per pre-market run.
   if the data feed recovers and this pattern repeats), ZCMD (pump
   fade, skip). Bigger picture: watching for GOOGL's earnings reaction
   and any TSLA follow-through today, plus the ongoing Iran situation.
+
+## 2026-07-24 — pre-market
+- Account: equity $99,994.35 | cash $98,584.47 | open positions: 7
+  total, all healthy — AAPL +4.0% (stop at breakeven $310.47), NVDA
+  -0.8%, ORCL -3.7% (bounced back from Wednesday's -6.04% close,
+  nearest the -7% hard bail, no longer at immediate risk), VOO -1.7%,
+  BTC +1.3%, ETH +0.2%, SOL -0.7% (crypto stop_limits unchanged).
+- **Guardrail flag (standing, unchanged)**: position count still 7
+  open vs the strategy's 4-concurrent max — seventh-plus straight
+  trading day pinned at the ceiling (since 7/18). No new agent entry
+  permitted today regardless of scan results.
+- Macro/calendar: 0 US high-impact events today (ForexFactory live
+  fetch) — no §3b blackout window today. FOMC meets Mon-Tue (7/28-29),
+  rate decision Wed 2:00 PM ET — five days out, not yet a blackout.
+- Sector momentum / market tone: **second straight day a real setup
+  blocked purely by a data gap** — INTC (Intel) +9.8% to $109.86 on a
+  genuine earnings blowout (Q2 revenue growth fastest in ~15 years, Q3
+  guidance $15.8-16.8B vs $15.1B est, CEO bullish on AI-inference CPU
+  demand, confirmed via Bloomberg/Benzinga). Clears 5 of 6
+  swing-eligibility checks (gap size, price, above prior high, above
+  200-day SMA, real catalyst) — blocked only by missing mcap/RVOL data
+  (yfinance blocked again this run), same pattern as yesterday's NOK
+  but stronger (this one clears the 8% swing threshold outright).
+  Mizuho stayed Neutral with a $109 PT (=today's price) vs HSBC's $200
+  target — real analyst disagreement on further upside. SPX 7,408.30 /
+  NDX 28,454.81 / RUT 2,940.16 (Thursday close, essentially flat).
+  VIX 18.84 live, down slightly from 19.48.
+- Crypto regime: BEAR (BTC prior close $65,068.40 < daily SMA200
+  $72,559.27) — sleeve stands down. BTC $65,016 (flat vs today's
+  open), ETH $1,881 (+0.2%), SOL $75.32 (-0.6%).
+- Extra-watch (BTC/ETH/SOL/NVDA/ORCL): NVDA $208.30 premarket (flat),
+  no specific news but INTC's AI-demand commentary is adjacent sector
+  context. ORCL $122.47 premarket (+2.0%), bouncing back after
+  Wednesday's slide, no new company-specific news.
+- Ideas (2-3): none actionable. INTC is a real, strong near-miss (5/6
+  swing checks) but stays off the watchlist per the rules (data gap on
+  mcap/RVOL, never promote unflagged) and would be vetoed regardless
+  by the position-count guardrail (7 open vs 4-max, 7th+ straight
+  day). No qualifying setups on the actionable list — standing aside
+  on equities. Crypto sleeve flat (bear regime).
+- Watching but not trading: INTC (strongest near-miss of the week,
+  worth remembering if the data feed recovers and position count
+  frees up). Bigger picture: watching for the yfinance outage to
+  resolve since it's now cost two real setups in two days, and
+  watching ORCL's proximity to -7% given how close it came Wednesday.
